@@ -6,6 +6,8 @@ import pe.villaesperanza.SpringWebMatriculas.dto.reference.GeneroReference;
 
 import java.io.Serializable;
 import java.time.Instant;
+import java.util.ArrayList;
+import java.util.List;
 
 @Getter
 @Setter
@@ -24,4 +26,6 @@ public class ApoderadosDto implements Serializable {
     private String direccion;
     private boolean habilitado;
     private Instant fechaCreacion;
+
+    private List<MatriculasDto> matriculas = new ArrayList<>();
 }

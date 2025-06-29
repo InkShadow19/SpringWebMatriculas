@@ -14,4 +14,7 @@ public class PagoDetallesDto implements Serializable {
     private Double montoAplicado;
     private boolean habilitado;
     private Instant fechaCreacion;
+
+    private String cronograma;
+    private String pago;
 }

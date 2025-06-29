@@ -36,4 +36,12 @@ public class TPagoDetallesEntity {
 
     @Column(name = "fecha_actualizacion", nullable = false)
     private Instant fechaActualizacion = Instant.now();
+
+    @ManyToOne
+    @JoinColumn(name = "id_cronograma_pagos")
+    private TCronogramaPagosEntity cronogramaPagosEntity;
+
+    @ManyToOne
+    @JoinColumn(name = "id_pagos")
+    private TPagosEntity pagosEntity;
 }

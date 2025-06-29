@@ -6,6 +6,8 @@ import pe.villaesperanza.SpringWebMatriculas.dto.reference.CanalReference;
 
 import java.io.Serializable;
 import java.time.Instant;
+import java.util.ArrayList;
+import java.util.List;
 
 @Getter
 @Setter
@@ -18,4 +20,8 @@ public class PagosDto implements Serializable {
     private Instant fechaPago;
     private boolean habilitado;
     private Instant fechaCreacion;
+
+    private String usuario;
+    private String banco;
+    private List<PagoDetallesDto> detalles = new ArrayList<>();
 }

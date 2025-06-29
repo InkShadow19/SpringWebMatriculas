@@ -6,6 +6,8 @@ import pe.villaesperanza.SpringWebMatriculas.dto.reference.SituacionReference;
 
 import java.io.Serializable;
 import java.time.Instant;
+import java.util.ArrayList;
+import java.util.List;
 
 @Getter
 @Setter
@@ -17,4 +19,11 @@ public class MatriculasDto implements Serializable {
     private Instant fechaMatricula;
     private boolean habilitado;
     private Instant fechaCreacion;
+
+    private String nivel;
+    private String grado;
+    private String estudiante;
+    private String apoderado;
+    private String anioAcademico;
+    private List<CronogramaPagosDto> cronogramas = new ArrayList<>();
 }

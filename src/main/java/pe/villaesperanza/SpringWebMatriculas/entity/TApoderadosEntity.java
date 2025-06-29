@@ -6,6 +6,8 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.time.Instant;
+import java.util.HashSet;
+import java.util.Set;
 
 @Entity
 @Getter
@@ -63,4 +65,7 @@ public class TApoderadosEntity {
 
     @Column(name = "fecha_actualizacion", nullable = false)
     private Instant fechaActualizacion = Instant.now();
+
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "apoderadosEntity")
+    private Set<TMatriculasEntity> matriculas = new HashSet<>();
 }

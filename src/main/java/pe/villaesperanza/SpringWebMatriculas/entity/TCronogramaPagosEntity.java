@@ -6,6 +6,8 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.time.Instant;
+import java.util.HashSet;
+import java.util.Set;
 
 @Entity
 @Getter
@@ -54,4 +56,15 @@ public class TCronogramaPagosEntity {
 
     @Column(name = "fecha_actualizacion", nullable = false)
     private Instant fechaActualizacion = Instant.now();
+
+    @ManyToOne
+    @JoinColumn(name = "id_conceptos_pago")
+    private TConceptosPagoEntity conceptosPagoEntity;
+
+    @ManyToOne
+    @JoinColumn(name = "id_matriculas")
+    private TMatriculasEntity matriculasEntity;
+
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "cronogramaPagosEntity")
+    private Set<TPagoDetallesEntity> detalles = new HashSet<>();
 }

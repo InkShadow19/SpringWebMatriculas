@@ -6,6 +6,8 @@ import pe.villaesperanza.SpringWebMatriculas.dto.reference.EstadoAcademicoRefere
 
 import java.io.Serializable;
 import java.time.Instant;
+import java.util.ArrayList;
+import java.util.List;
 
 @Getter
 @Setter
@@ -16,4 +18,6 @@ public class AñosAcademicosDto implements Serializable {
     private EstadoAcademicoReference estado;
     private boolean habilitado;
     private Instant fechaCreacion;
+
+    private List<MatriculasDto> matriculas = new ArrayList<>();
 }

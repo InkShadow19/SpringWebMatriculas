@@ -5,6 +5,8 @@ import lombok.Setter;
 
 import java.io.Serializable;
 import java.time.Instant;
+import java.util.ArrayList;
+import java.util.List;
 
 @Getter
 @Setter
@@ -15,4 +17,6 @@ public class BancosDto implements Serializable {
     private String descripcion;
     private boolean habilitado;
     private Instant fechaCreacion;
+
+    private List<PagosDto> pagos = new ArrayList<>();
 }

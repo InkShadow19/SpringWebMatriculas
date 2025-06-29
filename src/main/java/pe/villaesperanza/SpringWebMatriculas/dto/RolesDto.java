@@ -5,6 +5,8 @@ import lombok.Setter;
 
 import java.io.Serializable;
 import java.time.Instant;
+import java.util.ArrayList;
+import java.util.List;
 
 @Getter
 @Setter
@@ -14,4 +16,6 @@ public class RolesDto implements Serializable {
     private String descripcion;
     private boolean habilitado;
     private Instant fechaCreacion;
+
+    private List<UsuariosDto> usuarios = new ArrayList<>();
 }
