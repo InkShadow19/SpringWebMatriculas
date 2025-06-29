@@ -12,7 +12,7 @@ import java.time.Instant;
 @Setter
 @NoArgsConstructor
 @Table(name = "grados")
-public class TGradoEntity {
+public class TGradosEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

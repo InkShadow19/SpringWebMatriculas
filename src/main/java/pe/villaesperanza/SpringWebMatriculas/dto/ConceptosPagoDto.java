@@ -8,13 +8,12 @@ import java.time.Instant;
 
 @Getter
 @Setter
-public class UsuariosDto implements Serializable {
+public class ConceptosPagoDto implements Serializable {
 
     private String identifier;
-    private String usuario;
-    private String contraseña;
-    private String nombres;
-    private String apellidos;
+    private String codigo;
+    private String descripcion;
+    private Double montoSugerido;
     private boolean habilitado;
     private Instant fechaCreacion;
 }

@@ -2,19 +2,18 @@ package pe.villaesperanza.SpringWebMatriculas.dto;
 
 import lombok.Getter;
 import lombok.Setter;
+import pe.villaesperanza.SpringWebMatriculas.dto.reference.EstadoAcademicoReference;
 
 import java.io.Serializable;
 import java.time.Instant;
 
 @Getter
 @Setter
-public class UsuariosDto implements Serializable {
+public class AñosAcademicosDto implements Serializable {
 
     private String identifier;
-    private String usuario;
-    private String contraseña;
-    private String nombres;
-    private String apellidos;
+    private Integer anio;
+    private EstadoAcademicoReference estado;
     private boolean habilitado;
     private Instant fechaCreacion;
 }
