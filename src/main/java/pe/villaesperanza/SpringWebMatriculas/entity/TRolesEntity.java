@@ -4,10 +4,12 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import pe.villaesperanza.SpringWebMatriculas.dto.RolesDto;
 
 import java.time.Instant;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.UUID;
 
 @Entity
 @Getter
@@ -42,4 +44,21 @@ public class TRolesEntity {
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "rolesEntity")
     private Set<TUsuariosEntity> usuarios = new HashSet<>();
 
+    public TRolesEntity(RolesDto roles) {
+
+        this.identifier = UUID.randomUUID().toString();
+        this.descripcion = roles.getDescripcion();
+    }
+
+    public RolesDto toDto() {
+
+        RolesDto dto = new RolesDto();
+
+        dto.setIdentifier(identifier);
+        dto.setDescripcion(descripcion);
+        dto.setHabilitado(habilitado);
+        dto.setFechaCreacion(fechaCreacion.toString());
+
+        return dto;
+    }
 }

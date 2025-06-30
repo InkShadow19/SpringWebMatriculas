@@ -4,10 +4,12 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import pe.villaesperanza.SpringWebMatriculas.dto.MatriculasDto;
 
 import java.time.Instant;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.UUID;
 
 @Entity
 @Getter
@@ -67,4 +69,22 @@ public class TMatriculasEntity {
 
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "matriculasEntity")
     private Set<TCronogramaPagosEntity> cronogramas = new HashSet<>();
+
+    public TMatriculasEntity(MatriculasDto matriculasDto, TNivelesEntity nivelesEntity,
+                             TGradosEntity gradosEntity, TEstudiantesEntity estudiantesEntity,
+                             TApoderadosEntity apoderadosEntity, TAñosAcademicosEntity añosAcademicosEntity) {
+
+        this.nivelesEntity = nivelesEntity;
+        this.gradosEntity = gradosEntity;
+        this.estudiantesEntity = estudiantesEntity;
+        this.apoderadosEntity = apoderadosEntity;
+        this.añosAcademicosEntity = añosAcademicosEntity;
+
+        this.identifier = UUID.randomUUID().toString();
+        this.codigo = matriculasDto.getCodigo();
+        this.situacion = matriculasDto.getSituacion().getValue();
+        if (matriculasDto.getFechaMatricula() != null) this.fechaMatricula = Instant.parse(matriculasDto.getFechaMatricula());
+
+    }
+
 }

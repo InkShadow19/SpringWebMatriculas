@@ -4,8 +4,10 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import pe.villaesperanza.SpringWebMatriculas.dto.PagoDetallesDto;
 
 import java.time.Instant;
+import java.util.UUID;
 
 @Entity
 @Getter
@@ -44,4 +46,12 @@ public class TPagoDetallesEntity {
     @ManyToOne
     @JoinColumn(name = "id_pagos")
     private TPagosEntity pagosEntity;
+
+    public TPagoDetallesEntity(PagoDetallesDto detallesDto, TCronogramaPagosEntity cronogramaPagosEntity, TPagosEntity pagosEntity) {
+
+        this.cronogramaPagosEntity = cronogramaPagosEntity;
+        this.pagosEntity = pagosEntity;
+        this.identifier = UUID.randomUUID().toString();
+        this.montoAplicado = detallesDto.getMontoAplicado();
+    }
 }

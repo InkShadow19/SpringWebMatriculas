@@ -4,10 +4,12 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import pe.villaesperanza.SpringWebMatriculas.dto.EstudiantesDto;
 
 import java.time.Instant;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.UUID;
 
 @Entity
 @Getter
@@ -65,4 +67,18 @@ public class TEstudiantesEntity {
 
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "estudiantesEntity")
     private Set<TMatriculasEntity> matriculas = new HashSet<>();
+
+    public TEstudiantesEntity(EstudiantesDto estudiantesDto) {
+
+        this.identifier = UUID.randomUUID().toString();
+        this.dni = estudiantesDto.getDni();
+        this.nombre = estudiantesDto.getNombre();
+        this.apellidoPaterno = estudiantesDto.getApellidoPaterno();
+        this.apellidoMaterno = estudiantesDto.getApellidoMaterno();
+        if (estudiantesDto.getFechaNacimiento() != null) this.fechaNacimiento = Instant.parse(estudiantesDto.getFechaNacimiento());
+        this.genero = estudiantesDto.getGenero().getValue();
+        this.direccion = estudiantesDto.getDireccion();
+        this.telefono = estudiantesDto.getTelefono();
+        this.email = estudiantesDto.getEmail();
+    }
 }

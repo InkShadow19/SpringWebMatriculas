@@ -5,7 +5,6 @@ import lombok.Setter;
 import pe.villaesperanza.SpringWebMatriculas.dto.reference.SituacionReference;
 
 import java.io.Serializable;
-import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -16,9 +15,9 @@ public class MatriculasDto implements Serializable {
     private String identifier;
     private Integer codigo;
     private SituacionReference situacion;
-    private Instant fechaMatricula;
+    private String fechaMatricula;
     private boolean habilitado;
-    private Instant fechaCreacion;
+    private String fechaCreacion;
 
     private String nivel;
     private String grado;

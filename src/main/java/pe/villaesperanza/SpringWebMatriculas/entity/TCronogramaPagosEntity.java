@@ -4,10 +4,12 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import pe.villaesperanza.SpringWebMatriculas.dto.CronogramaPagosDto;
 
 import java.time.Instant;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.UUID;
 
 @Entity
 @Getter
@@ -67,4 +69,18 @@ public class TCronogramaPagosEntity {
 
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "cronogramaPagosEntity")
     private Set<TPagoDetallesEntity> detalles = new HashSet<>();
+
+    public TCronogramaPagosEntity(CronogramaPagosDto cronogramaPagosDto, TConceptosPagoEntity conceptosPagoEntity, TMatriculasEntity matriculasEntity) {
+
+        this.conceptosPagoEntity = conceptosPagoEntity;
+        this.matriculasEntity = matriculasEntity;
+        this.identifier = UUID.randomUUID().toString();
+        this.descripcion = cronogramaPagosDto.getDescripcion();
+        this.montoOriginal = cronogramaPagosDto.getMontoOriginal();
+        this.descuento = cronogramaPagosDto.getDescuento();
+        this.mora = cronogramaPagosDto.getMora();
+        this.montoAPagar = cronogramaPagosDto.getMontoAPagar();
+        if (cronogramaPagosDto.getFechaVencimiento() != null) this.fechaVencimiento = Instant.parse(cronogramaPagosDto.getFechaVencimiento());
+        this.estadoDeuda = cronogramaPagosDto.getEstadoDeuda().getValue();
+    }
 }

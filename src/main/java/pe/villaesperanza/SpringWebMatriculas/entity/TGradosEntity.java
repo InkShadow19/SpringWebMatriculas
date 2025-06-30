@@ -4,10 +4,12 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import pe.villaesperanza.SpringWebMatriculas.dto.GradosDto;
 
 import java.time.Instant;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.UUID;
 
 @Entity
 @Getter
@@ -45,4 +47,11 @@ public class TGradosEntity {
 
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "gradosEntity")
     private Set<TMatriculasEntity> matriculas = new HashSet<>();
+
+    public TGradosEntity(GradosDto gradosDto, TNivelesEntity nivelesEntity) {
+
+        this.nivelesEntity = nivelesEntity;
+        this.identifier = UUID.randomUUID().toString();
+        this.descripcion = gradosDto.getDescripcion();
+    }
 }

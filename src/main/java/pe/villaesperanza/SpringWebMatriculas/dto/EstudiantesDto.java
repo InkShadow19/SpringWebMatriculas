@@ -5,7 +5,6 @@ import lombok.Setter;
 import pe.villaesperanza.SpringWebMatriculas.dto.reference.GeneroReference;
 
 import java.io.Serializable;
-import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -18,13 +17,13 @@ public class EstudiantesDto implements Serializable {
     private String nombre;
     private String apellidoPaterno;
     private String apellidoMaterno;
-    private Instant fechaNacimiento;
+    private String fechaNacimiento;
     private GeneroReference genero;
     private String direccion;
     private String telefono;
     private String email;
     private boolean habilitado;
-    private Instant fechaCreacion;
+    private String fechaCreacion;
 
     private List<MatriculasDto> matriculas = new ArrayList<>();
 }

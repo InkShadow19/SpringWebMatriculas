@@ -4,10 +4,12 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import pe.villaesperanza.SpringWebMatriculas.dto.PagosDto;
 
 import java.time.Instant;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.UUID;
 
 @Entity
 @Getter
@@ -58,4 +60,15 @@ public class TPagosEntity {
 
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "pagosEntity")
     private Set<TPagoDetallesEntity> detalles = new HashSet<>();
+
+    public TPagosEntity(PagosDto pagosDto, TUsuariosEntity usuariosEntity, TBancosEntity bancosEntity) {
+
+        this.usuariosEntity = usuariosEntity;
+        this.bancosEntity = bancosEntity;
+        this.identifier = UUID.randomUUID().toString();
+        this.canalPago = pagosDto.getCanalPago().getValue();
+        this.numeroTicket = pagosDto.getNumeroTicket();
+        this.montoTotalPagado = pagosDto.getMontoTotalPagado();
+        if (pagosDto.getFechaPago() != null) this.fechaPago = Instant.parse(pagosDto.getFechaPago());
+    }
 }

@@ -4,10 +4,12 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import pe.villaesperanza.SpringWebMatriculas.dto.NivelesDto;
 
 import java.time.Instant;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.UUID;
 
 @Entity
 @Getter
@@ -44,4 +46,10 @@ public class TNivelesEntity {
 
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "nivelesEntity")
     private Set<TMatriculasEntity> matriculas = new HashSet<>();
+
+    public TNivelesEntity(NivelesDto nivelesDto) {
+
+        this.identifier = UUID.randomUUID().toString();
+        this.descripcion = nivelesDto.getDescripcion();
+    }
 }

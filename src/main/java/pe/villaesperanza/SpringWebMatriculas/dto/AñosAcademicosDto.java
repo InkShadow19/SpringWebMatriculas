@@ -5,7 +5,6 @@ import lombok.Setter;
 import pe.villaesperanza.SpringWebMatriculas.dto.reference.EstadoAcademicoReference;
 
 import java.io.Serializable;
-import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -17,7 +16,7 @@ public class AñosAcademicosDto implements Serializable {
     private Integer anio;
     private EstadoAcademicoReference estado;
     private boolean habilitado;
-    private Instant fechaCreacion;
+    private String fechaCreacion;
 
     private List<MatriculasDto> matriculas = new ArrayList<>();
 }

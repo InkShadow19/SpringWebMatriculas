@@ -4,10 +4,12 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import pe.villaesperanza.SpringWebMatriculas.dto.UsuariosDto;
 
 import java.time.Instant;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.UUID;
 
 @Entity
 @Getter
@@ -54,4 +56,15 @@ public class TUsuariosEntity {
 
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "usuariosEntity")
     private Set<TPagosEntity> pagos = new HashSet<>();
+
+    public TUsuariosEntity(UsuariosDto usuarios, TRolesEntity rolesEntity) {
+
+        this.rolesEntity = rolesEntity;
+        this.identifier = UUID.randomUUID().toString();
+        this.usuario = usuarios.getUsuario();
+        this.contraseña = usuarios.getContraseña();
+        this.nombres = usuarios.getNombres();
+        this.apellidos = usuarios.getApellidos();
+
+    }
 }

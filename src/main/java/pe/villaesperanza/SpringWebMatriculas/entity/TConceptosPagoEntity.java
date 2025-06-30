@@ -4,10 +4,12 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import pe.villaesperanza.SpringWebMatriculas.dto.ConceptosPagoDto;
 
 import java.time.Instant;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.UUID;
 
 @Entity
 @Getter
@@ -47,4 +49,12 @@ public class TConceptosPagoEntity {
 
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "conceptosPagoEntity")
     private Set<TCronogramaPagosEntity> cronogramas = new HashSet<>();
+
+    public TConceptosPagoEntity(ConceptosPagoDto conceptosPagoDto) {
+
+        this.identifier = UUID.randomUUID().toString();
+        this.codigo = conceptosPagoDto.getCodigo();
+        this.descripcion = conceptosPagoDto.getDescripcion();
+        this.montoSugerido = conceptosPagoDto.getMontoSugerido();
+    }
 }
