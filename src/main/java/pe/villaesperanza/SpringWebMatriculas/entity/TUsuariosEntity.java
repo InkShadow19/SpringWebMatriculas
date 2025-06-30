@@ -66,5 +66,26 @@ public class TUsuariosEntity {
         this.nombres = usuarios.getNombres();
         this.apellidos = usuarios.getApellidos();
 
+        if (usuarios.getPagos() != null)
+            this.pagos.addAll(usuarios.getPagos().parallelStream().map(x -> new TPagosEntity(x, this, null)).toList());
+    }
+
+    public UsuariosDto toDto() {
+
+        UsuariosDto dto = new UsuariosDto();
+
+        dto.setIdentifier(identifier);
+        dto.setUsuario(usuario);
+        dto.setContraseña(contraseña);
+        dto.setNombres(nombres);
+        dto.setHabilitado(habilitado);
+        dto.setFechaCreacion(fechaCreacion.toString());
+
+        if (rolesEntity != null) dto.setRol(rolesEntity.getIdentifier());
+
+        if (pagos != null)
+            dto.setPagos(pagos.stream().map(TPagosEntity::toDto).toList());
+
+        return dto;
     }
 }

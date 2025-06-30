@@ -48,6 +48,9 @@ public class TRolesEntity {
 
         this.identifier = UUID.randomUUID().toString();
         this.descripcion = roles.getDescripcion();
+
+        if (roles.getUsuarios() != null)
+            this.usuarios.addAll(roles.getUsuarios().parallelStream().map(x -> new TUsuariosEntity(x, this)).toList());
     }
 
     public RolesDto toDto() {
@@ -58,6 +61,9 @@ public class TRolesEntity {
         dto.setDescripcion(descripcion);
         dto.setHabilitado(habilitado);
         dto.setFechaCreacion(fechaCreacion.toString());
+
+        if (usuarios != null)
+            dto.setUsuarios(usuarios.stream().map(TUsuariosEntity::toDto).toList());
 
         return dto;
     }

@@ -5,6 +5,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import pe.villaesperanza.SpringWebMatriculas.dto.MatriculasDto;
+import pe.villaesperanza.SpringWebMatriculas.dto.reference.SituacionReference;
 
 import java.time.Instant;
 import java.util.HashSet;
@@ -85,6 +86,31 @@ public class TMatriculasEntity {
         this.situacion = matriculasDto.getSituacion().getValue();
         if (matriculasDto.getFechaMatricula() != null) this.fechaMatricula = Instant.parse(matriculasDto.getFechaMatricula());
 
+        if (matriculasDto.getCronogramas() != null)
+            this.cronogramas.addAll(matriculasDto.getCronogramas().parallelStream().map(x -> new TCronogramaPagosEntity(x, null, this)).toList());
+    }
+
+    public MatriculasDto toDto() {
+
+        MatriculasDto dto = new MatriculasDto();
+
+        dto.setIdentifier(identifier);
+        dto.setCodigo(codigo);
+        dto.setSituacion(SituacionReference.fromInt(situacion));
+        if (fechaMatricula != null) dto.setFechaMatricula(fechaMatricula.toString());
+        dto.setHabilitado(habilitado);
+        dto.setFechaCreacion(fechaCreacion.toString());
+
+        if (nivelesEntity != null) dto.setNivel(nivelesEntity.getIdentifier());
+        if (gradosEntity != null) dto.setGrado(gradosEntity.getIdentifier());
+        if (estudiantesEntity != null) dto.setEstudiante(estudiantesEntity.getIdentifier());
+        if (apoderadosEntity != null) dto.setApoderado(apoderadosEntity.getIdentifier());
+        if (añosAcademicosEntity != null) dto.setAnioAcademico(añosAcademicosEntity.getIdentifier());
+
+        if (cronogramas != null)
+            dto.setCronogramas(cronogramas.stream().map(TCronogramaPagosEntity::toDto).toList());
+
+        return dto;
     }
 
 }

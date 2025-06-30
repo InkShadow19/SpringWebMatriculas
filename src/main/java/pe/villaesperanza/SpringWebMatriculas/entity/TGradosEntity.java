@@ -53,5 +53,25 @@ public class TGradosEntity {
         this.nivelesEntity = nivelesEntity;
         this.identifier = UUID.randomUUID().toString();
         this.descripcion = gradosDto.getDescripcion();
+
+        if (gradosDto.getMatriculas() != null)
+            this.matriculas.addAll(gradosDto.getMatriculas().parallelStream().map(x -> new TMatriculasEntity(x, null, this, null, null, null)).toList());
+    }
+
+    public GradosDto toDto() {
+
+        GradosDto dto = new GradosDto();
+
+        dto.setIdentifier(identifier);
+        dto.setDescripcion(descripcion);
+        dto.setHabilitado(habilitado);
+        dto.setFechaCreacion(fechaCreacion.toString());
+
+        if (nivelesEntity != null) dto.setNivel(nivelesEntity.getIdentifier());
+
+        if (matriculas != null)
+            dto.setMatriculas(matriculas.stream().map(TMatriculasEntity::toDto).toList());
+
+        return dto;
     }
 }

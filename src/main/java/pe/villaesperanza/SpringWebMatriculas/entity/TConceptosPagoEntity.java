@@ -56,5 +56,25 @@ public class TConceptosPagoEntity {
         this.codigo = conceptosPagoDto.getCodigo();
         this.descripcion = conceptosPagoDto.getDescripcion();
         this.montoSugerido = conceptosPagoDto.getMontoSugerido();
+
+        if (conceptosPagoDto.getCronogramas() != null)
+            this.cronogramas.addAll(conceptosPagoDto.getCronogramas().parallelStream().map(x -> new TCronogramaPagosEntity(x, this, null)).toList());
+    }
+
+    public ConceptosPagoDto toDto() {
+
+        ConceptosPagoDto dto = new ConceptosPagoDto();
+
+        dto.setIdentifier(identifier);
+        dto.setCodigo(codigo);
+        dto.setDescripcion(descripcion);
+        dto.setMontoSugerido(montoSugerido);
+        dto.setHabilitado(habilitado);
+        dto.setFechaCreacion(fechaCreacion.toString());
+
+        if (cronogramas != null)
+            dto.setCronogramas(cronogramas.stream().map(TCronogramaPagosEntity::toDto).toList());
+
+        return dto;
     }
 }

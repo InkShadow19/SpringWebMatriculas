@@ -45,12 +45,31 @@ public class TBancosEntity {
     private Instant fechaActualizacion = Instant.now();
 
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "bancosEntity")
-    private Set<TPagosEntity> pagosEntities = new HashSet<>();
+    private Set<TPagosEntity> pagos = new HashSet<>();
 
     public TBancosEntity(BancosDto bancosDto) {
 
         this.identifier = UUID.randomUUID().toString();
         this.codigo = bancosDto.getCodigo();
         this.descripcion = bancosDto.getDescripcion();
+
+        if (bancosDto.getPagos() != null)
+            this.pagos.addAll(bancosDto.getPagos().parallelStream().map(x -> new TPagosEntity(x, null, this)).toList());
+    }
+
+    public BancosDto toDto() {
+
+        BancosDto dto = new BancosDto();
+
+        dto.setIdentifier(identifier);
+        dto.setCodigo(codigo);
+        dto.setDescripcion(descripcion);
+        dto.setHabilitado(habilitado);
+        dto.setFechaCreacion(fechaCreacion.toString());
+
+        if (pagos != null)
+            dto.setPagos(pagos.stream().map(TPagosEntity::toDto).toList());
+
+        return dto;
     }
 }

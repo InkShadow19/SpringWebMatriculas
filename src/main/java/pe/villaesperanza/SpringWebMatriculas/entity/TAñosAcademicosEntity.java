@@ -5,6 +5,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import pe.villaesperanza.SpringWebMatriculas.dto.AñosAcademicosDto;
+import pe.villaesperanza.SpringWebMatriculas.dto.reference.EstadoAcademicoReference;
 
 import java.time.Instant;
 import java.util.HashSet;
@@ -52,5 +53,24 @@ public class TAñosAcademicosEntity {
         this.identifier = UUID.randomUUID().toString();
         this.anio = añosAcademicosDto.getAnio();
         this.estado = añosAcademicosDto.getEstado().getValue();
+
+        if (añosAcademicosDto.getMatriculas() != null)
+            this.matriculas.addAll(añosAcademicosDto.getMatriculas().parallelStream().map(x -> new TMatriculasEntity(x, null, null, null, null, this)).toList());
+    }
+
+    public AñosAcademicosDto toDto() {
+
+        AñosAcademicosDto dto = new AñosAcademicosDto();
+
+        dto.setIdentifier(identifier);
+        dto.setAnio(anio);
+        dto.setEstado(EstadoAcademicoReference.fromInt(estado));
+        dto.setHabilitado(habilitado);
+        dto.setFechaCreacion(fechaCreacion.toString());
+
+        if (matriculas != null)
+            dto.setMatriculas(matriculas.stream().map(TMatriculasEntity::toDto).toList());
+
+        return dto;
     }
 }

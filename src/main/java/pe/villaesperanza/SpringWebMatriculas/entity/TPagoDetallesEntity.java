@@ -54,4 +54,19 @@ public class TPagoDetallesEntity {
         this.identifier = UUID.randomUUID().toString();
         this.montoAplicado = detallesDto.getMontoAplicado();
     }
+
+    public PagoDetallesDto toDto() {
+
+        PagoDetallesDto dto = new PagoDetallesDto();
+
+        dto.setIdentifier(identifier);
+        dto.setMontoAplicado(montoAplicado);
+        dto.setHabilitado(habilitado);
+        dto.setFechaCreacion(fechaCreacion.toString());
+
+        if (cronogramaPagosEntity != null) dto.setCronograma(cronogramaPagosEntity.getIdentifier());
+        if (pagosEntity != null) dto.setPago(pagosEntity.getIdentifier());
+
+        return dto;
+    }
 }

@@ -5,6 +5,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import pe.villaesperanza.SpringWebMatriculas.dto.PagosDto;
+import pe.villaesperanza.SpringWebMatriculas.dto.reference.CanalReference;
 
 import java.time.Instant;
 import java.util.HashSet;
@@ -70,5 +71,28 @@ public class TPagosEntity {
         this.numeroTicket = pagosDto.getNumeroTicket();
         this.montoTotalPagado = pagosDto.getMontoTotalPagado();
         if (pagosDto.getFechaPago() != null) this.fechaPago = Instant.parse(pagosDto.getFechaPago());
+
+        if (pagosDto.getDetalles() != null)
+            this.detalles.addAll(pagosDto.getDetalles().parallelStream().map(x -> new TPagoDetallesEntity(x, null, this)).toList());
+    }
+
+    public PagosDto toDto() {
+
+        PagosDto dto = new PagosDto();
+
+        dto.setIdentifier(identifier);
+        dto.setCanalPago(CanalReference.fromInt(canalPago));
+        dto.setNumeroTicket(numeroTicket);
+        dto.setMontoTotalPagado(montoTotalPagado);
+        dto.setHabilitado(habilitado);
+        dto.setFechaCreacion(fechaCreacion.toString());
+
+        if (usuariosEntity != null) dto.setUsuario(usuariosEntity.getIdentifier());
+        if (bancosEntity != null) dto.setBanco(bancosEntity.getIdentifier());
+
+        if (detalles != null)
+            dto.setDetalles(detalles.stream().map(TPagoDetallesEntity::toDto).toList());
+
+        return dto;
     }
 }

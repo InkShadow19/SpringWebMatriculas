@@ -5,6 +5,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import pe.villaesperanza.SpringWebMatriculas.dto.EstudiantesDto;
+import pe.villaesperanza.SpringWebMatriculas.dto.reference.GeneroReference;
 
 import java.time.Instant;
 import java.util.HashSet;
@@ -80,5 +81,31 @@ public class TEstudiantesEntity {
         this.direccion = estudiantesDto.getDireccion();
         this.telefono = estudiantesDto.getTelefono();
         this.email = estudiantesDto.getEmail();
+
+        if (estudiantesDto.getMatriculas() != null)
+            this.matriculas.addAll(estudiantesDto.getMatriculas().parallelStream().map(x -> new TMatriculasEntity(x, null, null, this, null, null)).toList());
+    }
+
+    public EstudiantesDto toDto() {
+
+        EstudiantesDto dto = new EstudiantesDto();
+
+        dto.setIdentifier(identifier);
+        dto.setDni(dni);
+        dto.setNombre(nombre);
+        dto.setApellidoMaterno(apellidoMaterno);
+        dto.setApellidoPaterno(apellidoPaterno);
+        if (fechaNacimiento != null) dto.setFechaCreacion(fechaCreacion.toString());
+        dto.setGenero(GeneroReference.fromInt(genero));
+        dto.setDireccion(direccion);
+        dto.setTelefono(telefono);
+        dto.setEmail(email);
+        dto.setHabilitado(habilitado);
+        dto.setFechaCreacion(fechaCreacion.toString());
+
+        if (matriculas != null)
+            dto.setMatriculas(matriculas.stream().map(TMatriculasEntity::toDto).toList());
+
+        return dto;
     }
 }

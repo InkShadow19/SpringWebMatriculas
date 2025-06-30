@@ -5,6 +5,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import pe.villaesperanza.SpringWebMatriculas.dto.CronogramaPagosDto;
+import pe.villaesperanza.SpringWebMatriculas.dto.reference.EstadoDeudaReference;
 
 import java.time.Instant;
 import java.util.HashSet;
@@ -82,5 +83,32 @@ public class TCronogramaPagosEntity {
         this.montoAPagar = cronogramaPagosDto.getMontoAPagar();
         if (cronogramaPagosDto.getFechaVencimiento() != null) this.fechaVencimiento = Instant.parse(cronogramaPagosDto.getFechaVencimiento());
         this.estadoDeuda = cronogramaPagosDto.getEstadoDeuda().getValue();
+
+        if (cronogramaPagosDto.getDetalles() != null)
+            this.detalles.addAll(cronogramaPagosDto.getDetalles().parallelStream().map(x -> new TPagoDetallesEntity(x, this, null)).toList());
+    }
+
+    public CronogramaPagosDto toDto() {
+
+        CronogramaPagosDto dto = new CronogramaPagosDto();
+
+        dto.setIdentifier(identifier);
+        dto.setDescripcion(descripcion);
+        dto.setMontoOriginal(montoOriginal);
+        dto.setDescuento(descuento);
+        dto.setMora(mora);
+        dto.setMontoAPagar(montoAPagar);
+        if (fechaVencimiento != null) dto.setFechaVencimiento(fechaVencimiento.toString());
+        dto.setEstadoDeuda(EstadoDeudaReference.fromInt(estadoDeuda));
+        dto.setHabilitado(habilitado);
+        dto.setFechaCreacion(fechaCreacion.toString());
+
+        if (conceptosPagoEntity != null) dto.setConcepto(conceptosPagoEntity.getIdentifier());
+        if (matriculasEntity != null) dto.setMatricula(matriculasEntity.getIdentifier());
+
+        if (detalles != null)
+            dto.setDetalles(detalles.stream().map(TPagoDetallesEntity::toDto).toList());
+
+        return dto;
     }
 }
