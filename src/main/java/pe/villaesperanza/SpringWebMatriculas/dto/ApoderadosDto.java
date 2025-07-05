@@ -2,6 +2,7 @@ package pe.villaesperanza.SpringWebMatriculas.dto;
 
 import lombok.Getter;
 import lombok.Setter;
+import pe.villaesperanza.SpringWebMatriculas.dto.reference.EstadoReference;
 import pe.villaesperanza.SpringWebMatriculas.dto.reference.GeneroReference;
 
 import java.io.Serializable;
@@ -23,7 +24,7 @@ public class ApoderadosDto implements Serializable {
     private String telefono;
     private String email;
     private String direccion;
-    private boolean habilitado;
+    private EstadoReference estado;
     private String fechaCreacion;
 
     private List<MatriculasDto> matriculas = new ArrayList<>();

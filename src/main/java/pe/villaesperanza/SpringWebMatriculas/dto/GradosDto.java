@@ -2,6 +2,7 @@ package pe.villaesperanza.SpringWebMatriculas.dto;
 
 import lombok.Getter;
 import lombok.Setter;
+import pe.villaesperanza.SpringWebMatriculas.dto.reference.EstadoReference;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -13,7 +14,7 @@ public class GradosDto implements Serializable {
 
     private String identifier;
     private String descripcion;
-    private boolean habilitado;
+    private EstadoReference estado;
     private String fechaCreacion;
 
     private String nivel;

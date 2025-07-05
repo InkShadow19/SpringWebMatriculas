@@ -2,6 +2,7 @@ package pe.villaesperanza.SpringWebMatriculas.dto;
 
 import lombok.Getter;
 import lombok.Setter;
+import pe.villaesperanza.SpringWebMatriculas.dto.reference.EstadoReference;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -16,7 +17,9 @@ public class UsuariosDto implements Serializable {
     private String contraseña;
     private String nombres;
     private String apellidos;
-    private boolean habilitado;
+    private String fechaNacimiento;
+    private String dni;
+    private EstadoReference estado;
     private String fechaCreacion;
 
     private String rol;

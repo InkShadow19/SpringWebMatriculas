@@ -6,6 +6,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import pe.villaesperanza.SpringWebMatriculas.dto.CronogramaPagosDto;
 import pe.villaesperanza.SpringWebMatriculas.dto.reference.EstadoDeudaReference;
+import pe.villaesperanza.SpringWebMatriculas.dto.reference.EstadoReference;
 
 import java.time.Instant;
 import java.util.HashSet;
@@ -48,11 +49,8 @@ public class TCronogramaPagosEntity {
     @Column(name = "estado_deuda")
     private Integer estadoDeuda;
 
-    @Column(name = "habilitado", nullable = false)
-    private boolean habilitado = true;
-
-    @Column(name = "eliminado", nullable = false)
-    private boolean eliminado = false;
+    @Column(name = "estado")
+    private Integer estado = 10;
 
     @Column(name = "fecha_creacion", nullable = false)
     private Instant fechaCreacion = Instant.now();
@@ -100,7 +98,7 @@ public class TCronogramaPagosEntity {
         dto.setMontoAPagar(montoAPagar);
         if (fechaVencimiento != null) dto.setFechaVencimiento(fechaVencimiento.toString());
         dto.setEstadoDeuda(EstadoDeudaReference.fromInt(estadoDeuda));
-        dto.setHabilitado(habilitado);
+        dto.setEstado(EstadoReference.fromInt(estado));
         dto.setFechaCreacion(fechaCreacion.toString());
 
         if (conceptosPagoEntity != null) dto.setConcepto(conceptosPagoEntity.getIdentifier());

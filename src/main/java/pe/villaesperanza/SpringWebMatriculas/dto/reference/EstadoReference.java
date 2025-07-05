@@ -5,16 +5,16 @@ import lombok.Getter;
 
 @Getter
 @AllArgsConstructor
-public enum GeneroReference {
+public enum EstadoReference {
 
-    MASCULINO(10),
-    FEMENINO(20),
+    ACTIVO(10),
+    INACTIVO(20),
     UNDEFINED(-1);
 
     private final int value;
 
-    public static GeneroReference fromInt(int value) {
-        for (GeneroReference enumValue : GeneroReference.values()) {
+    public static EstadoReference fromInt(int value) {
+        for (EstadoReference enumValue : EstadoReference.values()) {
             if (enumValue.getValue() == value) {
                 return enumValue;
             }

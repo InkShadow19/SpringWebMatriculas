@@ -5,6 +5,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import pe.villaesperanza.SpringWebMatriculas.dto.MatriculasDto;
+import pe.villaesperanza.SpringWebMatriculas.dto.reference.EstadoReference;
 import pe.villaesperanza.SpringWebMatriculas.dto.reference.SituacionReference;
 
 import java.time.Instant;
@@ -28,7 +29,10 @@ public class TMatriculasEntity {
     private String identifier;
 
     @Column(name = "codigo", length = 20)
-    private Integer codigo;
+    private String codigo;
+
+    @Column(name = "procedencia")
+    private String procedencia;
 
     @Column(name = "situacion")
     private Integer situacion;
@@ -36,11 +40,8 @@ public class TMatriculasEntity {
     @Column(name = "fecha_matricula", nullable = false)
     private Instant fechaMatricula = Instant.now();
 
-    @Column(name = "habilitado", nullable = false)
-    private boolean habilitado = true;
-
-    @Column(name = "eliminado", nullable = false)
-    private boolean eliminado = false;
+    @Column(name = "estado")
+    private Integer estado = 10;
 
     @Column(name = "fecha_creacion", nullable = false)
     private Instant fechaCreacion = Instant.now();
@@ -66,23 +67,24 @@ public class TMatriculasEntity {
 
     @ManyToOne
     @JoinColumn(name = "id_anios_academicos")
-    private TAñosAcademicosEntity añosAcademicosEntity;
+    private TAniosAcademicosEntity aniosAcademicosEntity;
 
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "matriculasEntity")
     private Set<TCronogramaPagosEntity> cronogramas = new HashSet<>();
 
     public TMatriculasEntity(MatriculasDto matriculasDto, TNivelesEntity nivelesEntity,
                              TGradosEntity gradosEntity, TEstudiantesEntity estudiantesEntity,
-                             TApoderadosEntity apoderadosEntity, TAñosAcademicosEntity añosAcademicosEntity) {
+                             TApoderadosEntity apoderadosEntity, TAniosAcademicosEntity aniosAcademicosEntity) {
 
         this.nivelesEntity = nivelesEntity;
         this.gradosEntity = gradosEntity;
         this.estudiantesEntity = estudiantesEntity;
         this.apoderadosEntity = apoderadosEntity;
-        this.añosAcademicosEntity = añosAcademicosEntity;
+        this.aniosAcademicosEntity = aniosAcademicosEntity;
 
         this.identifier = UUID.randomUUID().toString();
         this.codigo = matriculasDto.getCodigo();
+        this.procedencia = matriculasDto.getProcedencia();
         this.situacion = matriculasDto.getSituacion().getValue();
         if (matriculasDto.getFechaMatricula() != null) this.fechaMatricula = Instant.parse(matriculasDto.getFechaMatricula());
 
@@ -96,16 +98,17 @@ public class TMatriculasEntity {
 
         dto.setIdentifier(identifier);
         dto.setCodigo(codigo);
+        dto.setProcedencia(procedencia);
         dto.setSituacion(SituacionReference.fromInt(situacion));
         if (fechaMatricula != null) dto.setFechaMatricula(fechaMatricula.toString());
-        dto.setHabilitado(habilitado);
+        dto.setEstado(EstadoReference.fromInt(estado));
         dto.setFechaCreacion(fechaCreacion.toString());
 
         if (nivelesEntity != null) dto.setNivel(nivelesEntity.getIdentifier());
         if (gradosEntity != null) dto.setGrado(gradosEntity.getIdentifier());
         if (estudiantesEntity != null) dto.setEstudiante(estudiantesEntity.getIdentifier());
         if (apoderadosEntity != null) dto.setApoderado(apoderadosEntity.getIdentifier());
-        if (añosAcademicosEntity != null) dto.setAnioAcademico(añosAcademicosEntity.getIdentifier());
+        if (aniosAcademicosEntity != null) dto.setAnioAcademico(aniosAcademicosEntity.getIdentifier());
 
         if (cronogramas != null)
             dto.setCronogramas(cronogramas.stream().map(TCronogramaPagosEntity::toDto).toList());

@@ -10,6 +10,8 @@ public enum EstadoAcademicoReference {
     ACTIVO(10),
     CERRADO(20),
     FUTURO(30),
+    RETIRADO(40),
+    EGRESADO(50),
     UNDEFINED(-1);
 
     private final int value;

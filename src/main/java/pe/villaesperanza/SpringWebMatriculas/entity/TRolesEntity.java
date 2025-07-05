@@ -5,6 +5,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import pe.villaesperanza.SpringWebMatriculas.dto.RolesDto;
+import pe.villaesperanza.SpringWebMatriculas.dto.reference.EstadoReference;
 
 import java.time.Instant;
 import java.util.HashSet;
@@ -23,19 +24,16 @@ public class TRolesEntity {
     @Column(name = "id", nullable = false)
     private long id;
 
-    @Column(name = "identifier", length = 36, nullable = false)
+    @Column(name = "identifier", length = 36, nullable = false, updatable = false)
     private String identifier;
 
     @Column(name = "descripcion", length = 50)
     private String descripcion;
 
-    @Column(name = "habilitado", nullable = false)
-    private boolean habilitado = true;
+    @Column(name = "estado")
+    private Integer estado = 10;
 
-    @Column(name = "eliminado", nullable = false)
-    private boolean eliminado = false;
-
-    @Column(name = "fecha_creacion", nullable = false)
+    @Column(name = "fecha_creacion", nullable = false, updatable = false)
     private Instant fechaCreacion = Instant.now();
 
     @Column(name = "fecha_actualizacion", nullable = false)
@@ -59,7 +57,7 @@ public class TRolesEntity {
 
         dto.setIdentifier(identifier);
         dto.setDescripcion(descripcion);
-        dto.setHabilitado(habilitado);
+        dto.setEstado(EstadoReference.fromInt(estado));
         dto.setFechaCreacion(fechaCreacion.toString());
 
         if (usuarios != null)

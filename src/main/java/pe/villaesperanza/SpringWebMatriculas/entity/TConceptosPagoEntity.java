@@ -5,6 +5,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import pe.villaesperanza.SpringWebMatriculas.dto.ConceptosPagoDto;
+import pe.villaesperanza.SpringWebMatriculas.dto.reference.EstadoReference;
 
 import java.time.Instant;
 import java.util.HashSet;
@@ -35,11 +36,8 @@ public class TConceptosPagoEntity {
     @Column(name = "monto_sugerido")
     private Double montoSugerido;
 
-    @Column(name = "habilitado", nullable = false)
-    private boolean habilitado = true;
-
-    @Column(name = "eliminado", nullable = false)
-    private boolean eliminado = false;
+    @Column(name = "estado")
+    private Integer estado = 10;
 
     @Column(name = "fecha_creacion", nullable = false)
     private Instant fechaCreacion = Instant.now();
@@ -69,7 +67,7 @@ public class TConceptosPagoEntity {
         dto.setCodigo(codigo);
         dto.setDescripcion(descripcion);
         dto.setMontoSugerido(montoSugerido);
-        dto.setHabilitado(habilitado);
+        dto.setEstado(EstadoReference.fromInt(estado));
         dto.setFechaCreacion(fechaCreacion.toString());
 
         if (cronogramas != null)

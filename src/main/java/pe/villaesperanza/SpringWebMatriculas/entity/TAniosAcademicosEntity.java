@@ -4,8 +4,9 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import pe.villaesperanza.SpringWebMatriculas.dto.AñosAcademicosDto;
+import pe.villaesperanza.SpringWebMatriculas.dto.AniosAcademicosDto;
 import pe.villaesperanza.SpringWebMatriculas.dto.reference.EstadoAcademicoReference;
+import pe.villaesperanza.SpringWebMatriculas.dto.reference.EstadoReference;
 
 import java.time.Instant;
 import java.util.HashSet;
@@ -17,7 +18,7 @@ import java.util.UUID;
 @Setter
 @NoArgsConstructor
 @Table(name = "anios_academicos")
-public class TAñosAcademicosEntity {
+public class TAniosAcademicosEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -30,14 +31,11 @@ public class TAñosAcademicosEntity {
     @Column(name = "anio")
     private Integer anio;
 
+    @Column(name = "estado_academico")
+    private Integer estadoAcademico;
+
     @Column(name = "estado")
-    private Integer estado;
-
-    @Column(name = "habilitado", nullable = false)
-    private boolean habilitado = true;
-
-    @Column(name = "eliminado", nullable = false)
-    private boolean eliminado = false;
+    private Integer estado = 10;
 
     @Column(name = "fecha_creacion", nullable = false)
     private Instant fechaCreacion = Instant.now();
@@ -45,27 +43,27 @@ public class TAñosAcademicosEntity {
     @Column(name = "fecha_actualizacion", nullable = false)
     private Instant fechaActualizacion = Instant.now();
 
-    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "añosAcademicosEntity")
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "aniosAcademicosEntity")
     private Set<TMatriculasEntity> matriculas = new HashSet<>();
 
-    public TAñosAcademicosEntity(AñosAcademicosDto añosAcademicosDto) {
+    public TAniosAcademicosEntity(AniosAcademicosDto aniosAcademicosDto) {
 
         this.identifier = UUID.randomUUID().toString();
-        this.anio = añosAcademicosDto.getAnio();
-        this.estado = añosAcademicosDto.getEstado().getValue();
+        this.anio = aniosAcademicosDto.getAnio();
+        this.estadoAcademico = aniosAcademicosDto.getEstadoAcademico().getValue();
 
-        if (añosAcademicosDto.getMatriculas() != null)
-            this.matriculas.addAll(añosAcademicosDto.getMatriculas().parallelStream().map(x -> new TMatriculasEntity(x, null, null, null, null, this)).toList());
+        if (aniosAcademicosDto.getMatriculas() != null)
+            this.matriculas.addAll(aniosAcademicosDto.getMatriculas().parallelStream().map(x -> new TMatriculasEntity(x, null, null, null, null, this)).toList());
     }
 
-    public AñosAcademicosDto toDto() {
+    public AniosAcademicosDto toDto() {
 
-        AñosAcademicosDto dto = new AñosAcademicosDto();
+        AniosAcademicosDto dto = new AniosAcademicosDto();
 
         dto.setIdentifier(identifier);
         dto.setAnio(anio);
-        dto.setEstado(EstadoAcademicoReference.fromInt(estado));
-        dto.setHabilitado(habilitado);
+        dto.setEstadoAcademico(EstadoAcademicoReference.fromInt(estadoAcademico));
+        dto.setEstado(EstadoReference.fromInt(estado));
         dto.setFechaCreacion(fechaCreacion.toString());
 
         if (matriculas != null)

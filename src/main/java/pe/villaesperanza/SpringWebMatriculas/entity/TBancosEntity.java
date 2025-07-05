@@ -5,6 +5,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import pe.villaesperanza.SpringWebMatriculas.dto.BancosDto;
+import pe.villaesperanza.SpringWebMatriculas.dto.reference.EstadoReference;
 
 import java.time.Instant;
 import java.util.HashSet;
@@ -32,11 +33,8 @@ public class TBancosEntity {
     @Column(name = "descripcion", length = 150)
     private String descripcion;
 
-    @Column(name = "habilitado", nullable = false)
-    private boolean habilitado = true;
-
-    @Column(name = "eliminado", nullable = false)
-    private boolean eliminado = false;
+    @Column(name = "estado")
+    private Integer estado = 10;
 
     @Column(name = "fecha_creacion", nullable = false)
     private Instant fechaCreacion = Instant.now();
@@ -64,7 +62,7 @@ public class TBancosEntity {
         dto.setIdentifier(identifier);
         dto.setCodigo(codigo);
         dto.setDescripcion(descripcion);
-        dto.setHabilitado(habilitado);
+        dto.setEstado(EstadoReference.fromInt(estado));
         dto.setFechaCreacion(fechaCreacion.toString());
 
         if (pagos != null)

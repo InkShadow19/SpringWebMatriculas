@@ -5,6 +5,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import pe.villaesperanza.SpringWebMatriculas.dto.ApoderadosDto;
+import pe.villaesperanza.SpringWebMatriculas.dto.reference.EstadoReference;
 import pe.villaesperanza.SpringWebMatriculas.dto.reference.GeneroReference;
 
 import java.time.Instant;
@@ -57,11 +58,8 @@ public class TApoderadosEntity {
     @Column(name = "direccion")
     private String direccion;
 
-    @Column(name = "habilitado", nullable = false)
-    private boolean habilitado = true;
-
-    @Column(name = "eliminado", nullable = false)
-    private boolean eliminado = false;
+    @Column(name = "estado")
+    private Integer estado = 10;
 
     @Column(name = "fecha_creacion", nullable = false)
     private Instant fechaCreacion = Instant.now();
@@ -105,7 +103,7 @@ public class TApoderadosEntity {
         dto.setDireccion(direccion);
         dto.setTelefono(telefono);
         dto.setEmail(email);
-        dto.setHabilitado(habilitado);
+        dto.setEstado(EstadoReference.fromInt(estado));
         dto.setFechaCreacion(fechaCreacion.toString());
 
         if (matriculas != null)

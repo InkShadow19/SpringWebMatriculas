@@ -5,6 +5,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import pe.villaesperanza.SpringWebMatriculas.dto.UsuariosDto;
+import pe.villaesperanza.SpringWebMatriculas.dto.reference.EstadoReference;
 
 import java.time.Instant;
 import java.util.HashSet;
@@ -38,11 +39,14 @@ public class TUsuariosEntity {
     @Column(name = "apellidos", nullable = false)
     private String apellidos;
 
-    @Column(name = "habilitado", nullable = false)
-    private boolean habilitado = true;
+    @Column(name = "fecha_nacimiento", nullable = false)
+    private Instant fechaNacimiento;
 
-    @Column(name = "eliminado", nullable = false)
-    private boolean eliminado = false;
+    @Column(name = "dni", length = 15)
+    private String dni;
+
+    @Column(name = "estado")
+    private Integer estado = 10;
 
     @Column(name = "fecha_creacion", nullable = false)
     private Instant fechaCreacion = Instant.now();
@@ -65,6 +69,8 @@ public class TUsuariosEntity {
         this.contraseña = usuarios.getContraseña();
         this.nombres = usuarios.getNombres();
         this.apellidos = usuarios.getApellidos();
+        this.fechaNacimiento = Instant.parse(usuarios.getFechaNacimiento());
+        this.dni = usuarios.getDni();
 
         if (usuarios.getPagos() != null)
             this.pagos.addAll(usuarios.getPagos().parallelStream().map(x -> new TPagosEntity(x, this, null)).toList());
@@ -78,7 +84,10 @@ public class TUsuariosEntity {
         dto.setUsuario(usuario);
         dto.setContraseña(contraseña);
         dto.setNombres(nombres);
-        dto.setHabilitado(habilitado);
+        dto.setApellidos(apellidos);
+        dto.setFechaNacimiento(fechaNacimiento.toString());
+        dto.setDni(dni);
+        dto.setEstado(EstadoReference.fromInt(estado));
         dto.setFechaCreacion(fechaCreacion.toString());
 
         if (rolesEntity != null) dto.setRol(rolesEntity.getIdentifier());

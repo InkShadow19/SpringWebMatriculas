@@ -3,6 +3,7 @@ package pe.villaesperanza.SpringWebMatriculas.dto;
 import lombok.Getter;
 import lombok.Setter;
 import pe.villaesperanza.SpringWebMatriculas.dto.reference.EstadoDeudaReference;
+import pe.villaesperanza.SpringWebMatriculas.dto.reference.EstadoReference;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -20,7 +21,7 @@ public class CronogramaPagosDto implements Serializable {
     private Double montoAPagar;
     private String fechaVencimiento;
     private EstadoDeudaReference estadoDeuda;
-    private boolean habilitado;
+    private EstadoReference estado;
     private String fechaCreacion;
 
     private String concepto;

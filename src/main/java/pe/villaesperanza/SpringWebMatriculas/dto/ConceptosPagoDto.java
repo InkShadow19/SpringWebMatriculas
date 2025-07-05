@@ -2,6 +2,7 @@ package pe.villaesperanza.SpringWebMatriculas.dto;
 
 import lombok.Getter;
 import lombok.Setter;
+import pe.villaesperanza.SpringWebMatriculas.dto.reference.EstadoReference;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -15,7 +16,7 @@ public class ConceptosPagoDto implements Serializable {
     private String codigo;
     private String descripcion;
     private Double montoSugerido;
-    private boolean habilitado;
+    private EstadoReference estado;
     private String fechaCreacion;
 
     private List<CronogramaPagosDto> cronogramas = new ArrayList<>();
