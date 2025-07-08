@@ -16,7 +16,6 @@ import pe.villaesperanza.SpringWebMatriculas.util.AppException;
 
 import java.io.IOException;
 import java.time.Instant;
-import java.util.List;
 import java.util.Optional;
 
 @Slf4j
@@ -29,8 +28,8 @@ public class NivelesService {
     @Transactional(propagation = Propagation.REQUIRED, rollbackFor = { Exception.class, IOException.class })
     public NivelesDto add(NivelesDto nivelesDto) {
 
-        TNivelesEntity nivelesEntity = new TNivelesEntity(nivelesDto);
-        TNivelesEntity result = nivelesRepository.save(nivelesEntity);
+        TNivelesEntity entity = new TNivelesEntity(nivelesDto);
+        TNivelesEntity result = nivelesRepository.save(entity);
 
         return result.toDto();
     }

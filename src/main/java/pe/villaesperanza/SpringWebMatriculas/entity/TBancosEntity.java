@@ -55,6 +55,15 @@ public class TBancosEntity {
             this.pagos.addAll(bancosDto.getPagos().parallelStream().map(x -> new TPagosEntity(x, null, this)).toList());
     }
 
+    public void update(BancosDto bancosDto) {
+
+        this.descripcion = bancosDto.getDescripcion();
+        this.codigo = bancosDto.getCodigo();
+        if (bancosDto.getEstado() != null) this.estado = bancosDto.getEstado().getValue();
+
+        this.fechaActualizacion = Instant.now();
+    }
+
     public BancosDto toDto() {
 
         BancosDto dto = new BancosDto();

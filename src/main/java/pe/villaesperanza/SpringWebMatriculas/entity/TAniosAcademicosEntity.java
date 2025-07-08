@@ -56,6 +56,15 @@ public class TAniosAcademicosEntity {
             this.matriculas.addAll(aniosAcademicosDto.getMatriculas().parallelStream().map(x -> new TMatriculasEntity(x, null, null, null, null, this)).toList());
     }
 
+    public void update(AniosAcademicosDto aniosAcademicosDto) {
+
+        this.anio = aniosAcademicosDto.getAnio();
+        if (aniosAcademicosDto.getEstadoAcademico() != null) this.estadoAcademico = aniosAcademicosDto.getEstadoAcademico().getValue();
+        if (aniosAcademicosDto.getEstado() != null) this.estado = aniosAcademicosDto.getEstado().getValue();
+
+        this.fechaActualizacion = Instant.now();
+    }
+
     public AniosAcademicosDto toDto() {
 
         AniosAcademicosDto dto = new AniosAcademicosDto();

@@ -89,6 +89,18 @@ public class TEstudiantesEntity {
             this.matriculas.addAll(estudiantesDto.getMatriculas().parallelStream().map(x -> new TMatriculasEntity(x, null, null, this, null, null)).toList());
     }
 
+    public void update(EstudiantesDto estudiantesDto) {
+
+        this.direccion = estudiantesDto.getDireccion();
+        this.telefono = estudiantesDto.getTelefono();
+        this.email = estudiantesDto.getEmail();
+        if (estudiantesDto.getGenero() != null) this.genero = estudiantesDto.getGenero().getValue();
+        if (estudiantesDto.getEstado() != null) this.estado = estudiantesDto.getEstado().getValue();
+        if (estudiantesDto.getEstadoAcademico() != null) this.estadoAcademico = estudiantesDto.getEstadoAcademico().getValue();
+
+        this.fechaActualizacion = Instant.now();
+    }
+
     public EstudiantesDto toDto() {
 
         EstudiantesDto dto = new EstudiantesDto();

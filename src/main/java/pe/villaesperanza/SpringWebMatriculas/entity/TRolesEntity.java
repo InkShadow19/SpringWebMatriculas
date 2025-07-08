@@ -51,6 +51,14 @@ public class TRolesEntity {
             this.usuarios.addAll(roles.getUsuarios().parallelStream().map(x -> new TUsuariosEntity(x, this)).toList());
     }
 
+    public void update(RolesDto rolesDto) {
+
+        this.descripcion = rolesDto.getDescripcion();
+        if (rolesDto.getEstado() != null) this.estado = rolesDto.getEstado().getValue();
+
+        this.fechaActualizacion = Instant.now();
+    }
+
     public RolesDto toDto() {
 
         RolesDto dto = new RolesDto();

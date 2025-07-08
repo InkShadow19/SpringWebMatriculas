@@ -5,38 +5,38 @@ import org.springframework.data.domain.Page;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import pe.villaesperanza.SpringWebMatriculas.dto.NivelesDto;
+import pe.villaesperanza.SpringWebMatriculas.dto.RolesDto;
 import pe.villaesperanza.SpringWebMatriculas.dto.reference.EstadoReference;
-import pe.villaesperanza.SpringWebMatriculas.service.NivelesService;
+import pe.villaesperanza.SpringWebMatriculas.service.RolesService;
 
 import java.time.Instant;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/niveles")
-public class NivelesController {
+@RequestMapping("/roles")
+public class RolesController {
 
-    private final NivelesService nivelesService;
+    private final RolesService rolesService;
 
     @PostMapping
-    public NivelesDto add(@RequestBody NivelesDto nivel) {
-        return nivelesService.add(nivel);
+    public RolesDto add(@RequestBody RolesDto rolesDto) {
+        return rolesService.add(rolesDto);
     }
 
     @PatchMapping("/{identifier}")
-    public NivelesDto update(@PathVariable(value = "identifier") String identifier,
-                             @RequestBody NivelesDto nivel) {
-        return nivelesService.update(identifier, nivel);
+    public RolesDto update(@PathVariable(value = "identifier") String identifier,
+                             @RequestBody RolesDto rolesDto) {
+        return rolesService.update(identifier, rolesDto);
     }
 
     @GetMapping("/{identifier}")
-    public ResponseEntity<NivelesDto> get(@PathVariable(value = "identifier") String identifier) {
-        return nivelesService.get(identifier).map(ResponseEntity::ok)
+    public ResponseEntity<RolesDto> get(@PathVariable(value = "identifier") String identifier) {
+        return rolesService.get(identifier).map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
     }
 
     @GetMapping("/search")
-    public Page<NivelesDto> search(
+    public Page<RolesDto> search(
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size,
             @RequestParam(required = false) String descripcion,
@@ -44,6 +44,6 @@ public class NivelesController {
             @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) Instant fechaDesde,
             @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) Instant fechaHasta
     ) {
-        return nivelesService.getSearch(page, size, descripcion, estado, fechaDesde, fechaHasta);
+        return rolesService.getSearch(page, size, descripcion, estado, fechaDesde, fechaHasta);
     }
 }

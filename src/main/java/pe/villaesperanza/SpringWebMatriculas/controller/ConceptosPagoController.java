@@ -5,45 +5,46 @@ import org.springframework.data.domain.Page;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import pe.villaesperanza.SpringWebMatriculas.dto.NivelesDto;
+import pe.villaesperanza.SpringWebMatriculas.dto.ConceptosPagoDto;
 import pe.villaesperanza.SpringWebMatriculas.dto.reference.EstadoReference;
-import pe.villaesperanza.SpringWebMatriculas.service.NivelesService;
+import pe.villaesperanza.SpringWebMatriculas.service.ConceptosPagoService;
 
 import java.time.Instant;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/niveles")
-public class NivelesController {
+@RequestMapping("/conceptos/pago")
+public class ConceptosPagoController {
 
-    private final NivelesService nivelesService;
+    private final ConceptosPagoService conceptosPagoService;
 
     @PostMapping
-    public NivelesDto add(@RequestBody NivelesDto nivel) {
-        return nivelesService.add(nivel);
+    public ConceptosPagoDto add(@RequestBody ConceptosPagoDto conceptosPagoDto) {
+        return conceptosPagoService.add(conceptosPagoDto);
     }
 
     @PatchMapping("/{identifier}")
-    public NivelesDto update(@PathVariable(value = "identifier") String identifier,
-                             @RequestBody NivelesDto nivel) {
-        return nivelesService.update(identifier, nivel);
+    public ConceptosPagoDto update(@PathVariable(value = "identifier") String identifier,
+                            @RequestBody ConceptosPagoDto conceptosPagoDto) {
+        return conceptosPagoService.update(identifier, conceptosPagoDto);
     }
 
     @GetMapping("/{identifier}")
-    public ResponseEntity<NivelesDto> get(@PathVariable(value = "identifier") String identifier) {
-        return nivelesService.get(identifier).map(ResponseEntity::ok)
+    public ResponseEntity<ConceptosPagoDto> get(@PathVariable(value = "identifier") String identifier) {
+        return conceptosPagoService.get(identifier).map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
     }
 
     @GetMapping("/search")
-    public Page<NivelesDto> search(
+    public Page<ConceptosPagoDto> search(
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size,
+            @RequestParam(required = false) String codigo,
             @RequestParam(required = false) String descripcion,
             @RequestParam(required = false) EstadoReference estado,
             @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) Instant fechaDesde,
             @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) Instant fechaHasta
     ) {
-        return nivelesService.getSearch(page, size, descripcion, estado, fechaDesde, fechaHasta);
+        return conceptosPagoService.getSearch(page, size, codigo, descripcion, estado, fechaDesde, fechaHasta);
     }
 }

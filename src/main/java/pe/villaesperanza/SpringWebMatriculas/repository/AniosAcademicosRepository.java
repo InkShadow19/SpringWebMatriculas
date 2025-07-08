@@ -5,22 +5,22 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
-import pe.villaesperanza.SpringWebMatriculas.entity.TNivelesEntity;
+import pe.villaesperanza.SpringWebMatriculas.entity.TAniosAcademicosEntity;
 
 import java.time.Instant;
 import java.util.Optional;
 
 @Repository
-public interface NivelesRepository extends JpaRepository<TNivelesEntity, Long> {
+public interface AniosAcademicosRepository extends JpaRepository<TAniosAcademicosEntity, Long> {
 
-    Optional<TNivelesEntity> findByIdentifier(String identifier);
+    Optional<TAniosAcademicosEntity> findByIdentifier(String identifier);
 
-    @Query("SELECT r FROM TNivelesEntity r " +
-            "WHERE (:descripcion IS NULL OR r.description LIKE %:descripcion%) " +
+    @Query("SELECT r FROM TAniosAcademicosEntity r " +
+            "WHERE (:anio IS NULL OR r.anio LIKE %:anio%) " +
             "AND (:estado is NULL OR r.estado = :estado) " +
+            "AND (:estadoA is NULL OR r.estadoAcademico = :estadoA) " +
             "AND (CAST(:fechaDesde AS TIMESTAMP) IS NULL OR r.fechaCreacion >= :fechaDesde) " +
             "AND (CAST(:fechaHasta AS TIMESTAMP) IS NULL OR r.fechaCreacion <= :fechaHasta) " +
             "ORDER BY r.fechaCreacion DESC")
-    Page<TNivelesEntity> searchNiveles(String descripcion, Integer estado, Instant fechaDesde, Instant fechaHasta, Pageable pageable);
-
+    Page<TAniosAcademicosEntity> searchAcademicos(Integer anio, Integer estado, Integer estadoA, Instant fechaDesde, Instant fechaHasta, Pageable pageable);
 }

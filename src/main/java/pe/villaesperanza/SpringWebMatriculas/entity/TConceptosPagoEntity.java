@@ -59,6 +59,15 @@ public class TConceptosPagoEntity {
             this.cronogramas.addAll(conceptosPagoDto.getCronogramas().parallelStream().map(x -> new TCronogramaPagosEntity(x, this, null)).toList());
     }
 
+    public void update(ConceptosPagoDto conceptosPagoDto) {
+
+        this.descripcion = conceptosPagoDto.getDescripcion();
+        this.codigo = conceptosPagoDto.getCodigo();
+        if (conceptosPagoDto.getEstado() != null) this.estado = conceptosPagoDto.getEstado().getValue();
+
+        this.fechaActualizacion = Instant.now();
+    }
+
     public ConceptosPagoDto toDto() {
 
         ConceptosPagoDto dto = new ConceptosPagoDto();
