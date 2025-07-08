@@ -22,4 +22,5 @@ public interface NivelesRepository extends JpaRepository<TNivelesEntity, Long> {
             "AND (CAST(:fechaHasta AS TIMESTAMP) IS NULL OR r.fechaCreacion <= :fechaHasta) " +
             "ORDER BY r.fechaCreacion DESC")
     Page<TNivelesEntity> searchNiveles(String descripcion, Integer estado, Instant fechaDesde, Instant fechaHasta, Pageable pageable);
+
 }

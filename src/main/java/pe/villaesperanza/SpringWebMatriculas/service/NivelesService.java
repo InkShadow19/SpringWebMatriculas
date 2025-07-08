@@ -13,11 +13,11 @@ import pe.villaesperanza.SpringWebMatriculas.dto.reference.EstadoReference;
 import pe.villaesperanza.SpringWebMatriculas.entity.TNivelesEntity;
 import pe.villaesperanza.SpringWebMatriculas.repository.NivelesRepository;
 import pe.villaesperanza.SpringWebMatriculas.util.AppException;
-import pe.villaesperanza.SpringWebMatriculas.util.PagedResponse;
 
 import java.io.IOException;
 import java.time.Instant;
 import java.util.List;
+import java.util.Optional;
 
 @Slf4j
 @Service
@@ -29,31 +29,40 @@ public class NivelesService {
     @Transactional(propagation = Propagation.REQUIRED, rollbackFor = { Exception.class, IOException.class })
     public NivelesDto add(NivelesDto nivelesDto) {
 
-        TNivelesEntity requirementEntity = new TNivelesEntity(nivelesDto);
+        TNivelesEntity nivelesEntity = new TNivelesEntity(nivelesDto);
+        TNivelesEntity result = nivelesRepository.save(nivelesEntity);
 
-        TNivelesEntity result = nivelesRepository.save(requirementEntity);
+        return result.toDto();
+    }
+
+    @Transactional(propagation = Propagation.REQUIRED, rollbackFor = { Exception.class, IOException.class })
+    public NivelesDto update(String identifier, NivelesDto nivelesDto) {
+
+        TNivelesEntity entity = nivelesRepository.findByIdentifier(identifier)
+                .orElseThrow(() -> new AppException("El identifier de este nivel no existe"));
+
+        entity.update(nivelesDto);
+        TNivelesEntity result = nivelesRepository.save(entity);
+        nivelesRepository.save(result);
 
         return result.toDto();
     }
 
     @Transactional(readOnly = true, propagation = Propagation.REQUIRED)
-    public NivelesDto get(String identifier) {
+    public Optional<NivelesDto> get(String identifier) {
 
         TNivelesEntity result = nivelesRepository.findByIdentifier(identifier)
                 .orElseThrow(() -> new AppException("El identifier de este nivel no existe"));
 
-        return result.toDto();
+        return Optional.ofNullable(result.toDto());
     }
 
     @Transactional(readOnly = true, propagation = Propagation.REQUIRED)
-    public PagedResponse<NivelesDto> getSearch(int page, int size, String descripcion, EstadoReference estado, Instant fechaDesde, Instant fechaHasta) {
+    public Page<NivelesDto> getSearch(int page, int size, String descripcion, EstadoReference estado, Instant fechaDesde, Instant fechaHasta) {
 
         Pageable pageable = PageRequest.of(page, size);
-
         Page<TNivelesEntity> pageList =  nivelesRepository.searchNiveles(descripcion, estado == null ? null : estado.getValue(), fechaDesde, fechaHasta, pageable);
 
-        List<NivelesDto> requirementDtos = pageList.map(TNivelesEntity::toDto).toList();
-
-        return new PagedResponse<>(requirementDtos, pageList.getNumber(), pageList.getSize(), pageList.getTotalElements(), pageList.getTotalPages(), pageList.isLast());
+        return pageList.map(TNivelesEntity::toDto);
     }
 }

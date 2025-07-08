@@ -57,6 +57,14 @@ public class TNivelesEntity {
             this.matriculas.addAll(nivelesDto.getMatriculas().parallelStream().map(x -> new TMatriculasEntity(x, this, null, null, null, null)).toList());
     }
 
+    public void update(NivelesDto nivelesDto) {
+
+        this.descripcion = nivelesDto.getDescripcion();
+        if (nivelesDto.getEstado() != null) this.estado = nivelesDto.getEstado().getValue();
+
+        this.fechaActualizacion = Instant.now();
+    }
+
     public NivelesDto toDto() {
 
         NivelesDto dto = new NivelesDto();
