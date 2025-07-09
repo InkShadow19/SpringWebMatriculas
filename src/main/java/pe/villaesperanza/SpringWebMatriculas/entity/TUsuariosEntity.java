@@ -1,5 +1,11 @@
 package pe.villaesperanza.SpringWebMatriculas.entity;
 
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
+import java.util.Collection;
+import java.util.List;
+
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -17,7 +23,7 @@ import java.util.UUID;
 @Setter
 @NoArgsConstructor
 @Table(name = "usuarios")
-public class TUsuariosEntity {
+public class TUsuariosEntity implements UserDetails {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -60,6 +66,47 @@ public class TUsuariosEntity {
 
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "usuariosEntity")
     private Set<TPagosEntity> pagos = new HashSet<>();
+
+    @Override
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        // Esto le dice a Spring Security cuál es el rol del usuario.
+        // Asegúrate de que 'rolesEntity' y su descripción no sean nulos.
+        if (rolesEntity != null && rolesEntity.getDescripcion() != null) {
+            return List.of(new SimpleGrantedAuthority(rolesEntity.getDescripcion()));
+        }
+        return List.of(); // Devuelve una lista vacía si no hay rol
+    }
+
+    @Override
+    public String getPassword() {
+        return this.contraseña;
+    }
+
+    @Override
+    public String getUsername() {
+        return this.usuario;
+    }
+
+    @Override
+    public boolean isAccountNonExpired() {
+        return true;
+    }
+
+    @Override
+    public boolean isAccountNonLocked() {
+        return true;
+    }
+
+    @Override
+    public boolean isCredentialsNonExpired() {
+        return true;
+    }
+
+    @Override
+    public boolean isEnabled() {
+        // El usuario está habilitado si su estado es ACTIVO (valor 10)
+        return this.estado == 10;
+    }
 
     public TUsuariosEntity(UsuariosDto usuarios, TRolesEntity rolesEntity) {
 
