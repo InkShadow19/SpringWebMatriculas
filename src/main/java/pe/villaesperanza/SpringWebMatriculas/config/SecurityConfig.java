@@ -6,6 +6,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
@@ -25,9 +26,12 @@ public class SecurityConfig {
         http
             .cors(cors -> cors.configurationSource(corsConfigurationSource())) // Habilitar CORS
             .csrf(csrf -> csrf.disable()) // Deshabilitar CSRF para APIs REST
+            .csrf(AbstractHttpConfigurer::disable)
             .authorizeHttpRequests(auth -> auth
                 // ENDPOINT PÚBLICO: Solo el login es público.
-                .requestMatchers("/auth/login").permitAll()
+                .requestMatchers("/auth/login",
+                                             "/apoderados/**", 
+                                             "/estudiantes/**").permitAll()
 
                 // RUTAS SOLO PARA ADMINISTRADOR:
                 .requestMatchers("/usuarios/**", "/roles/**", "/anios/academicos/**", "/niveles/**", "/grados/**", "/conceptos/pago/**", "/bancos/**").hasAuthority("Administrador")

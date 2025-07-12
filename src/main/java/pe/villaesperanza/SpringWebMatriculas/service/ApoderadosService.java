@@ -58,13 +58,22 @@ public class ApoderadosService {
     }
 
     @Transactional(readOnly = true, propagation = Propagation.REQUIRED)
-    public Page<ApoderadosDto> getSearch(int page, int size, String descripcion, GeneroReference genero, EstadoReference estado, Instant fechaDesde, Instant fechaHasta) {
+    public Page<ApoderadosDto> getSearch(int page, int size, String descripcion, GeneroReference genero,
+            EstadoReference estado, Instant fechaDesde, Instant fechaHasta) {
 
         Pageable pageable = PageRequest.of(page, size);
-        Page<TApoderadosEntity> pageList =  apoderadosRepository.searchApoderados(descripcion,
+        Page<TApoderadosEntity> pageList = apoderadosRepository.searchApoderados(descripcion,
                 genero == null ? null : genero.getValue(), estado == null ? null : estado.getValue(),
                 fechaDesde, fechaHasta, pageable);
 
         return pageList.map(TApoderadosEntity::toDto);
+    }
+
+    @Transactional(propagation = Propagation.REQUIRED, rollbackFor = { Exception.class, IOException.class })
+    public void delete(String identifier) {
+
+        TApoderadosEntity entity = apoderadosRepository.findByIdentifier(identifier)
+                .orElseThrow(() -> new AppException("El identifier de este apoderado no existe para eliminar"));
+        apoderadosRepository.delete(entity);
     }
 }

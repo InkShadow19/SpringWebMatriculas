@@ -17,7 +17,7 @@ public interface BancosRepository extends JpaRepository<TBancosEntity, Long> {
 
     @Query("SELECT r FROM TBancosEntity r " +
             "WHERE (:codigo IS NULL OR r.codigo LIKE %:codigo%) " +
-            "WHERE (:descripcion IS NULL OR r.description LIKE %:descripcion%) " +
+            "AND (:descripcion IS NULL OR r.descripcion LIKE %:descripcion%) " +
             "AND (:estado is NULL OR r.estado = :estado) " +
             "AND (CAST(:fechaDesde AS TIMESTAMP) IS NULL OR r.fechaCreacion >= :fechaDesde) " +
             "AND (CAST(:fechaHasta AS TIMESTAMP) IS NULL OR r.fechaCreacion <= :fechaHasta) " +

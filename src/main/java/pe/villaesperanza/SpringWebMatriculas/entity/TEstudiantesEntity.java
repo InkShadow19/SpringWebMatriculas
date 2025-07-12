@@ -78,7 +78,8 @@ public class TEstudiantesEntity {
         this.nombre = estudiantesDto.getNombre();
         this.apellidoPaterno = estudiantesDto.getApellidoPaterno();
         this.apellidoMaterno = estudiantesDto.getApellidoMaterno();
-        if (estudiantesDto.getFechaNacimiento() != null) this.fechaNacimiento = Instant.parse(estudiantesDto.getFechaNacimiento());
+        if (estudiantesDto.getFechaNacimiento() != null)
+            this.fechaNacimiento = Instant.parse(estudiantesDto.getFechaNacimiento());
         this.genero = estudiantesDto.getGenero().getValue();
         this.direccion = estudiantesDto.getDireccion();
         this.telefono = estudiantesDto.getTelefono();
@@ -86,18 +87,45 @@ public class TEstudiantesEntity {
         this.estadoAcademico = estudiantesDto.getEstadoAcademico().getValue();
 
         if (estudiantesDto.getMatriculas() != null)
-            this.matriculas.addAll(estudiantesDto.getMatriculas().parallelStream().map(x -> new TMatriculasEntity(x, null, null, this, null, null)).toList());
+            this.matriculas.addAll(estudiantesDto.getMatriculas().parallelStream()
+                    .map(x -> new TMatriculasEntity(x, null, null, this, null, null)).toList());
     }
 
     public void update(EstudiantesDto estudiantesDto) {
 
-        this.direccion = estudiantesDto.getDireccion();
-        this.telefono = estudiantesDto.getTelefono();
-        this.email = estudiantesDto.getEmail();
-        if (estudiantesDto.getGenero() != null) this.genero = estudiantesDto.getGenero().getValue();
-        if (estudiantesDto.getEstado() != null) this.estado = estudiantesDto.getEstado().getValue();
-        if (estudiantesDto.getEstadoAcademico() != null) this.estadoAcademico = estudiantesDto.getEstadoAcademico().getValue();
-
+        if (estudiantesDto.getDni() != null) {
+            this.dni = estudiantesDto.getDni();
+        }
+        if (estudiantesDto.getNombre() != null) {
+            this.nombre = estudiantesDto.getNombre();
+        }
+        if (estudiantesDto.getApellidoPaterno() != null) {
+            this.apellidoPaterno = estudiantesDto.getApellidoPaterno();
+        }
+        if (estudiantesDto.getApellidoMaterno() != null) {
+            this.apellidoMaterno = estudiantesDto.getApellidoMaterno();
+        }
+        if (estudiantesDto.getFechaNacimiento() != null) {
+            this.fechaNacimiento = Instant.parse(estudiantesDto.getFechaNacimiento());
+        }
+        if (estudiantesDto.getDireccion() != null) {
+            this.direccion = estudiantesDto.getDireccion();
+        }
+        if (estudiantesDto.getTelefono() != null) {
+            this.telefono = estudiantesDto.getTelefono();
+        }
+        if (estudiantesDto.getEmail() != null) {
+            this.email = estudiantesDto.getEmail();
+        }
+        if (estudiantesDto.getGenero() != null) {
+            this.genero = estudiantesDto.getGenero().getValue();
+        }
+        if (estudiantesDto.getEstado() != null) {
+            this.estado = estudiantesDto.getEstado().getValue();
+        }
+        if (estudiantesDto.getEstadoAcademico() != null) {
+            this.estadoAcademico = estudiantesDto.getEstadoAcademico().getValue();
+        }
         this.fechaActualizacion = Instant.now();
     }
 
@@ -110,7 +138,8 @@ public class TEstudiantesEntity {
         dto.setNombre(nombre);
         dto.setApellidoMaterno(apellidoMaterno);
         dto.setApellidoPaterno(apellidoPaterno);
-        if (fechaNacimiento != null) dto.setFechaCreacion(fechaCreacion.toString());
+        if (fechaNacimiento != null)
+            dto.setFechaCreacion(fechaCreacion.toString());
         dto.setGenero(GeneroReference.fromInt(genero));
         dto.setDireccion(direccion);
         dto.setTelefono(telefono);

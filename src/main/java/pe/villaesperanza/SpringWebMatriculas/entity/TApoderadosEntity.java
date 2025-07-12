@@ -77,7 +77,8 @@ public class TApoderadosEntity {
         this.nombre = apoderadosDto.getNombre();
         this.apellidoPaterno = apoderadosDto.getApellidoPaterno();
         this.apellidoMaterno = apoderadosDto.getApellidoMaterno();
-        if (apoderadosDto.getFechaNacimiento() != null) this.fechaNacimiento = Instant.parse(apoderadosDto.getFechaNacimiento());
+        if (apoderadosDto.getFechaNacimiento() != null)
+            this.fechaNacimiento = Instant.parse(apoderadosDto.getFechaNacimiento());
         this.parentesco = apoderadosDto.getParentesco();
         this.genero = apoderadosDto.getGenero().getValue();
         this.direccion = apoderadosDto.getDireccion();
@@ -85,20 +86,47 @@ public class TApoderadosEntity {
         this.email = apoderadosDto.getEmail();
 
         if (apoderadosDto.getMatriculas() != null)
-            this.matriculas.addAll(apoderadosDto.getMatriculas().parallelStream().map(x -> new TMatriculasEntity(x, null, null, null, this, null)).toList());
+            this.matriculas.addAll(apoderadosDto.getMatriculas().parallelStream()
+                    .map(x -> new TMatriculasEntity(x, null, null, null, this, null)).toList());
     }
 
     public void update(ApoderadosDto apoderadosDto) {
 
-        this.direccion = apoderadosDto.getDireccion();
-        this.telefono = apoderadosDto.getTelefono();
-        this.email = apoderadosDto.getEmail();
-        if (apoderadosDto.getGenero() != null) this.genero = apoderadosDto.getGenero().getValue();
-        if (apoderadosDto.getEstado() != null) this.estado = apoderadosDto.getEstado().getValue();
-
+        if (apoderadosDto.getDni() != null) {
+            this.dni = apoderadosDto.getDni();
+        }
+        if (apoderadosDto.getNombre() != null) {
+            this.nombre = apoderadosDto.getNombre();
+        }
+        if (apoderadosDto.getApellidoPaterno() != null) {
+            this.apellidoPaterno = apoderadosDto.getApellidoPaterno();
+        }
+        if (apoderadosDto.getApellidoMaterno() != null) {
+            this.apellidoMaterno = apoderadosDto.getApellidoMaterno();
+        }
+        if (apoderadosDto.getFechaNacimiento() != null) {
+            this.fechaNacimiento = Instant.parse(apoderadosDto.getFechaNacimiento());
+        }
+        if (apoderadosDto.getParentesco() != null) {
+            this.parentesco = apoderadosDto.getParentesco();
+        }
+        if (apoderadosDto.getDireccion() != null) {
+            this.direccion = apoderadosDto.getDireccion();
+        }
+        if (apoderadosDto.getTelefono() != null) {
+            this.telefono = apoderadosDto.getTelefono();
+        }
+        if (apoderadosDto.getEmail() != null) {
+            this.email = apoderadosDto.getEmail();
+        }
+        if (apoderadosDto.getGenero() != null) {
+            this.genero = apoderadosDto.getGenero().getValue();
+        }
+        if (apoderadosDto.getEstado() != null) {
+            this.estado = apoderadosDto.getEstado().getValue();
+        }
         this.fechaActualizacion = Instant.now();
     }
-
 
     public ApoderadosDto toDto() {
 
@@ -109,7 +137,8 @@ public class TApoderadosEntity {
         dto.setNombre(nombre);
         dto.setApellidoMaterno(apellidoMaterno);
         dto.setApellidoPaterno(apellidoPaterno);
-        if (fechaNacimiento != null) dto.setFechaCreacion(fechaCreacion.toString());
+        if (fechaNacimiento != null)
+            dto.setFechaCreacion(fechaCreacion.toString());
         dto.setGenero(GeneroReference.fromInt(genero));
         dto.setParentesco(parentesco);
         dto.setDireccion(direccion);

@@ -16,7 +16,7 @@ public interface AniosAcademicosRepository extends JpaRepository<TAniosAcademico
     Optional<TAniosAcademicosEntity> findByIdentifier(String identifier);
 
     @Query("SELECT r FROM TAniosAcademicosEntity r " +
-            "WHERE (:anio IS NULL OR r.anio LIKE %:anio%) " +
+            "WHERE (:anio IS NULL OR r.anio = :anio) " +
             "AND (:estado is NULL OR r.estado = :estado) " +
             "AND (:estadoA is NULL OR r.estadoAcademico = :estadoA) " +
             "AND (CAST(:fechaDesde AS TIMESTAMP) IS NULL OR r.fechaCreacion >= :fechaDesde) " +

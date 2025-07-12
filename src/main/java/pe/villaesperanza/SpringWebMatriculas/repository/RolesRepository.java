@@ -16,11 +16,10 @@ public interface RolesRepository extends JpaRepository<TRolesEntity, Long> {
     Optional<TRolesEntity> findByIdentifier(String identifier);
 
     @Query("SELECT r FROM TRolesEntity r " +
-            "WHERE (:descripcion IS NULL OR r.description LIKE %:descripcion%) " +
+            "WHERE (:descripcion IS NULL OR r.descripcion LIKE %:descripcion%) " +
             "AND (:estado is NULL OR r.estado = :estado) " +
             "AND (CAST(:fechaDesde AS TIMESTAMP) IS NULL OR r.fechaCreacion >= :fechaDesde) " +
             "AND (CAST(:fechaHasta AS TIMESTAMP) IS NULL OR r.fechaCreacion <= :fechaHasta) " +
             "ORDER BY r.fechaCreacion DESC")
     Page<TRolesEntity> searchRoles(String descripcion, Integer estado, Instant fechaDesde, Instant fechaHasta, Pageable pageable);
-
 }

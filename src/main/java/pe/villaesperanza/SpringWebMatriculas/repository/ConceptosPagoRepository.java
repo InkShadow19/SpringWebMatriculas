@@ -17,11 +17,10 @@ public interface ConceptosPagoRepository extends JpaRepository<TConceptosPagoEnt
 
     @Query("SELECT r FROM TConceptosPagoEntity r " +
             "WHERE (:codigo IS NULL OR r.codigo LIKE %:codigo%) " +
-            "WHERE (:descripcion IS NULL OR r.description LIKE %:descripcion%) " +
+            "AND (:descripcion IS NULL OR r.descripcion LIKE %:descripcion%) " +
             "AND (:estado is NULL OR r.estado = :estado) " +
             "AND (CAST(:fechaDesde AS TIMESTAMP) IS NULL OR r.fechaCreacion >= :fechaDesde) " +
             "AND (CAST(:fechaHasta AS TIMESTAMP) IS NULL OR r.fechaCreacion <= :fechaHasta) " +
             "ORDER BY r.fechaCreacion DESC")
     Page<TConceptosPagoEntity> searchConceptos(String codigo, String descripcion, Integer estado, Instant fechaDesde, Instant fechaHasta, Pageable pageable);
-
 }

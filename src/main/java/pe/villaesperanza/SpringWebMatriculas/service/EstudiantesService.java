@@ -59,13 +59,21 @@ public class EstudiantesService {
     }
 
     @Transactional(readOnly = true, propagation = Propagation.REQUIRED)
-    public Page<EstudiantesDto> getSearch(int page, int size, String descripcion, GeneroReference genero, EstadoReference estado, EstadoAcademicoReference estadoA, Instant fechaDesde, Instant fechaHasta) {
+    public Page<EstudiantesDto> getSearch(int page, int size, String descripcion, GeneroReference genero,
+            EstadoReference estado, EstadoAcademicoReference estadoA, Instant fechaDesde, Instant fechaHasta) {
 
         Pageable pageable = PageRequest.of(page, size);
-        Page<TEstudiantesEntity> pageList =  estudiantesRepository.searchEstudiantes(descripcion,
+        Page<TEstudiantesEntity> pageList = estudiantesRepository.searchEstudiantes(descripcion,
                 genero == null ? null : genero.getValue(), estado == null ? null : estado.getValue(),
                 estadoA == null ? null : estadoA.getValue(), fechaDesde, fechaHasta, pageable);
 
         return pageList.map(TEstudiantesEntity::toDto);
+    }
+
+    @Transactional(propagation = Propagation.REQUIRED, rollbackFor = { Exception.class, IOException.class })
+    public void delete(String identifier) {
+        TEstudiantesEntity entity = estudiantesRepository.findByIdentifier(identifier)
+                .orElseThrow(() -> new AppException("El identifier de este estudiante no existe para eliminar"));
+        estudiantesRepository.delete(entity);
     }
 }
