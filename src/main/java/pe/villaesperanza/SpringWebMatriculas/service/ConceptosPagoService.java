@@ -65,4 +65,11 @@ public class ConceptosPagoService {
 
         return pageList.map(TConceptosPagoEntity::toDto);
     }
+
+    @Transactional(propagation = Propagation.REQUIRED, rollbackFor = { Exception.class, IOException.class })
+    public void delete(String identifier) {
+        TConceptosPagoEntity entity = conceptosPagoRepository.findByIdentifier(identifier)
+                .orElseThrow(() -> new AppException("El identifier de este concepto no existe para eliminar"));
+        conceptosPagoRepository.delete(entity);
+    }
 }

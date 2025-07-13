@@ -31,7 +31,13 @@ public class SecurityConfig {
                 // ENDPOINT PÚBLICO: Solo el login es público.
                 .requestMatchers("/auth/login",
                                              "/apoderados/**", 
-                                             "/estudiantes/**").permitAll()
+                                             "/estudiantes/**",
+                                             "/anios/academicos/**",
+                                             "/bancos/**",
+                                             "/conceptos/pago**",
+                                             "/grados/**",
+                                             "/niveles/**",
+                                             "/roles/**").permitAll()
 
                 // RUTAS SOLO PARA ADMINISTRADOR:
                 .requestMatchers("/usuarios/**", "/roles/**", "/anios/academicos/**", "/niveles/**", "/grados/**", "/conceptos/pago/**", "/bancos/**").hasAuthority("Administrador")

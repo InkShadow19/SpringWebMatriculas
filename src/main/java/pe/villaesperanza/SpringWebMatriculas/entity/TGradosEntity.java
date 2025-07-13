@@ -56,6 +56,20 @@ public class TGradosEntity {
             this.matriculas.addAll(gradosDto.getMatriculas().parallelStream().map(x -> new TMatriculasEntity(x, null, this, null, null, null)).toList());
     }
 
+    public void update(GradosDto gradosDto) {
+        
+        if (gradosDto.getDescripcion() != null) {
+            this.descripcion = gradosDto.getDescripcion();
+        }
+        if (gradosDto.getEstado() != null) {
+            this.estado = gradosDto.getEstado().getValue();
+        }
+        // Asumiendo que no puedes cambiar el nivel de un grado ya creado.
+        // Si se pudiera, aquí iría la lógica para actualizar 'nivelesEntity'.
+
+        this.fechaActualizacion = Instant.now();
+    }
+
     public GradosDto toDto() {
 
         GradosDto dto = new GradosDto();

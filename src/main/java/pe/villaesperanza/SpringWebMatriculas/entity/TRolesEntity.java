@@ -53,9 +53,12 @@ public class TRolesEntity {
 
     public void update(RolesDto rolesDto) {
 
-        this.descripcion = rolesDto.getDescripcion();
-        if (rolesDto.getEstado() != null) this.estado = rolesDto.getEstado().getValue();
-
+        if (rolesDto.getDescripcion() != null) {
+            this.descripcion = rolesDto.getDescripcion();
+        }
+        if (rolesDto.getEstado() != null) {
+            this.estado = rolesDto.getEstado().getValue();
+        }
         this.fechaActualizacion = Instant.now();
     }
 

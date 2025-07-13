@@ -65,4 +65,11 @@ public class BancosService {
 
         return pageList.map(TBancosEntity::toDto);
     }
+
+    @Transactional(propagation = Propagation.REQUIRED, rollbackFor = { Exception.class, IOException.class })
+    public void delete(String identifier) {
+        TBancosEntity entity = bancosRepository.findByIdentifier(identifier)
+                .orElseThrow(() -> new AppException("El identifier de este banco no existe para eliminar"));
+        bancosRepository.delete(entity);
+    }
 }

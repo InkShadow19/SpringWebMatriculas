@@ -60,11 +60,19 @@ public class TConceptosPagoEntity {
     }
 
     public void update(ConceptosPagoDto conceptosPagoDto) {
-
-        this.descripcion = conceptosPagoDto.getDescripcion();
-        this.codigo = conceptosPagoDto.getCodigo();
-        if (conceptosPagoDto.getEstado() != null) this.estado = conceptosPagoDto.getEstado().getValue();
-
+        
+        if (conceptosPagoDto.getCodigo() != null) {
+            this.codigo = conceptosPagoDto.getCodigo();
+        }
+        if (conceptosPagoDto.getDescripcion() != null) {
+            this.descripcion = conceptosPagoDto.getDescripcion();
+        }
+        if (conceptosPagoDto.getMontoSugerido() != null) {
+            this.montoSugerido = conceptosPagoDto.getMontoSugerido();
+        }
+        if (conceptosPagoDto.getEstado() != null) {
+            this.estado = conceptosPagoDto.getEstado().getValue();
+        }
         this.fechaActualizacion = Instant.now();
     }
 
