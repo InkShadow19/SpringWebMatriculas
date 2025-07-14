@@ -84,10 +84,6 @@ public class TApoderadosEntity {
         this.direccion = apoderadosDto.getDireccion();
         this.telefono = apoderadosDto.getTelefono();
         this.email = apoderadosDto.getEmail();
-
-        if (apoderadosDto.getMatriculas() != null)
-            this.matriculas.addAll(apoderadosDto.getMatriculas().parallelStream()
-                    .map(x -> new TMatriculasEntity(x, null, null, null, this, null)).toList());
     }
 
     public void update(ApoderadosDto apoderadosDto) {

@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import pe.villaesperanza.SpringWebMatriculas.dto.BancosDto;
 import pe.villaesperanza.SpringWebMatriculas.dto.GradosDto;
 import pe.villaesperanza.SpringWebMatriculas.dto.reference.EstadoReference;
 
@@ -51,9 +52,14 @@ public class TGradosEntity {
         this.nivelesEntity = nivelesEntity;
         this.identifier = UUID.randomUUID().toString();
         this.descripcion = gradosDto.getDescripcion();
+    }
 
-        if (gradosDto.getMatriculas() != null)
-            this.matriculas.addAll(gradosDto.getMatriculas().parallelStream().map(x -> new TMatriculasEntity(x, null, this, null, null, null)).toList());
+    public void update(GradosDto gradosDto) {
+
+        this.descripcion = gradosDto.getDescripcion();
+        if (gradosDto.getEstado() != null) this.estado = gradosDto.getEstado().getValue();
+
+        this.fechaActualizacion = Instant.now();
     }
 
     public GradosDto toDto() {

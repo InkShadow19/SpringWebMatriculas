@@ -49,12 +49,6 @@ public class TNivelesEntity {
 
         this.identifier = UUID.randomUUID().toString();
         this.descripcion = nivelesDto.getDescripcion();
-
-        if (nivelesDto.getGrados() != null)
-            this.grados.addAll(nivelesDto.getGrados().parallelStream().map(x -> new TGradosEntity(x, this)).toList());
-
-        if (nivelesDto.getMatriculas() != null)
-            this.matriculas.addAll(nivelesDto.getMatriculas().parallelStream().map(x -> new TMatriculasEntity(x, this, null, null, null, null)).toList());
     }
 
     public void update(NivelesDto nivelesDto) {

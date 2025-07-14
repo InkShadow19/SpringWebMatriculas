@@ -74,6 +74,16 @@ public class TPagosEntity {
             this.detalles.addAll(pagosDto.getDetalles().parallelStream().map(x -> new TPagoDetallesEntity(x, null, this)).toList());
     }
 
+    public void update(PagosDto pagosDto) {
+
+        this.canalPago = pagosDto.getCanalPago().getValue();
+        this.numeroTicket = pagosDto.getNumeroTicket();
+        this.montoTotalPagado = pagosDto.getMontoTotalPagado();
+        if (pagosDto.getFechaPago() != null) this.fechaPago = Instant.parse(pagosDto.getFechaPago());
+
+        this.fechaActualizacion = Instant.now();
+    }
+
     public PagosDto toDto() {
 
         PagosDto dto = new PagosDto();

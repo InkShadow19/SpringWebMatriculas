@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import pe.villaesperanza.SpringWebMatriculas.dto.BancosDto;
 import pe.villaesperanza.SpringWebMatriculas.dto.MatriculasDto;
 import pe.villaesperanza.SpringWebMatriculas.dto.reference.EstadoReference;
 import pe.villaesperanza.SpringWebMatriculas.dto.reference.SituacionReference;
@@ -90,6 +91,15 @@ public class TMatriculasEntity {
 
         if (matriculasDto.getCronogramas() != null)
             this.cronogramas.addAll(matriculasDto.getCronogramas().parallelStream().map(x -> new TCronogramaPagosEntity(x, null, this)).toList());
+    }
+
+    public void update(MatriculasDto matriculasDto) {
+
+        if (matriculasDto.getFechaMatricula() != null) this.fechaMatricula = Instant.parse(matriculasDto.getFechaMatricula());
+        if (matriculasDto.getSituacion() != null) this.situacion = matriculasDto.getSituacion().getValue();
+        if (matriculasDto.getEstado() != null) this.estado = matriculasDto.getEstado().getValue();
+
+        this.fechaActualizacion = Instant.now();
     }
 
     public MatriculasDto toDto() {

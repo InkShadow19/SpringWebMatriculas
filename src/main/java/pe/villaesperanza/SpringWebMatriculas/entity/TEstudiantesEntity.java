@@ -85,10 +85,6 @@ public class TEstudiantesEntity {
         this.telefono = estudiantesDto.getTelefono();
         this.email = estudiantesDto.getEmail();
         this.estadoAcademico = estudiantesDto.getEstadoAcademico().getValue();
-
-        if (estudiantesDto.getMatriculas() != null)
-            this.matriculas.addAll(estudiantesDto.getMatriculas().parallelStream()
-                    .map(x -> new TMatriculasEntity(x, null, null, this, null, null)).toList());
     }
 
     public void update(EstudiantesDto estudiantesDto) {

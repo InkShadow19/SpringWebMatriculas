@@ -50,9 +50,6 @@ public class TBancosEntity {
         this.identifier = UUID.randomUUID().toString();
         this.codigo = bancosDto.getCodigo();
         this.descripcion = bancosDto.getDescripcion();
-
-        if (bancosDto.getPagos() != null)
-            this.pagos.addAll(bancosDto.getPagos().parallelStream().map(x -> new TPagosEntity(x, null, this)).toList());
     }
 
     public void update(BancosDto bancosDto) {

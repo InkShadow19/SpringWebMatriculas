@@ -81,9 +81,6 @@ public class TCronogramaPagosEntity {
         this.montoAPagar = cronogramaPagosDto.getMontoAPagar();
         if (cronogramaPagosDto.getFechaVencimiento() != null) this.fechaVencimiento = Instant.parse(cronogramaPagosDto.getFechaVencimiento());
         this.estadoDeuda = cronogramaPagosDto.getEstadoDeuda().getValue();
-
-        if (cronogramaPagosDto.getDetalles() != null)
-            this.detalles.addAll(cronogramaPagosDto.getDetalles().parallelStream().map(x -> new TPagoDetallesEntity(x, this, null)).toList());
     }
 
     public CronogramaPagosDto toDto() {
