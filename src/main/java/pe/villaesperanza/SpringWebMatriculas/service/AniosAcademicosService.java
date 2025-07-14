@@ -67,4 +67,11 @@ public class AniosAcademicosService {
 
         return pageList.map(TAniosAcademicosEntity::toDto);
     }
+
+    @Transactional(propagation = Propagation.REQUIRED, rollbackFor = { Exception.class, IOException.class })
+    public void delete(String identifier) {
+        TAniosAcademicosEntity entity = aniosAcademicosRepository.findByIdentifier(identifier)
+                .orElseThrow(() -> new AppException("El identifier de este año académico no existe para eliminar"));
+        aniosAcademicosRepository.delete(entity);
+    }
 }

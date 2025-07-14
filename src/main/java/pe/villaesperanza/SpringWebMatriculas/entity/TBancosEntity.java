@@ -54,10 +54,15 @@ public class TBancosEntity {
 
     public void update(BancosDto bancosDto) {
 
-        this.descripcion = bancosDto.getDescripcion();
-        this.codigo = bancosDto.getCodigo();
-        if (bancosDto.getEstado() != null) this.estado = bancosDto.getEstado().getValue();
-
+        if (bancosDto.getCodigo() != null) {
+            this.codigo = bancosDto.getCodigo();
+        }
+        if (bancosDto.getDescripcion() != null) {
+            this.descripcion = bancosDto.getDescripcion();
+        }
+        if (bancosDto.getEstado() != null) {
+            this.estado = bancosDto.getEstado().getValue();
+        }
         this.fechaActualizacion = Instant.now();
     }
 

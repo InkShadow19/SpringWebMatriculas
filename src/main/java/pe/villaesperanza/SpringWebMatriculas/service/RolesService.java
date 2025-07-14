@@ -64,4 +64,11 @@ public class RolesService {
 
         return pageList.map(TRolesEntity::toDto);
     }
+
+    @Transactional(propagation = Propagation.REQUIRED, rollbackFor = { Exception.class, IOException.class })
+    public void delete(String identifier) {
+        TRolesEntity entity = rolesRepository.findByIdentifier(identifier)
+                .orElseThrow(() -> new AppException("El identifier de este rol no existe para eliminar"));
+        rolesRepository.delete(entity);
+    }
 }

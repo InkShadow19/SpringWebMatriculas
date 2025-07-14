@@ -64,4 +64,11 @@ public class NivelesService {
 
         return pageList.map(TNivelesEntity::toDto);
     }
+
+    @Transactional(propagation = Propagation.REQUIRED, rollbackFor = { Exception.class, IOException.class })
+    public void delete(String identifier) {
+        TNivelesEntity entity = nivelesRepository.findByIdentifier(identifier)
+                .orElseThrow(() -> new AppException("El identifier de este nivel no existe para eliminar"));
+        nivelesRepository.delete(entity);
+    }
 }

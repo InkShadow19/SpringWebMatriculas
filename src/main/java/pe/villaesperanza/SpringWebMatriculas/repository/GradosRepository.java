@@ -16,10 +16,10 @@ public interface GradosRepository extends JpaRepository<TGradosEntity, Long> {
     Optional<TGradosEntity> findByIdentifier(String identifier);
 
     @Query("SELECT r FROM TGradosEntity r " +
-            "WHERE (:descripcion IS NULL OR r.descripcion LIKE %:descripcion%) " +
-            "AND (:estado is NULL OR r.estado = :estado) " +
-            "AND (CAST(:fechaDesde AS TIMESTAMP) IS NULL OR r.fechaCreacion >= :fechaDesde) " +
-            "AND (CAST(:fechaHasta AS TIMESTAMP) IS NULL OR r.fechaCreacion <= :fechaHasta) " +
-            "ORDER BY r.fechaCreacion DESC")
-    Page<TGradosEntity> searchGrados(String descripcion, Integer estado, Instant fechaDesde, Instant fechaHasta, Pageable pageable);
+           "WHERE (:descripcion IS NULL OR r.descripcion LIKE %:descripcion%) " +
+           "AND (:estado IS NULL OR r.estado = :estado) " +
+           "AND (:idNivel IS NULL OR r.nivelesEntity.id = :idNivel) " +
+           "AND (CAST(:fechaDesde AS TIMESTAMP) IS NULL OR r.fechaCreacion >= :fechaDesde) " +
+           "AND (CAST(:fechaHasta AS TIMESTAMP) IS NULL OR r.fechaCreacion <= :fechaHasta)")
+    Page<TGradosEntity> searchGrados(String descripcion, Integer estado, Long idNivel, Instant fechaDesde, Instant fechaHasta, Pageable pageable);
 }

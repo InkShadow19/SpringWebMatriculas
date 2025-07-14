@@ -51,14 +51,23 @@ public class TAniosAcademicosEntity {
         this.identifier = UUID.randomUUID().toString();
         this.anio = aniosAcademicosDto.getAnio();
         this.estadoAcademico = aniosAcademicosDto.getEstadoAcademico().getValue();
+
+        if (aniosAcademicosDto.getMatriculas() != null)
+            this.matriculas.addAll(aniosAcademicosDto.getMatriculas().parallelStream()
+                    .map(x -> new TMatriculasEntity(x, null, null, null, null, this)).toList());
     }
 
     public void update(AniosAcademicosDto aniosAcademicosDto) {
-
-        this.anio = aniosAcademicosDto.getAnio();
-        if (aniosAcademicosDto.getEstadoAcademico() != null) this.estadoAcademico = aniosAcademicosDto.getEstadoAcademico().getValue();
-        if (aniosAcademicosDto.getEstado() != null) this.estado = aniosAcademicosDto.getEstado().getValue();
-
+        
+        if (aniosAcademicosDto.getAnio() != null) {
+            this.anio = aniosAcademicosDto.getAnio();
+        }
+        if (aniosAcademicosDto.getEstadoAcademico() != null) {
+            this.estadoAcademico = aniosAcademicosDto.getEstadoAcademico().getValue();
+        }
+        if (aniosAcademicosDto.getEstado() != null) {
+            this.estado = aniosAcademicosDto.getEstado().getValue();
+        }
         this.fechaActualizacion = Instant.now();
     }
 
