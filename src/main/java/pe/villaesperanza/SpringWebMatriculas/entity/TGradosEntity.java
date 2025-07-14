@@ -4,7 +4,6 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import pe.villaesperanza.SpringWebMatriculas.dto.BancosDto;
 import pe.villaesperanza.SpringWebMatriculas.dto.GradosDto;
 import pe.villaesperanza.SpringWebMatriculas.dto.reference.EstadoReference;
 

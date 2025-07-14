@@ -21,7 +21,7 @@ public interface PagosRepository extends JpaRepository<TPagosEntity, Long> {
             "WHERE (:estado is NULL OR r.estado = :estado) " +
             "AND (:canalPago is NULL OR r.canalPago = :canalPago) " +
             "AND (:ticket IS NULL OR r.numeroTicket LIKE %:ticket%) " +
-            "AND (:monto IS NULL OR r.montoTotalPagado LIKE %:monto%) " +
+            "AND (:monto IS NULL OR r.montoTotalPagado = monto) " +
             "AND (CAST(:fechaDesde AS TIMESTAMP) IS NULL OR r.fechaPago >= :fechaDesde) " +
             "AND (CAST(:fechaHasta AS TIMESTAMP) IS NULL OR r.fechaPago <= :fechaHasta) " +
             "ORDER BY r.fechaCreacion DESC")
