@@ -40,7 +40,7 @@ public class ReportController {
         return service.porMorosidad(nivel, grado);
     }
 
-    @GetMapping("/search")
+    @GetMapping("/pagos/por/periodos")
     public Optional<List<PagosPorPeriodosDto>> pagosPorPeriodos(
             @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) Instant fechaDesde,
             @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) Instant fechaHasta
