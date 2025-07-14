@@ -10,9 +10,11 @@ import pe.villaesperanza.SpringWebMatriculas.dto.EstudiantesDto;
 import pe.villaesperanza.SpringWebMatriculas.dto.reference.EstadoAcademicoReference;
 import pe.villaesperanza.SpringWebMatriculas.dto.reference.EstadoReference;
 import pe.villaesperanza.SpringWebMatriculas.dto.reference.GeneroReference;
+import pe.villaesperanza.SpringWebMatriculas.dto.report.EstadoCuentaEstudianteDto;
 import pe.villaesperanza.SpringWebMatriculas.service.EstudiantesService;
 
 import java.time.Instant;
+import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
@@ -56,5 +58,12 @@ public class EstudiantesController {
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void delete(@PathVariable(value = "identifier") String identifier) {
         estudiantesService.delete(identifier);
+    }
+
+    //! Report
+
+    @GetMapping("/{identifier}/estado/cuenta")
+    public ResponseEntity<List<EstadoCuentaEstudianteDto>> getEstadoEstudiante(@PathVariable(value = "identifier") String identifier) {
+        return estudiantesService.getEstadoEstudiante(identifier).map(ResponseEntity::ok).orElse(ResponseEntity.notFound().build());
     }
 }

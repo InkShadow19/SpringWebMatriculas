@@ -7,6 +7,7 @@ import lombok.Setter;
 import pe.villaesperanza.SpringWebMatriculas.dto.CronogramaPagosDto;
 import pe.villaesperanza.SpringWebMatriculas.dto.reference.EstadoDeudaReference;
 import pe.villaesperanza.SpringWebMatriculas.dto.reference.EstadoReference;
+import pe.villaesperanza.SpringWebMatriculas.dto.report.EstadoCuentaEstudianteDto;
 
 import java.time.Instant;
 import java.util.HashSet;
@@ -104,6 +105,19 @@ public class TCronogramaPagosEntity {
         if (detalles != null)
             dto.setDetalles(detalles.stream().map(TPagoDetallesEntity::toDto).toList());
 
+        return dto;
+    }
+
+    public EstadoCuentaEstudianteDto estadoCuentaEstudante() {
+
+        EstadoCuentaEstudianteDto dto = new EstadoCuentaEstudianteDto();
+        dto.setDescripcion(descripcion);
+        dto.setMontoOriginal(montoOriginal);
+        dto.setDescuento(descuento);
+        dto.setMora(mora);
+        dto.setMontoAPagar(montoAPagar);
+        if (fechaVencimiento != null) dto.setFechaVencimiento(fechaVencimiento.toString());
+        dto.setEstadoDeuda(EstadoDeudaReference.fromInt(estadoDeuda));
         return dto;
     }
 }

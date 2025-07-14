@@ -55,14 +55,6 @@ public class TGradosEntity {
     }
 
     public void update(GradosDto gradosDto) {
-
-        this.descripcion = gradosDto.getDescripcion();
-        if (gradosDto.getEstado() != null) this.estado = gradosDto.getEstado().getValue();
-
-        this.fechaActualizacion = Instant.now();
-    }
-
-    public void update(GradosDto gradosDto) {
         
         if (gradosDto.getDescripcion() != null) {
             this.descripcion = gradosDto.getDescripcion();

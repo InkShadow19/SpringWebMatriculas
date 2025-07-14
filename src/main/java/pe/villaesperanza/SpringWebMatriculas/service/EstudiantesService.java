@@ -12,12 +12,16 @@ import pe.villaesperanza.SpringWebMatriculas.dto.EstudiantesDto;
 import pe.villaesperanza.SpringWebMatriculas.dto.reference.EstadoAcademicoReference;
 import pe.villaesperanza.SpringWebMatriculas.dto.reference.EstadoReference;
 import pe.villaesperanza.SpringWebMatriculas.dto.reference.GeneroReference;
+import pe.villaesperanza.SpringWebMatriculas.dto.report.EstadoCuentaEstudianteDto;
+import pe.villaesperanza.SpringWebMatriculas.entity.TCronogramaPagosEntity;
 import pe.villaesperanza.SpringWebMatriculas.entity.TEstudiantesEntity;
+import pe.villaesperanza.SpringWebMatriculas.repository.CronogramaRepository;
 import pe.villaesperanza.SpringWebMatriculas.repository.EstudiantesRepository;
 import pe.villaesperanza.SpringWebMatriculas.util.AppException;
 
 import java.io.IOException;
 import java.time.Instant;
+import java.util.List;
 import java.util.Optional;
 
 @Slf4j
@@ -26,6 +30,7 @@ import java.util.Optional;
 public class EstudiantesService {
 
     private final EstudiantesRepository estudiantesRepository;
+    private final CronogramaRepository cronogramaRepository;
 
     @Transactional(propagation = Propagation.REQUIRED, rollbackFor = { Exception.class, IOException.class })
     public EstudiantesDto add(EstudiantesDto nivelesDto) {
@@ -75,5 +80,20 @@ public class EstudiantesService {
         TEstudiantesEntity entity = estudiantesRepository.findByIdentifier(identifier)
                 .orElseThrow(() -> new AppException("El identifier de este estudiante no existe para eliminar"));
         estudiantesRepository.delete(entity);
+    }
+
+    //? REPORTE
+
+    @Transactional(readOnly = true, propagation = Propagation.REQUIRED)
+    public Optional<List<EstadoCuentaEstudianteDto>> getEstadoEstudiante(String estudiante) {
+
+        List<TCronogramaPagosEntity> result = cronogramaRepository.estadoCuenta(estudiante);
+
+        if (result == null || result.isEmpty()) return Optional.empty();
+
+        List<EstadoCuentaEstudianteDto> dtos = result.stream()
+                .map(TCronogramaPagosEntity::estadoCuentaEstudante).toList();
+
+        return Optional.of(dtos);
     }
 }
