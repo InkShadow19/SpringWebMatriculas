@@ -3,6 +3,7 @@ package pe.villaesperanza.SpringWebMatriculas.controller;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import pe.villaesperanza.SpringWebMatriculas.dto.MatriculasDto;
@@ -48,5 +49,11 @@ public class MatriculasController {
             @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) Instant fechaHasta
     ) {
         return matriculasService.getSearch(page, size, codigo, procedencia, situacion, estado, fechaDesde, fechaHasta);
+    }
+
+    @DeleteMapping("/{identifier}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void delete(@PathVariable(value = "identifier") String identifier) {
+        matriculasService.delete(identifier);
     }
 }

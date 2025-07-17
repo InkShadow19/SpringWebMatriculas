@@ -88,4 +88,11 @@ public class MatriculasService {
 
         return pageList.map(TMatriculasEntity::toDto);
     }
+
+    @Transactional(propagation = Propagation.REQUIRED, rollbackFor = { Exception.class, IOException.class })
+    public void delete(String identifier) {
+        TMatriculasEntity entity = matriculasRepository.findByIdentifier(identifier)
+                .orElseThrow(() -> new AppException("El identifier de esta matricula no existe para eliminar"));
+        matriculasRepository.delete(entity);
+    }
 }

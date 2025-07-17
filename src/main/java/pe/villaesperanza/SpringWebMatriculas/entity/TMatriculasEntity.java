@@ -94,6 +94,8 @@ public class TMatriculasEntity {
 
     public void update(MatriculasDto matriculasDto) {
 
+        if (matriculasDto.getCodigo() != null) this.codigo = matriculasDto.getCodigo();
+        if (matriculasDto.getProcedencia() != null) this.procedencia = matriculasDto.getProcedencia();
         if (matriculasDto.getFechaMatricula() != null) this.fechaMatricula = Instant.parse(matriculasDto.getFechaMatricula());
         if (matriculasDto.getSituacion() != null) this.situacion = matriculasDto.getSituacion().getValue();
         if (matriculasDto.getEstado() != null) this.estado = matriculasDto.getEstado().getValue();

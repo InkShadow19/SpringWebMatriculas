@@ -33,7 +33,7 @@ public class ReportController {
         return service.alumnoPorGrado(anio, nivel, grado);
     }
 
-    @GetMapping("/alumnos/por/grado")
+    @GetMapping("/alumnos/morosos")
     public Optional<List<PorMorosidadDto>> porMorosidad(
              @RequestParam(required = false) String nivel, @RequestParam(required = false) String grado
     ) {

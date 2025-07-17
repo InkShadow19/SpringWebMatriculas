@@ -77,8 +77,7 @@ public class TApoderadosEntity {
         this.nombre = apoderadosDto.getNombre();
         this.apellidoPaterno = apoderadosDto.getApellidoPaterno();
         this.apellidoMaterno = apoderadosDto.getApellidoMaterno();
-        if (apoderadosDto.getFechaNacimiento() != null)
-            this.fechaNacimiento = Instant.parse(apoderadosDto.getFechaNacimiento());
+        if (apoderadosDto.getFechaNacimiento() != null) this.fechaNacimiento = Instant.parse(apoderadosDto.getFechaNacimiento() + "T00:00:00Z");
         this.parentesco = apoderadosDto.getParentesco();
         this.genero = apoderadosDto.getGenero().getValue();
         this.direccion = apoderadosDto.getDireccion();
@@ -134,7 +133,7 @@ public class TApoderadosEntity {
         dto.setApellidoMaterno(apellidoMaterno);
         dto.setApellidoPaterno(apellidoPaterno);
         if (fechaNacimiento != null)
-            dto.setFechaCreacion(fechaCreacion.toString());
+            dto.setFechaNacimiento(fechaNacimiento.toString());
         dto.setGenero(GeneroReference.fromInt(genero));
         dto.setParentesco(parentesco);
         dto.setDireccion(direccion);
