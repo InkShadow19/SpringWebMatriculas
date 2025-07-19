@@ -100,7 +100,13 @@ public class TApoderadosEntity {
             this.apellidoMaterno = apoderadosDto.getApellidoMaterno();
         }
         if (apoderadosDto.getFechaNacimiento() != null) {
-            this.fechaNacimiento = Instant.parse(apoderadosDto.getFechaNacimiento());
+            String fechaNacimientoStr = apoderadosDto.getFechaNacimiento();
+            // Si la fecha no contiene 'T' o 'Z', es una fecha simple.
+            if (!fechaNacimientoStr.contains("T") && !fechaNacimientoStr.contains("Z")) {
+                this.fechaNacimiento = Instant.parse(fechaNacimientoStr + "T00:00:00Z");
+            } else {
+                this.fechaNacimiento = Instant.parse(fechaNacimientoStr);
+            }
         }
         if (apoderadosDto.getParentesco() != null) {
             this.parentesco = apoderadosDto.getParentesco();

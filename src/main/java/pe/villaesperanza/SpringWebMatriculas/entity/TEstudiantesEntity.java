@@ -98,7 +98,13 @@ public class TEstudiantesEntity {
             this.apellidoMaterno = estudiantesDto.getApellidoMaterno();
         }
         if (estudiantesDto.getFechaNacimiento() != null) {
-            this.fechaNacimiento = Instant.parse(estudiantesDto.getFechaNacimiento());
+            String fechaNacimientoStr = estudiantesDto.getFechaNacimiento();
+            // Si la fecha no contiene 'T' o 'Z', es una fecha simple.
+            if (!fechaNacimientoStr.contains("T") && !fechaNacimientoStr.contains("Z")) {
+                this.fechaNacimiento = Instant.parse(fechaNacimientoStr + "T00:00:00Z");
+            } else {
+                this.fechaNacimiento = Instant.parse(fechaNacimientoStr);
+            }
         }
         if (estudiantesDto.getDireccion() != null) {
             this.direccion = estudiantesDto.getDireccion();
