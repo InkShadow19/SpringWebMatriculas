@@ -6,7 +6,6 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import pe.villaesperanza.SpringWebMatriculas.dto.AniosAcademicosDto;
 import pe.villaesperanza.SpringWebMatriculas.dto.reference.EstadoAcademicoReference;
-import pe.villaesperanza.SpringWebMatriculas.dto.reference.EstadoReference;
 
 import java.time.Instant;
 import java.util.HashSet;
@@ -33,9 +32,6 @@ public class TAniosAcademicosEntity {
 
     @Column(name = "estado_academico")
     private Integer estadoAcademico;
-
-    @Column(name = "estado")
-    private Integer estado = 10;
 
     @Column(name = "fecha_creacion", nullable = false)
     private Instant fechaCreacion = Instant.now();
@@ -65,9 +61,7 @@ public class TAniosAcademicosEntity {
         if (aniosAcademicosDto.getEstadoAcademico() != null) {
             this.estadoAcademico = aniosAcademicosDto.getEstadoAcademico().getValue();
         }
-        if (aniosAcademicosDto.getEstado() != null) {
-            this.estado = aniosAcademicosDto.getEstado().getValue();
-        }
+
         this.fechaActualizacion = Instant.now();
     }
 
@@ -78,7 +72,6 @@ public class TAniosAcademicosEntity {
         dto.setIdentifier(identifier);
         dto.setAnio(anio);
         dto.setEstadoAcademico(EstadoAcademicoReference.fromInt(estadoAcademico));
-        dto.setEstado(EstadoReference.fromInt(estado));
         dto.setFechaCreacion(fechaCreacion.toString());
 
         if (matriculas != null)

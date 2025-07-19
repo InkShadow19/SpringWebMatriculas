@@ -6,7 +6,6 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import pe.villaesperanza.SpringWebMatriculas.dto.EstudiantesDto;
 import pe.villaesperanza.SpringWebMatriculas.dto.reference.EstadoAcademicoReference;
-import pe.villaesperanza.SpringWebMatriculas.dto.reference.EstadoReference;
 import pe.villaesperanza.SpringWebMatriculas.dto.reference.GeneroReference;
 
 import java.time.Instant;
@@ -58,9 +57,6 @@ public class TEstudiantesEntity {
 
     @Column(name = "estado_academico")
     private Integer estadoAcademico;
-
-    @Column(name = "estado")
-    private Integer estado = 10;
 
     @Column(name = "fecha_creacion", nullable = false)
     private Instant fechaCreacion = Instant.now();
@@ -116,9 +112,6 @@ public class TEstudiantesEntity {
         if (estudiantesDto.getGenero() != null) {
             this.genero = estudiantesDto.getGenero().getValue();
         }
-        if (estudiantesDto.getEstado() != null) {
-            this.estado = estudiantesDto.getEstado().getValue();
-        }
         if (estudiantesDto.getEstadoAcademico() != null) {
             this.estadoAcademico = estudiantesDto.getEstadoAcademico().getValue();
         }
@@ -141,7 +134,6 @@ public class TEstudiantesEntity {
         dto.setTelefono(telefono);
         dto.setEmail(email);
         dto.setEstadoAcademico(EstadoAcademicoReference.fromInt(estadoAcademico));
-        dto.setEstado(EstadoReference.fromInt(estado));
         dto.setFechaCreacion(fechaCreacion.toString());
 
         if (matriculas != null)

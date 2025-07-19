@@ -17,10 +17,9 @@ public interface AniosAcademicosRepository extends JpaRepository<TAniosAcademico
 
     @Query("SELECT r FROM TAniosAcademicosEntity r " +
             "WHERE (:anio IS NULL OR r.anio = :anio) " +
-            "AND (:estado is NULL OR r.estado = :estado) " +
             "AND (:estadoA is NULL OR r.estadoAcademico = :estadoA) " +
             "AND (CAST(:fechaDesde AS TIMESTAMP) IS NULL OR r.fechaCreacion >= :fechaDesde) " +
             "AND (CAST(:fechaHasta AS TIMESTAMP) IS NULL OR r.fechaCreacion <= :fechaHasta) " +
             "ORDER BY r.fechaCreacion DESC")
-    Page<TAniosAcademicosEntity> searchAcademicos(Integer anio, Integer estado, Integer estadoA, Instant fechaDesde, Instant fechaHasta, Pageable pageable);
+    Page<TAniosAcademicosEntity> searchAcademicos(Integer anio, Integer estadoA, Instant fechaDesde, Instant fechaHasta, Pageable pageable);
 }

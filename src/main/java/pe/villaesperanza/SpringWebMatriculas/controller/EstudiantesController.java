@@ -8,7 +8,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import pe.villaesperanza.SpringWebMatriculas.dto.EstudiantesDto;
 import pe.villaesperanza.SpringWebMatriculas.dto.reference.EstadoAcademicoReference;
-import pe.villaesperanza.SpringWebMatriculas.dto.reference.EstadoReference;
 import pe.villaesperanza.SpringWebMatriculas.dto.reference.GeneroReference;
 import pe.villaesperanza.SpringWebMatriculas.service.EstudiantesService;
 
@@ -44,12 +43,11 @@ public class EstudiantesController {
             @RequestParam(defaultValue = "10") int size,
             @RequestParam(required = false) String descripcion,
             @RequestParam(required = false) GeneroReference genero,
-            @RequestParam(required = false) EstadoReference estado,
             @RequestParam(required = false) EstadoAcademicoReference estadoA,
             @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) Instant fechaDesde,
             @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) Instant fechaHasta
     ) {
-        return estudiantesService.getSearch(page, size, descripcion, genero, estado, estadoA, fechaDesde, fechaHasta);
+        return estudiantesService.getSearch(page, size, descripcion, genero, estadoA, fechaDesde, fechaHasta);
     }
 
     @DeleteMapping("/{identifier}")

@@ -10,7 +10,6 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import pe.villaesperanza.SpringWebMatriculas.dto.EstudiantesDto;
 import pe.villaesperanza.SpringWebMatriculas.dto.reference.EstadoAcademicoReference;
-import pe.villaesperanza.SpringWebMatriculas.dto.reference.EstadoReference;
 import pe.villaesperanza.SpringWebMatriculas.dto.reference.GeneroReference;
 import pe.villaesperanza.SpringWebMatriculas.entity.TEstudiantesEntity;
 import pe.villaesperanza.SpringWebMatriculas.repository.EstudiantesRepository;
@@ -60,12 +59,12 @@ public class EstudiantesService {
     }
 
     @Transactional(readOnly = true, propagation = Propagation.REQUIRED)
-    public Page<EstudiantesDto> getSearch(int page, int size, String descripcion, GeneroReference genero,
-            EstadoReference estado, EstadoAcademicoReference estadoA, Instant fechaDesde, Instant fechaHasta) {
+    public Page<EstudiantesDto> getSearch(int page, int size, String descripcion, GeneroReference genero, 
+                EstadoAcademicoReference estadoA, Instant fechaDesde, Instant fechaHasta) {
 
         Pageable pageable = PageRequest.of(page, size);
         Page<TEstudiantesEntity> pageList = estudiantesRepository.searchEstudiantes(descripcion,
-                genero == null ? null : genero.getValue(), estado == null ? null : estado.getValue(),
+                genero == null ? null : genero.getValue(),
                 estadoA == null ? null : estadoA.getValue(), fechaDesde, fechaHasta, pageable);
 
         return pageList.map(TEstudiantesEntity::toDto);

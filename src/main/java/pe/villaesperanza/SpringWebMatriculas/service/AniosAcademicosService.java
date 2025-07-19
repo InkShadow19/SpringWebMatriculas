@@ -10,7 +10,6 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import pe.villaesperanza.SpringWebMatriculas.dto.AniosAcademicosDto;
 import pe.villaesperanza.SpringWebMatriculas.dto.reference.EstadoAcademicoReference;
-import pe.villaesperanza.SpringWebMatriculas.dto.reference.EstadoReference;
 import pe.villaesperanza.SpringWebMatriculas.entity.TAniosAcademicosEntity;
 import pe.villaesperanza.SpringWebMatriculas.repository.AniosAcademicosRepository;
 import pe.villaesperanza.SpringWebMatriculas.util.AppException;
@@ -58,11 +57,11 @@ public class AniosAcademicosService {
     }
 
     @Transactional(readOnly = true, propagation = Propagation.REQUIRED)
-    public Page<AniosAcademicosDto> getSearch(int page, int size, Integer anio, EstadoReference estado, EstadoAcademicoReference estadoA, Instant fechaDesde, Instant fechaHasta) {
+    public Page<AniosAcademicosDto> getSearch(int page, int size, Integer anio, EstadoAcademicoReference estadoA, Instant fechaDesde, Instant fechaHasta) {
 
         Pageable pageable = PageRequest.of(page, size);
         Page<TAniosAcademicosEntity> pageList =  aniosAcademicosRepository.searchAcademicos(anio,
-                estado == null ? null : estado.getValue(), estadoA == null ? null : estadoA.getValue(),
+                estadoA == null ? null : estadoA.getValue(),
                 fechaDesde, fechaHasta, pageable);
 
         return pageList.map(TAniosAcademicosEntity::toDto);

@@ -8,7 +8,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import pe.villaesperanza.SpringWebMatriculas.dto.AniosAcademicosDto;
 import pe.villaesperanza.SpringWebMatriculas.dto.reference.EstadoAcademicoReference;
-import pe.villaesperanza.SpringWebMatriculas.dto.reference.EstadoReference;
 import pe.villaesperanza.SpringWebMatriculas.service.AniosAcademicosService;
 
 import java.time.Instant;
@@ -42,12 +41,11 @@ public class AniosAcademicosController {
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size,
             @RequestParam(required = false) Integer anio,
-            @RequestParam(required = false) EstadoReference estado,
             @RequestParam(required = false) EstadoAcademicoReference estadoA,
             @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) Instant fechaDesde,
             @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) Instant fechaHasta
     ) {
-        return academicosService.getSearch(page, size, anio, estado, estadoA, fechaDesde, fechaHasta);
+        return academicosService.getSearch(page, size, anio, estadoA, fechaDesde, fechaHasta);
     }
 
     @DeleteMapping("/{identifier}")

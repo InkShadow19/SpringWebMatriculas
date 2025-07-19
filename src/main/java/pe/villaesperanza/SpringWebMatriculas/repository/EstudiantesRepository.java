@@ -18,10 +18,9 @@ public interface EstudiantesRepository extends JpaRepository<TEstudiantesEntity,
     @Query("SELECT r FROM TEstudiantesEntity r " +
             "WHERE (:descripcion IS NULL OR r.nombre LIKE %:descripcion% OR r.dni LIKE %:descripcion%) " +
             "AND (:genero is NULL OR r.genero = :genero) " +
-            "AND (:estado is NULL OR r.estado = :estado) " +
             "AND (:estadoAcademico is NULL OR r.estadoAcademico = :estadoAcademico) " +
             "AND (CAST(:fechaDesde AS TIMESTAMP) IS NULL OR r.fechaNacimiento >= :fechaDesde) " +
             "AND (CAST(:fechaHasta AS TIMESTAMP) IS NULL OR r.fechaNacimiento <= :fechaHasta) " +
             "ORDER BY r.fechaCreacion DESC")
-    Page<TEstudiantesEntity> searchEstudiantes(String descripcion, Integer genero, Integer estado, Integer estadoAcademico, Instant fechaDesde, Instant fechaHasta, Pageable pageable);
+    Page<TEstudiantesEntity> searchEstudiantes(String descripcion, Integer genero, Integer estadoAcademico, Instant fechaDesde, Instant fechaHasta, Pageable pageable);
 }
