@@ -9,7 +9,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import pe.villaesperanza.SpringWebMatriculas.dto.MatriculasDto;
-import pe.villaesperanza.SpringWebMatriculas.dto.reference.EstadoReference;
+import pe.villaesperanza.SpringWebMatriculas.dto.reference.EstadoMatriculaReference;
 import pe.villaesperanza.SpringWebMatriculas.dto.reference.SituacionReference;
 import pe.villaesperanza.SpringWebMatriculas.entity.*;
 import pe.villaesperanza.SpringWebMatriculas.repository.*;
@@ -80,7 +80,7 @@ public class MatriculasService {
     }
 
     @Transactional(readOnly = true, propagation = Propagation.REQUIRED)
-    public Page<MatriculasDto> getSearch(int page, int size, String codigo, String procedencia, SituacionReference situacion, EstadoReference estado, Instant fechaDesde, Instant fechaHasta) {
+    public Page<MatriculasDto> getSearch(int page, int size, String codigo, String procedencia, SituacionReference situacion, EstadoMatriculaReference estado, Instant fechaDesde, Instant fechaHasta) {
 
         Pageable pageable = PageRequest.of(page, size);
         Page<TMatriculasEntity> pageList =  matriculasRepository.searchMatriculas(codigo, procedencia,

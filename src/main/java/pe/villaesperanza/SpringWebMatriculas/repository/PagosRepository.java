@@ -29,7 +29,7 @@ public interface PagosRepository extends JpaRepository<TPagosEntity, Long> {
     Page<TPagosEntity> searchPagos(Integer estado, Integer canalPago, String ticket, Double montoTotalPagado, Instant fechaDesde, Instant fechaHasta, Pageable pageable);
 
     @Query("SELECT new pe.villaesperanza.SpringWebMatriculas.dto.report.PagosPorPeriodosDto(" +
-            "r.numeroTicket, r.fechaPago, r.montoTotalPagado, r.canalPago, " + // <-- CORRECCIÓN: Añadido alias r.
+            "r.numeroTicket, r.fechaPago, r.montoTotalPagado, r.canalPago, " +
             "r.bancosEntity.descripcion, " +
             "CONCAT(r.usuariosEntity.nombres, ' ', r.usuariosEntity.apellidos)) " +
             "FROM TPagosEntity r " +

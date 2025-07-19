@@ -3,7 +3,7 @@ package pe.villaesperanza.SpringWebMatriculas.dto;
 import lombok.Getter;
 import lombok.Setter;
 import pe.villaesperanza.SpringWebMatriculas.dto.reference.CanalReference;
-import pe.villaesperanza.SpringWebMatriculas.dto.reference.EstadoReference;
+import pe.villaesperanza.SpringWebMatriculas.dto.reference.EstadoPagoReference;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -18,10 +18,10 @@ public class PagosDto implements Serializable {
     private String numeroTicket;
     private Double montoTotalPagado;
     private String fechaPago;
-    private EstadoReference estado;
+    private EstadoPagoReference estado;
     private String fechaCreacion;
-
     private String usuario;
     private String banco;
+
     private List<PagoDetallesDto> detalles = new ArrayList<>();
 }

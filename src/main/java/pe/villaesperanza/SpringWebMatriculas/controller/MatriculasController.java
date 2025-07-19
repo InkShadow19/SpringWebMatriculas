@@ -7,7 +7,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import pe.villaesperanza.SpringWebMatriculas.dto.MatriculasDto;
-import pe.villaesperanza.SpringWebMatriculas.dto.reference.EstadoReference;
+import pe.villaesperanza.SpringWebMatriculas.dto.reference.EstadoMatriculaReference;
 import pe.villaesperanza.SpringWebMatriculas.dto.reference.SituacionReference;
 import pe.villaesperanza.SpringWebMatriculas.service.MatriculasService;
 
@@ -44,7 +44,7 @@ public class MatriculasController {
             @RequestParam(required = false) String codigo,
             @RequestParam(required = false) String procedencia,
             @RequestParam(required = false) SituacionReference situacion,
-            @RequestParam(required = false) EstadoReference estado,
+            @RequestParam(required = false) EstadoMatriculaReference estado,
             @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) Instant fechaDesde,
             @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) Instant fechaHasta
     ) {

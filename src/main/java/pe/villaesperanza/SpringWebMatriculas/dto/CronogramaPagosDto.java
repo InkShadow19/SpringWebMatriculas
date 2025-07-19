@@ -21,8 +21,8 @@ public class CronogramaPagosDto implements Serializable {
     private String fechaVencimiento;
     private EstadoDeudaReference estadoDeuda;
     private String fechaCreacion;
-
     private String concepto;
     private String matricula;
+    
     private List<PagoDetallesDto> detalles = new ArrayList<>();
 }

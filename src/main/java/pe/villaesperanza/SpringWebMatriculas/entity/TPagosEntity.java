@@ -6,7 +6,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import pe.villaesperanza.SpringWebMatriculas.dto.PagosDto;
 import pe.villaesperanza.SpringWebMatriculas.dto.reference.CanalReference;
-import pe.villaesperanza.SpringWebMatriculas.dto.reference.EstadoReference;
+import pe.villaesperanza.SpringWebMatriculas.dto.reference.EstadoPagoReference;
 
 import java.time.Instant;
 import java.util.HashSet;
@@ -92,7 +92,7 @@ public class TPagosEntity {
         dto.setCanalPago(CanalReference.fromInt(canalPago));
         dto.setNumeroTicket(numeroTicket);
         dto.setMontoTotalPagado(montoTotalPagado);
-        dto.setEstado(EstadoReference.fromInt(estado));
+        dto.setEstado(EstadoPagoReference.fromInt(estado));
         dto.setFechaCreacion(fechaCreacion.toString());
 
         if (usuariosEntity != null) dto.setUsuario(usuariosEntity.getIdentifier());

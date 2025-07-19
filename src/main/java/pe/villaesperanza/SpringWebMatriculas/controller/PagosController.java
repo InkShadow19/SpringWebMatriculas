@@ -7,7 +7,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import pe.villaesperanza.SpringWebMatriculas.dto.PagosDto;
 import pe.villaesperanza.SpringWebMatriculas.dto.reference.CanalReference;
-import pe.villaesperanza.SpringWebMatriculas.dto.reference.EstadoReference;
+import pe.villaesperanza.SpringWebMatriculas.dto.reference.EstadoPagoReference;
 import pe.villaesperanza.SpringWebMatriculas.service.PagosService;
 
 import java.time.Instant;
@@ -40,7 +40,7 @@ public class PagosController {
     public Page<PagosDto> search(
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size,
-            @RequestParam(required = false) EstadoReference estado,
+            @RequestParam(required = false) EstadoPagoReference estado,
             @RequestParam(required = false) CanalReference canal,
             @RequestParam(required = false) String ticket,
             @RequestParam(required = false) Double monto,

@@ -5,7 +5,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import pe.villaesperanza.SpringWebMatriculas.dto.MatriculasDto;
-import pe.villaesperanza.SpringWebMatriculas.dto.reference.EstadoReference;
+import pe.villaesperanza.SpringWebMatriculas.dto.reference.EstadoMatriculaReference;
 import pe.villaesperanza.SpringWebMatriculas.dto.reference.SituacionReference;
 
 import java.time.Instant;
@@ -112,7 +112,7 @@ public class TMatriculasEntity {
         dto.setProcedencia(procedencia);
         dto.setSituacion(SituacionReference.fromInt(situacion));
         if (fechaMatricula != null) dto.setFechaMatricula(fechaMatricula.toString());
-        dto.setEstado(EstadoReference.fromInt(estado));
+        dto.setEstado(EstadoMatriculaReference.fromInt(estado));
         dto.setFechaCreacion(fechaCreacion.toString());
 
         if (nivelesEntity != null) dto.setNivel(nivelesEntity.getIdentifier());

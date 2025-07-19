@@ -2,7 +2,7 @@ package pe.villaesperanza.SpringWebMatriculas.dto;
 
 import lombok.Getter;
 import lombok.Setter;
-import pe.villaesperanza.SpringWebMatriculas.dto.reference.EstadoReference;
+import pe.villaesperanza.SpringWebMatriculas.dto.reference.EstadoMatriculaReference;
 import pe.villaesperanza.SpringWebMatriculas.dto.reference.SituacionReference;
 
 import java.io.Serializable;
@@ -18,13 +18,13 @@ public class MatriculasDto implements Serializable {
     private String procedencia;
     private SituacionReference situacion;
     private String fechaMatricula;
-    private EstadoReference estado;
+    private EstadoMatriculaReference estado;
     private String fechaCreacion;
-
     private String nivel;
     private String grado;
     private String estudiante;
     private String apoderado;
     private String anioAcademico;
+
     private List<CronogramaPagosDto> cronogramas = new ArrayList<>();
 }

@@ -14,7 +14,6 @@ public class PagoDetallesDto implements Serializable {
     private Double montoAplicado;
     private EstadoReference estado;
     private String fechaCreacion;
-
     private String cronograma;
     private String pago;
 }

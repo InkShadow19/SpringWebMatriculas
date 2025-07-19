@@ -16,7 +16,7 @@ public class GradosDto implements Serializable {
     private String descripcion;
     private EstadoReference estado;
     private String fechaCreacion;
-
     private String nivel;
+    
     private List<MatriculasDto> matriculas = new ArrayList<>();
 }

@@ -10,7 +10,7 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import pe.villaesperanza.SpringWebMatriculas.dto.PagosDto;
 import pe.villaesperanza.SpringWebMatriculas.dto.reference.CanalReference;
-import pe.villaesperanza.SpringWebMatriculas.dto.reference.EstadoReference;
+import pe.villaesperanza.SpringWebMatriculas.dto.reference.EstadoPagoReference;
 import pe.villaesperanza.SpringWebMatriculas.entity.*;
 import pe.villaesperanza.SpringWebMatriculas.repository.BancosRepository;
 import pe.villaesperanza.SpringWebMatriculas.repository.PagosRepository;
@@ -72,7 +72,7 @@ public class PagosService {
     }
 
     @Transactional(readOnly = true, propagation = Propagation.REQUIRED)
-    public Page<PagosDto> getSearch(int page, int size, EstadoReference estado, CanalReference canalPago, String ticket, Double monto, Instant fechaDesde, Instant fechaHasta) {
+    public Page<PagosDto> getSearch(int page, int size, EstadoPagoReference estado, CanalReference canalPago, String ticket, Double monto, Instant fechaDesde, Instant fechaHasta) {
 
         Pageable pageable = PageRequest.of(page, size);
         Page<TPagosEntity> pageList =  pagosRepository.searchPagos(estado == null ? null : estado.getValue(), canalPago == null ? null : canalPago.getValue(), ticket, monto, fechaDesde, fechaHasta, pageable);
