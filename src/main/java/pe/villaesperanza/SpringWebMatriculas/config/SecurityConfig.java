@@ -34,7 +34,7 @@ public class SecurityConfig {
                                              "/estudiantes/**",
                                              "/anios/academicos/**",
                                              "/bancos/**",
-                                             "/conceptos/pago**",
+                                             "/conceptos/pago/**",
                                              "/grados/**",
                                              "/niveles/**",
                                              "/roles/**").permitAll()

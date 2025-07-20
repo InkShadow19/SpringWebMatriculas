@@ -74,8 +74,7 @@ public class TEstudiantesEntity {
         this.nombre = estudiantesDto.getNombre();
         this.apellidoPaterno = estudiantesDto.getApellidoPaterno();
         this.apellidoMaterno = estudiantesDto.getApellidoMaterno();
-        if (estudiantesDto.getFechaNacimiento() != null)
-            this.fechaNacimiento = Instant.parse(estudiantesDto.getFechaNacimiento());
+        if (estudiantesDto.getFechaNacimiento() != null) this.fechaNacimiento = Instant.parse(estudiantesDto.getFechaNacimiento() + "T00:00:00Z");
         this.genero = estudiantesDto.getGenero().getValue();
         this.direccion = estudiantesDto.getDireccion();
         this.telefono = estudiantesDto.getTelefono();
@@ -134,7 +133,7 @@ public class TEstudiantesEntity {
         dto.setApellidoMaterno(apellidoMaterno);
         dto.setApellidoPaterno(apellidoPaterno);
         if (fechaNacimiento != null)
-            dto.setFechaCreacion(fechaCreacion.toString());
+            dto.setFechaNacimiento(fechaNacimiento.toString());
         dto.setGenero(GeneroReference.fromInt(genero));
         dto.setDireccion(direccion);
         dto.setTelefono(telefono);
