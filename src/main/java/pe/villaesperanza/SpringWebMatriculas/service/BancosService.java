@@ -57,10 +57,10 @@ public class BancosService {
     }
 
     @Transactional(readOnly = true, propagation = Propagation.REQUIRED)
-    public Page<BancosDto> getSearch(int page, int size, String codigo, String description, EstadoReference estado, Instant fechaDesde, Instant fechaHasta) {
+    public Page<BancosDto> getSearch(int page, int size, String descripcion, EstadoReference estado, Instant fechaDesde, Instant fechaHasta) {
 
         Pageable pageable = PageRequest.of(page, size);
-        Page<TBancosEntity> pageList =  bancosRepository.searchBancos(codigo, description,
+        Page<TBancosEntity> pageList =  bancosRepository.searchBancos(descripcion,
                 estado == null ? null : estado.getValue(), fechaDesde, fechaHasta, pageable);
 
         return pageList.map(TBancosEntity::toDto);

@@ -40,13 +40,12 @@ public class BancosController {
     public Page<BancosDto> search(
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size,
-            @RequestParam(required = false) String codigo,
-            @RequestParam(required = false) String descripcion,
+            @RequestParam(required = false) String descripcion, // Solo un parámetro de búsqueda
             @RequestParam(required = false) EstadoReference estado,
             @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) Instant fechaDesde,
             @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) Instant fechaHasta
     ) {
-        return bancosService.getSearch(page, size, codigo, descripcion, estado, fechaDesde, fechaHasta);
+        return bancosService.getSearch(page, size, descripcion, estado, fechaDesde, fechaHasta);
     }
 
     @DeleteMapping("/{identifier}")

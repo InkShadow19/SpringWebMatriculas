@@ -16,12 +16,10 @@ public interface BancosRepository extends JpaRepository<TBancosEntity, Long> {
     Optional<TBancosEntity> findByIdentifier(String identifier);
 
     @Query("SELECT r FROM TBancosEntity r " +
-            "WHERE (:codigo IS NULL OR r.codigo LIKE %:codigo%) " +
-            "AND (:descripcion IS NULL OR r.descripcion LIKE %:descripcion%) " +
+            "WHERE (:descripcion IS NULL OR r.descripcion LIKE %:descripcion% OR r.codigo LIKE %:descripcion%) " +
             "AND (:estado is NULL OR r.estado = :estado) " +
             "AND (CAST(:fechaDesde AS TIMESTAMP) IS NULL OR r.fechaCreacion >= :fechaDesde) " +
             "AND (CAST(:fechaHasta AS TIMESTAMP) IS NULL OR r.fechaCreacion <= :fechaHasta) " +
             "ORDER BY r.fechaCreacion DESC")
-    Page<TBancosEntity> searchBancos(String codigo, String descripcion, Integer estado, Instant fechaDesde, Instant fechaHasta, Pageable pageable);
-
+    Page<TBancosEntity> searchBancos(String descripcion, Integer estado, Instant fechaDesde, Instant fechaHasta, Pageable pageable);
 }
