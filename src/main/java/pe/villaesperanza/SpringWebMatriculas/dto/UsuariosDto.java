@@ -14,9 +14,9 @@ public class UsuariosDto implements Serializable {
 
     private String identifier;
     private String usuario;
-    private String contraseña;
+    private String contrasena;
     private String nombres;
-    private String apellidos;
+    private String apellidos;   
     private String fechaNacimiento;
     private String dni;
     private EstadoReference estado;

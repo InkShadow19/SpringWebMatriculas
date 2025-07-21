@@ -16,7 +16,11 @@ public interface EstudiantesRepository extends JpaRepository<TEstudiantesEntity,
     Optional<TEstudiantesEntity> findByIdentifier(String identifier);
     
     @Query("SELECT r FROM TEstudiantesEntity r " +
-            "WHERE (:descripcion IS NULL OR r.nombre LIKE %:descripcion% OR r.dni LIKE %:descripcion%) " +
+            "WHERE (:descripcion IS NULL " +
+            "OR r.dni LIKE %:descripcion% " +
+            "OR r.nombre LIKE %:descripcion% " +
+            "OR r.apellidoPaterno LIKE %:descripcion% " +
+            "OR r.apellidoMaterno LIKE %:descripcion%) " +
             "AND (:genero is NULL OR r.genero = :genero) " +
             "AND (:estadoAcademico is NULL OR r.estadoAcademico = :estadoAcademico) " +
             "AND (CAST(:fechaDesde AS TIMESTAMP) IS NULL OR r.fechaNacimiento >= :fechaDesde) " +

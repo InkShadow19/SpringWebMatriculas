@@ -1,11 +1,16 @@
 package pe.villaesperanza.SpringWebMatriculas.dto.auth;
 
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Data
+@Builder
 @AllArgsConstructor
+@NoArgsConstructor
 public class LoginResponse {
-    private String message;
-    private Object userInfo; // Para enviar datos del usuario si lo necesitas
+    private String token;
+    private String username;
+    private String role;
 }

@@ -36,8 +36,8 @@ public class TUsuariosEntity implements UserDetails {
     @Column(name = "usuario", length = 100, nullable = false)
     private String usuario;
 
-    @Column(name = "contraseña", nullable = false)
-    private String contraseña;
+    @Column(name = "contrasena", nullable = false)
+    private String contrasena;
 
     @Column(name = "nombres", nullable = false)
     private String nombres;
@@ -79,7 +79,7 @@ public class TUsuariosEntity implements UserDetails {
 
     @Override
     public String getPassword() {
-        return this.contraseña;
+        return this.contrasena;
     }
 
     @Override
@@ -113,7 +113,7 @@ public class TUsuariosEntity implements UserDetails {
         this.rolesEntity = rolesEntity;
         this.identifier = UUID.randomUUID().toString();
         this.usuario = usuarios.getUsuario();
-        this.contraseña = usuarios.getContraseña();
+        this.contrasena = usuarios.getContrasena();
         this.nombres = usuarios.getNombres();
         this.apellidos = usuarios.getApellidos();
         this.fechaNacimiento = Instant.parse(usuarios.getFechaNacimiento());
@@ -129,7 +129,7 @@ public class TUsuariosEntity implements UserDetails {
 
         dto.setIdentifier(identifier);
         dto.setUsuario(usuario);
-        dto.setContraseña(contraseña);
+        dto.setContrasena(contrasena);
         dto.setNombres(nombres);
         dto.setApellidos(apellidos);
         dto.setFechaNacimiento(fechaNacimiento.toString());
