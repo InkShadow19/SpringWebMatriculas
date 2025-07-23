@@ -15,6 +15,8 @@ public interface ConceptosPagoRepository extends JpaRepository<TConceptosPagoEnt
 
     Optional<TConceptosPagoEntity> findByIdentifier(String identifier);
 
+    Optional<TConceptosPagoEntity> findByCodigo(String codigo);
+
     @Query("SELECT r FROM TConceptosPagoEntity r " +
             "WHERE (:codigo IS NULL OR r.codigo LIKE %:codigo%) " +
             "AND (:descripcion IS NULL OR r.descripcion LIKE %:descripcion%) " +
