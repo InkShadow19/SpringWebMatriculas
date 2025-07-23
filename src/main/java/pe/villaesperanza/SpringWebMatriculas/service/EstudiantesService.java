@@ -27,50 +27,61 @@ public class EstudiantesService {
 
     private final EstudiantesRepository estudiantesRepository;
 
-    @Transactional(propagation = Propagation.REQUIRED, rollbackFor = { Exception.class, IOException.class })
-    public EstudiantesDto add(EstudiantesDto nivelesDto) {
+    private void validarUnicidad(String dni, String email, String identifier) {
+        // Validar DNI
+        Optional<TEstudiantesEntity> estudiantePorDni = estudiantesRepository.findByDni(dni);
+        if (estudiantePorDni.isPresent() && !estudiantePorDni.get().getIdentifier().equals(identifier)) {
+            throw new AppException("El DNI '" + dni + "' ya se encuentra registrado.");
+        }
 
-        TEstudiantesEntity entity = new TEstudiantesEntity(nivelesDto);
+        // Validar Email
+        Optional<TEstudiantesEntity> estudiantePorEmail = estudiantesRepository.findByEmail(email);
+        if (estudiantePorEmail.isPresent() && !estudiantePorEmail.get().getIdentifier().equals(identifier)) {
+            throw new AppException("El correo electrónico '" + email + "' ya se encuentra registrado.");
+        }
+    }
+
+    @Transactional(propagation = Propagation.REQUIRED, rollbackFor = {Exception.class, IOException.class})
+    public EstudiantesDto add(EstudiantesDto estudiantesDto) {
+        // Para un nuevo estudiante, el identifier a comparar es null.
+        validarUnicidad(estudiantesDto.getDni(), estudiantesDto.getEmail(), null);
+        
+        TEstudiantesEntity entity = new TEstudiantesEntity(estudiantesDto);
         TEstudiantesEntity result = estudiantesRepository.save(entity);
 
         return result.toDto();
     }
 
-    @Transactional(propagation = Propagation.REQUIRED, rollbackFor = { Exception.class, IOException.class })
-    public EstudiantesDto update(String identifier, EstudiantesDto nivelesDto) {
+    @Transactional(propagation = Propagation.REQUIRED, rollbackFor = {Exception.class, IOException.class})
+    public EstudiantesDto update(String identifier, EstudiantesDto estudiantesDto) {
+        // Para actualizar, pasamos el identifier del estudiante que estamos editando.
+        validarUnicidad(estudiantesDto.getDni(), estudiantesDto.getEmail(), identifier);
 
         TEstudiantesEntity entity = estudiantesRepository.findByIdentifier(identifier)
                 .orElseThrow(() -> new AppException("El identifier de este estudiante no existe"));
 
-        entity.update(nivelesDto);
+        entity.update(estudiantesDto);
         TEstudiantesEntity result = estudiantesRepository.save(entity);
-        estudiantesRepository.save(result);
-
         return result.toDto();
     }
 
     @Transactional(readOnly = true, propagation = Propagation.REQUIRED)
     public Optional<EstudiantesDto> get(String identifier) {
-
-        TEstudiantesEntity result = estudiantesRepository.findByIdentifier(identifier)
-                .orElseThrow(() -> new AppException("El identifier de este estudiante no existe"));
-
-        return Optional.ofNullable(result.toDto());
+        return estudiantesRepository.findByIdentifier(identifier).map(TEstudiantesEntity::toDto);
     }
 
     @Transactional(readOnly = true, propagation = Propagation.REQUIRED)
-    public Page<EstudiantesDto> getSearch(int page, int size, String descripcion, GeneroReference genero, 
-                EstadoAcademicoReference estadoA, Instant fechaDesde, Instant fechaHasta) {
-
+    public Page<EstudiantesDto> getSearch(int page, int size, String descripcion, GeneroReference genero,
+                                          EstadoAcademicoReference estadoA, Instant fechaDesde, Instant fechaHasta) {
         Pageable pageable = PageRequest.of(page, size);
-        Page<TEstudiantesEntity> pageList = estudiantesRepository.searchEstudiantes(descripcion,
-                genero == null ? null : genero.getValue(),
-                estadoA == null ? null : estadoA.getValue(), fechaDesde, fechaHasta, pageable);
-
+        Integer generoValue = (genero != null) ? genero.getValue() : null;
+        Integer estadoAValue = (estadoA != null) ? estadoA.getValue() : null;
+        
+        Page<TEstudiantesEntity> pageList = estudiantesRepository.searchEstudiantes(descripcion, generoValue, estadoAValue, fechaDesde, fechaHasta, pageable);
         return pageList.map(TEstudiantesEntity::toDto);
     }
 
-    @Transactional(propagation = Propagation.REQUIRED, rollbackFor = { Exception.class, IOException.class })
+    @Transactional(propagation = Propagation.REQUIRED, rollbackFor = {Exception.class, IOException.class})
     public void delete(String identifier) {
         TEstudiantesEntity entity = estudiantesRepository.findByIdentifier(identifier)
                 .orElseThrow(() -> new AppException("El identifier de este estudiante no existe para eliminar"));

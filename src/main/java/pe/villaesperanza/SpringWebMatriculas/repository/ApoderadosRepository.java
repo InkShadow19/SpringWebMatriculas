@@ -13,6 +13,10 @@ public interface ApoderadosRepository extends JpaRepository<TApoderadosEntity, L
 
     Optional<TApoderadosEntity> findByIdentifier(String identifier);
 
+    // --- MÉTODOS AÑADIDOS PARA VALIDACIÓN DE UNICIDAD ---
+    Optional<TApoderadosEntity> findByDni(String dni);
+    Optional<TApoderadosEntity> findByEmail(String email);
+
     @Query("SELECT r FROM TApoderadosEntity r " +
             "WHERE (:descripcion IS NULL " +
             "OR r.dni LIKE %:descripcion% " +

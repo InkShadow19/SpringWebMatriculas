@@ -6,6 +6,8 @@ import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import jakarta.validation.Valid;
 import pe.villaesperanza.SpringWebMatriculas.dto.ApoderadosDto;
 import pe.villaesperanza.SpringWebMatriculas.dto.reference.EstadoReference;
 import pe.villaesperanza.SpringWebMatriculas.dto.reference.GeneroReference;
@@ -21,13 +23,13 @@ public class ApoderadosController {
     private final ApoderadosService apoderadosService;
 
     @PostMapping
-    public ApoderadosDto add(@RequestBody ApoderadosDto apoderadosDto) {
+    public ApoderadosDto add(@Valid @RequestBody ApoderadosDto apoderadosDto) { // Añadir @Valid
         return apoderadosService.add(apoderadosDto);
     }
 
     @PatchMapping("/{identifier}")
     public ApoderadosDto update(@PathVariable(value = "identifier") String identifier,
-                                 @RequestBody ApoderadosDto apoderadosDto) {
+                                 @Valid @RequestBody ApoderadosDto apoderadosDto) { // Añadir @Valid
         return apoderadosService.update(identifier, apoderadosDto);
     }
 
@@ -51,7 +53,7 @@ public class ApoderadosController {
     }
 
     @DeleteMapping("/{identifier}")
-    @ResponseStatus(HttpStatus.NO_CONTENT) // Devuelve un estado 204 No Content, ideal para delete exitoso
+    @ResponseStatus(HttpStatus.NO_CONTENT)
     public void delete(@PathVariable(value = "identifier") String identifier) {
         apoderadosService.delete(identifier);
     }

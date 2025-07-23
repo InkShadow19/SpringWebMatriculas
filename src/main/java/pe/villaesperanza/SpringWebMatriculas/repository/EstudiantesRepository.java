@@ -14,6 +14,10 @@ import java.util.Optional;
 public interface EstudiantesRepository extends JpaRepository<TEstudiantesEntity, Long> {
 
     Optional<TEstudiantesEntity> findByIdentifier(String identifier);
+
+    // Métodos para validación de unicidad
+    Optional<TEstudiantesEntity> findByDni(String dni);
+    Optional<TEstudiantesEntity> findByEmail(String email);
     
     @Query("SELECT r FROM TEstudiantesEntity r " +
             "WHERE (:descripcion IS NULL " +

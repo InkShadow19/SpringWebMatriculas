@@ -6,6 +6,8 @@ import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import jakarta.validation.Valid;
 import pe.villaesperanza.SpringWebMatriculas.dto.EstudiantesDto;
 import pe.villaesperanza.SpringWebMatriculas.dto.reference.EstadoAcademicoReference;
 import pe.villaesperanza.SpringWebMatriculas.dto.reference.GeneroReference;
@@ -21,13 +23,13 @@ public class EstudiantesController {
     private final EstudiantesService estudiantesService;
 
     @PostMapping
-    public EstudiantesDto add(@RequestBody EstudiantesDto estudiantesDto) {
+    public EstudiantesDto add(@Valid @RequestBody EstudiantesDto estudiantesDto) {
         return estudiantesService.add(estudiantesDto);
     }
 
     @PatchMapping("/{identifier}")
     public EstudiantesDto update(@PathVariable(value = "identifier") String identifier,
-                             @RequestBody EstudiantesDto estudiantesDto) {
+                             @Valid @RequestBody EstudiantesDto estudiantesDto) {
         return estudiantesService.update(identifier, estudiantesDto);
     }
 
