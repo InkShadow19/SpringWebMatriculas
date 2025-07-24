@@ -6,6 +6,8 @@ import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import jakarta.validation.Valid;
 import pe.villaesperanza.SpringWebMatriculas.dto.RolesDto;
 import pe.villaesperanza.SpringWebMatriculas.dto.reference.EstadoReference;
 import pe.villaesperanza.SpringWebMatriculas.service.RolesService;
@@ -20,14 +22,20 @@ public class RolesController {
     private final RolesService rolesService;
 
     @PostMapping
-    public RolesDto add(@RequestBody RolesDto rolesDto) {
+    public RolesDto add(@Valid @RequestBody RolesDto rolesDto) {
         return rolesService.add(rolesDto);
     }
 
     @PatchMapping("/{identifier}")
     public RolesDto update(@PathVariable(value = "identifier") String identifier,
-                             @RequestBody RolesDto rolesDto) {
+                             @Valid @RequestBody RolesDto rolesDto) {
         return rolesService.update(identifier, rolesDto);
+    }
+
+    @DeleteMapping("/{identifier}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void delete(@PathVariable(value = "identifier") String identifier) {
+        rolesService.delete(identifier);
     }
 
     @GetMapping("/{identifier}")
@@ -46,11 +54,5 @@ public class RolesController {
             @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) Instant fechaHasta
     ) {
         return rolesService.getSearch(page, size, descripcion, estado, fechaDesde, fechaHasta);
-    }
-
-    @DeleteMapping("/{identifier}")
-    @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void delete(@PathVariable(value = "identifier") String identifier) {
-        rolesService.delete(identifier);
     }
 }

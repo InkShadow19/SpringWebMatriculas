@@ -25,52 +25,70 @@ public class AniosAcademicosService {
 
     private final AniosAcademicosRepository aniosAcademicosRepository;
 
+    private void validarUnicidad(Integer anio, String identifier) {
+        Optional<TAniosAcademicosEntity> porAnio = aniosAcademicosRepository.findByAnio(anio);
+        if (porAnio.isPresent() && !porAnio.get().getIdentifier().equals(identifier)) {
+            throw new AppException("El año académico " + anio + " ya se encuentra registrado.");
+        }
+    }
+
+    private void validarEstadoActivo(String identifier) {
+        Optional<TAniosAcademicosEntity> anioActivo = aniosAcademicosRepository.findByEstadoAcademico(EstadoAcademicoReference.ACTIVO.getValue());
+        if (anioActivo.isPresent() && !anioActivo.get().getIdentifier().equals(identifier)) {
+            throw new AppException("Ya existe un año académico activo. Solo puede haber uno a la vez.");
+        }
+    }
+
     @Transactional(propagation = Propagation.REQUIRED, rollbackFor = { Exception.class, IOException.class })
     public AniosAcademicosDto add(AniosAcademicosDto aniosAcademicosDto) {
-
+        validarUnicidad(aniosAcademicosDto.getAnio(), null);
+        if (aniosAcademicosDto.getEstadoAcademico() == EstadoAcademicoReference.ACTIVO) {
+            validarEstadoActivo(null);
+        }
+        
         TAniosAcademicosEntity entity = new TAniosAcademicosEntity(aniosAcademicosDto);
         TAniosAcademicosEntity result = aniosAcademicosRepository.save(entity);
-
         return result.toDto();
     }
 
     @Transactional(propagation = Propagation.REQUIRED, rollbackFor = { Exception.class, IOException.class })
     public AniosAcademicosDto update(String identifier, AniosAcademicosDto aniosAcademicosDto) {
+        validarUnicidad(aniosAcademicosDto.getAnio(), identifier);
+        if (aniosAcademicosDto.getEstadoAcademico() == EstadoAcademicoReference.ACTIVO) {
+            validarEstadoActivo(identifier);
+        }
 
         TAniosAcademicosEntity entity = aniosAcademicosRepository.findByIdentifier(identifier)
                 .orElseThrow(() -> new AppException("El identifier de este año no existe"));
 
         entity.update(aniosAcademicosDto);
-        TAniosAcademicosEntity result = aniosAcademicosRepository.save(entity);
-        aniosAcademicosRepository.save(result);
-
-        return result.toDto();
+        aniosAcademicosRepository.save(entity);
+        return entity.toDto();
     }
 
     @Transactional(readOnly = true, propagation = Propagation.REQUIRED)
     public Optional<AniosAcademicosDto> get(String identifier) {
-
-        TAniosAcademicosEntity result = aniosAcademicosRepository.findByIdentifier(identifier)
-                .orElseThrow(() -> new AppException("El identifier de este año no existe"));
-
-        return Optional.ofNullable(result.toDto());
+        return aniosAcademicosRepository.findByIdentifier(identifier).map(TAniosAcademicosEntity::toDto);
     }
 
     @Transactional(readOnly = true, propagation = Propagation.REQUIRED)
     public Page<AniosAcademicosDto> getSearch(int page, int size, Integer anio, EstadoAcademicoReference estadoA, Instant fechaDesde, Instant fechaHasta) {
-
         Pageable pageable = PageRequest.of(page, size);
-        Page<TAniosAcademicosEntity> pageList =  aniosAcademicosRepository.searchAcademicos(anio,
-                estadoA == null ? null : estadoA.getValue(),
-                fechaDesde, fechaHasta, pageable);
-
+        Integer estadoValue = (estadoA != null) ? estadoA.getValue() : null;
+        Page<TAniosAcademicosEntity> pageList = aniosAcademicosRepository.searchAcademicos(anio, estadoValue, fechaDesde, fechaHasta, pageable);
         return pageList.map(TAniosAcademicosEntity::toDto);
     }
 
     @Transactional(propagation = Propagation.REQUIRED, rollbackFor = { Exception.class, IOException.class })
     public void delete(String identifier) {
         TAniosAcademicosEntity entity = aniosAcademicosRepository.findByIdentifier(identifier)
-                .orElseThrow(() -> new AppException("El identifier de este año académico no existe para eliminar"));
+                .orElseThrow(() -> new AppException("El año académico a eliminar no existe."));
+
+        // VALIDACIÓN: No eliminar si tiene matrículas asociadas.
+        if (!entity.getMatriculas().isEmpty()) {
+            throw new AppException("No se puede eliminar un año académico con matrículas asociadas. Cámbielo a estado 'CERRADO'.");
+        }
+
         aniosAcademicosRepository.delete(entity);
     }
 }

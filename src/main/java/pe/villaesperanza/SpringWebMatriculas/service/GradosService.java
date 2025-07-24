@@ -28,11 +28,19 @@ public class GradosService {
     private final GradosRepository gradosRepository;
     private final NivelesRepository nivelesRepository;
 
+    private void validarUnicidad(String descripcion, String nivelIdentifier, String gradoIdentifier) {
+        Optional<TGradosEntity> porDescripcionYNivel = gradosRepository.findByDescripcionAndNivelesEntityIdentifier(descripcion, nivelIdentifier);
+        if (porDescripcionYNivel.isPresent() && !porDescripcionYNivel.get().getIdentifier().equals(gradoIdentifier)) {
+            throw new AppException("La descripción '" + descripcion + "' ya existe para este nivel.");
+        }
+    }
+
     @Transactional(propagation = Propagation.REQUIRED, rollbackFor = { Exception.class, IOException.class })
     public GradosDto add(GradosDto gradosDto) {
+        validarUnicidad(gradosDto.getDescripcion(), gradosDto.getNivel(), null);
         
         TNivelesEntity nivel = nivelesRepository.findByIdentifier(gradosDto.getNivel())
-                .orElseThrow(() -> new AppException("El nivel especificado no existe"));
+                .orElseThrow(() -> new AppException("El nivel especificado no existe."));
         
         TGradosEntity entity = new TGradosEntity(gradosDto, nivel);
         TGradosEntity result = gradosRepository.save(entity);
@@ -41,23 +49,29 @@ public class GradosService {
 
     @Transactional(propagation = Propagation.REQUIRED, rollbackFor = { Exception.class, IOException.class })
     public GradosDto update(String identifier, GradosDto gradosDto) {
-        
         TGradosEntity entity = gradosRepository.findByIdentifier(identifier)
-                .orElseThrow(() -> new AppException("El identifier de este grado no existe"));
+                .orElseThrow(() -> new AppException("El identificador de este grado no existe."));
 
+        validarUnicidad(gradosDto.getDescripcion(), entity.getNivelesEntity().getIdentifier(), identifier);
+        
         entity.update(gradosDto);
-        // Opcional: Lógica para cambiar de nivel si se proporciona en el DTO
-        /*if (gradosDto.getNivel() != null) {
-            TNivelesEntity nuevoNivel = nivelesRepository.findByIdentifier(gradosDto.getNivel())
-                    .orElseThrow(() -> new AppException("El nuevo nivel especificado no existe"));
-            entity.setNivelesEntity(nuevoNivel);
-        }*/
         TGradosEntity result = gradosRepository.save(entity);
-        gradosRepository.save(result);
-
         return result.toDto();
     }
     
+    @Transactional(propagation = Propagation.REQUIRED, rollbackFor = { Exception.class, IOException.class })
+    public void delete(String identifier) {
+        TGradosEntity entity = gradosRepository.findByIdentifier(identifier)
+                .orElseThrow(() -> new AppException("El grado que intenta eliminar no existe."));
+
+        // VALIDACIÓN: No eliminar si tiene matrículas asociadas.
+        if (!entity.getMatriculas().isEmpty()) {
+            throw new AppException("No se puede eliminar el grado porque tiene matrículas asociadas. Por favor, inactivelo en su lugar.");
+        }
+        
+        gradosRepository.delete(entity);
+    }
+
     @Transactional(readOnly = true, propagation = Propagation.REQUIRED)
     public Optional<GradosDto> get(String identifier) {
         return gradosRepository.findByIdentifier(identifier).map(TGradosEntity::toDto);
@@ -65,25 +79,14 @@ public class GradosService {
 
     @Transactional(readOnly = true, propagation = Propagation.REQUIRED)
     public Page<GradosDto> getSearch(int page, int size, String descripcion, EstadoReference estado, String nivelIdentifier, Instant fechaDesde, Instant fechaHasta) {
-        
         Pageable pageable = PageRequest.of(page, size);
-        
         Long idNivel = null;
         if (nivelIdentifier != null && !nivelIdentifier.isEmpty()) {
             idNivel = nivelesRepository.findByIdentifier(nivelIdentifier)
                     .orElseThrow(() -> new AppException("El nivel para el filtro no existe")).getId();
         }
-
         Integer estadoValue = (estado != null) ? estado.getValue() : null;
-        
         Page<TGradosEntity> pageList = gradosRepository.searchGrados(descripcion, estadoValue, idNivel, fechaDesde, fechaHasta, pageable);
         return pageList.map(TGradosEntity::toDto);
-    }
-
-    @Transactional(propagation = Propagation.REQUIRED, rollbackFor = { Exception.class, IOException.class })
-    public void delete(String identifier) {
-        TGradosEntity entity = gradosRepository.findByIdentifier(identifier)
-                .orElseThrow(() -> new AppException("El identifier de este grado no existe para eliminar"));
-        gradosRepository.delete(entity);
     }
 }

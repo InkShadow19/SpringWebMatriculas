@@ -15,6 +15,9 @@ public interface NivelesRepository extends JpaRepository<TNivelesEntity, Long> {
 
     Optional<TNivelesEntity> findByIdentifier(String identifier);
 
+    // --- MÉTODO AÑADIDO PARA VALIDACIÓN DE UNICIDAD ---
+    Optional<TNivelesEntity> findByDescripcion(String descripcion);
+
     @Query("SELECT r FROM TNivelesEntity r " +
             "WHERE (:descripcion IS NULL OR r.descripcion LIKE %:descripcion%) " +
             "AND (:estado is NULL OR r.estado = :estado) " +

@@ -25,44 +25,47 @@ public class ConceptosPagoService {
 
     private final ConceptosPagoRepository conceptosPagoRepository;
 
+    private void validarUnicidad(String codigo, String descripcion, String identifier) {
+        Optional<TConceptosPagoEntity> porCodigo = conceptosPagoRepository.findByCodigo(codigo);
+        if (porCodigo.isPresent() && !porCodigo.get().getIdentifier().equals(identifier)) {
+            throw new AppException("El código '" + codigo + "' ya se encuentra registrado.");
+        }
+       
+        Optional<TConceptosPagoEntity> porDescripcion = conceptosPagoRepository.findByDescripcion(descripcion);
+        if (porDescripcion.isPresent() && !porDescripcion.get().getIdentifier().equals(identifier)) {
+            throw new AppException("La descripción '" + descripcion + "' ya está en uso.");
+        }
+    }
+
     @Transactional(propagation = Propagation.REQUIRED, rollbackFor = { Exception.class, IOException.class })
-    public ConceptosPagoDto add(ConceptosPagoDto bancosDto) {
-
-        TConceptosPagoEntity entity = new TConceptosPagoEntity(bancosDto);
+    public ConceptosPagoDto add(ConceptosPagoDto conceptosPagoDto) {
+        validarUnicidad(conceptosPagoDto.getCodigo(), conceptosPagoDto.getDescripcion(), null);
+        TConceptosPagoEntity entity = new TConceptosPagoEntity(conceptosPagoDto);
         TConceptosPagoEntity result = conceptosPagoRepository.save(entity);
-
         return result.toDto();
     }
 
     @Transactional(propagation = Propagation.REQUIRED, rollbackFor = { Exception.class, IOException.class })
-    public ConceptosPagoDto update(String identifier, ConceptosPagoDto bancosDto) {
-
+    public ConceptosPagoDto update(String identifier, ConceptosPagoDto conceptosPagoDto) {
+        validarUnicidad(conceptosPagoDto.getCodigo(), conceptosPagoDto.getDescripcion(), identifier);
         TConceptosPagoEntity entity = conceptosPagoRepository.findByIdentifier(identifier)
                 .orElseThrow(() -> new AppException("El identifier de este concepto no existe"));
 
-        entity.update(bancosDto);
-        TConceptosPagoEntity result = conceptosPagoRepository.save(entity);
-        conceptosPagoRepository.save(result);
-
-        return result.toDto();
+        entity.update(conceptosPagoDto);
+        conceptosPagoRepository.save(entity);
+        return entity.toDto();
     }
 
     @Transactional(readOnly = true, propagation = Propagation.REQUIRED)
     public Optional<ConceptosPagoDto> get(String identifier) {
-
-        TConceptosPagoEntity result = conceptosPagoRepository.findByIdentifier(identifier)
-                .orElseThrow(() -> new AppException("El identifier de este concepto no existe"));
-
-        return Optional.ofNullable(result.toDto());
+        return conceptosPagoRepository.findByIdentifier(identifier).map(TConceptosPagoEntity::toDto);
     }
 
     @Transactional(readOnly = true, propagation = Propagation.REQUIRED)
     public Page<ConceptosPagoDto> getSearch(int page, int size, String codigo, String description, EstadoReference estado, Instant fechaDesde, Instant fechaHasta) {
-
         Pageable pageable = PageRequest.of(page, size);
-        Page<TConceptosPagoEntity> pageList =  conceptosPagoRepository.searchConceptos(codigo, description,
-                estado == null ? null : estado.getValue(), fechaDesde, fechaHasta, pageable);
-
+        Integer estadoValue = (estado != null) ? estado.getValue() : null;
+        Page<TConceptosPagoEntity> pageList = conceptosPagoRepository.searchConceptos(codigo, description, estadoValue, fechaDesde, fechaHasta, pageable);
         return pageList.map(TConceptosPagoEntity::toDto);
     }
 

@@ -14,6 +14,11 @@ import java.util.Optional;
 public interface AniosAcademicosRepository extends JpaRepository<TAniosAcademicosEntity, Long> {
 
     Optional<TAniosAcademicosEntity> findByIdentifier(String identifier);
+    
+    Optional<TAniosAcademicosEntity> findByAnio(Integer anio);
+
+    // --- MÉTODO AÑADIDO PARA BUSCAR POR ESTADO ---
+    Optional<TAniosAcademicosEntity> findByEstadoAcademico(Integer estado);
 
     @Query("SELECT r FROM TAniosAcademicosEntity r " +
             "WHERE (:anio IS NULL OR r.anio = :anio) " +

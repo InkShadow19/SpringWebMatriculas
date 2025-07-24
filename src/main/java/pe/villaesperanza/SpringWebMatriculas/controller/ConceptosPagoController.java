@@ -6,6 +6,8 @@ import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import jakarta.validation.Valid;
 import pe.villaesperanza.SpringWebMatriculas.dto.ConceptosPagoDto;
 import pe.villaesperanza.SpringWebMatriculas.dto.reference.EstadoReference;
 import pe.villaesperanza.SpringWebMatriculas.service.ConceptosPagoService;
@@ -20,13 +22,13 @@ public class ConceptosPagoController {
     private final ConceptosPagoService conceptosPagoService;
 
     @PostMapping
-    public ConceptosPagoDto add(@RequestBody ConceptosPagoDto conceptosPagoDto) {
+    public ConceptosPagoDto add(@Valid @RequestBody ConceptosPagoDto conceptosPagoDto) {
         return conceptosPagoService.add(conceptosPagoDto);
     }
 
     @PatchMapping("/{identifier}")
     public ConceptosPagoDto update(@PathVariable(value = "identifier") String identifier,
-                            @RequestBody ConceptosPagoDto conceptosPagoDto) {
+                            @Valid @RequestBody ConceptosPagoDto conceptosPagoDto) {
         return conceptosPagoService.update(identifier, conceptosPagoDto);
     }
 

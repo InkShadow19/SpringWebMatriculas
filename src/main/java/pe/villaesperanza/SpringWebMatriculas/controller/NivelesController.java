@@ -6,6 +6,8 @@ import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import jakarta.validation.Valid;
 import pe.villaesperanza.SpringWebMatriculas.dto.NivelesDto;
 import pe.villaesperanza.SpringWebMatriculas.dto.reference.EstadoReference;
 import pe.villaesperanza.SpringWebMatriculas.service.NivelesService;
@@ -20,16 +22,22 @@ public class NivelesController {
     private final NivelesService nivelesService;
 
     @PostMapping
-    public NivelesDto add(@RequestBody NivelesDto nivel) {
+    public NivelesDto add(@Valid @RequestBody NivelesDto nivel) {
         return nivelesService.add(nivel);
     }
 
     @PatchMapping("/{identifier}")
     public NivelesDto update(@PathVariable(value = "identifier") String identifier,
-                             @RequestBody NivelesDto nivel) {
+                             @Valid @RequestBody NivelesDto nivel) {
         return nivelesService.update(identifier, nivel);
     }
 
+    @DeleteMapping("/{identifier}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void delete(@PathVariable(value = "identifier") String identifier) {
+        nivelesService.delete(identifier);
+    }
+    
     @GetMapping("/{identifier}")
     public ResponseEntity<NivelesDto> get(@PathVariable(value = "identifier") String identifier) {
         return nivelesService.get(identifier).map(ResponseEntity::ok)
@@ -46,11 +54,5 @@ public class NivelesController {
             @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) Instant fechaHasta
     ) {
         return nivelesService.getSearch(page, size, descripcion, estado, fechaDesde, fechaHasta);
-    }
-
-    @DeleteMapping("/{identifier}")
-    @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void delete(@PathVariable(value = "identifier") String identifier) {
-        nivelesService.delete(identifier);
     }
 }

@@ -6,6 +6,8 @@ import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import jakarta.validation.Valid;
 import pe.villaesperanza.SpringWebMatriculas.dto.AniosAcademicosDto;
 import pe.villaesperanza.SpringWebMatriculas.dto.reference.EstadoAcademicoReference;
 import pe.villaesperanza.SpringWebMatriculas.service.AniosAcademicosService;
@@ -20,16 +22,23 @@ public class AniosAcademicosController {
     private final AniosAcademicosService academicosService;
 
     @PostMapping
-    public AniosAcademicosDto add(@RequestBody AniosAcademicosDto aniosAcademicosDto) {
+    public AniosAcademicosDto add(@Valid @RequestBody AniosAcademicosDto aniosAcademicosDto) {
         return academicosService.add(aniosAcademicosDto);
     }
 
     @PatchMapping("/{identifier}")
     public AniosAcademicosDto update(@PathVariable(value = "identifier") String identifier,
-                             @RequestBody AniosAcademicosDto aniosAcademicosDto) {
+                             @Valid @RequestBody AniosAcademicosDto aniosAcademicosDto) {
         return academicosService.update(identifier, aniosAcademicosDto);
     }
+    
+    @DeleteMapping("/{identifier}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void delete(@PathVariable(value = "identifier") String identifier) {
+        academicosService.delete(identifier);
+    }
 
+    // --- Endpoints de búsqueda sin cambios ---
     @GetMapping("/{identifier}")
     public ResponseEntity<AniosAcademicosDto> get(@PathVariable(value = "identifier") String identifier) {
         return academicosService.get(identifier).map(ResponseEntity::ok)
@@ -46,11 +55,5 @@ public class AniosAcademicosController {
             @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) Instant fechaHasta
     ) {
         return academicosService.getSearch(page, size, anio, estadoA, fechaDesde, fechaHasta);
-    }
-
-    @DeleteMapping("/{identifier}")
-    @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void delete(@PathVariable(value = "identifier") String identifier) {
-        academicosService.delete(identifier);
     }
 }

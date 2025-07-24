@@ -15,6 +15,9 @@ public interface RolesRepository extends JpaRepository<TRolesEntity, Long> {
 
     Optional<TRolesEntity> findByIdentifier(String identifier);
 
+    // --- MÉTODO AÑADIDO PARA VALIDACIÓN DE UNICIDAD ---
+    Optional<TRolesEntity> findByDescripcion(String descripcion);
+
     @Query("SELECT r FROM TRolesEntity r " +
             "WHERE (:descripcion IS NULL OR r.descripcion LIKE %:descripcion%) " +
             "AND (:estado is NULL OR r.estado = :estado) " +

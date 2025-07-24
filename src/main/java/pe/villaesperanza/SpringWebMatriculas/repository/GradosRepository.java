@@ -15,6 +15,9 @@ public interface GradosRepository extends JpaRepository<TGradosEntity, Long> {
 
     Optional<TGradosEntity> findByIdentifier(String identifier);
 
+    // --- MÉTODO AÑADIDO PARA VALIDACIÓN DE UNICIDAD POR NIVEL ---
+    Optional<TGradosEntity> findByDescripcionAndNivelesEntityIdentifier(String descripcion, String nivelIdentifier);
+
     @Query("SELECT r FROM TGradosEntity r " +
            "WHERE (:descripcion IS NULL OR r.descripcion LIKE %:descripcion%) " +
            "AND (:estado IS NULL OR r.estado = :estado) " +

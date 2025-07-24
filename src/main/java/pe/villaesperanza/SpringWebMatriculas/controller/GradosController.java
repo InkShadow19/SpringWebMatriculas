@@ -9,6 +9,8 @@ import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import jakarta.validation.Valid;
 import pe.villaesperanza.SpringWebMatriculas.dto.GradosDto;
 import pe.villaesperanza.SpringWebMatriculas.dto.reference.EstadoReference;
 import pe.villaesperanza.SpringWebMatriculas.service.GradosService;
@@ -21,15 +23,21 @@ public class GradosController {
     private final GradosService gradosService;
 
     @PostMapping
-    public GradosDto add(@RequestBody GradosDto gradosDto) {
+    public GradosDto add(@Valid @RequestBody GradosDto gradosDto) {
         return gradosService.add(gradosDto);
     }
 
     @PatchMapping("/{identifier}")
-    public GradosDto update(@PathVariable String identifier, @RequestBody GradosDto gradosDto) {
+    public GradosDto update(@PathVariable String identifier, @Valid @RequestBody GradosDto gradosDto) {
         return gradosService.update(identifier, gradosDto);
     }
 
+    @DeleteMapping("/{identifier}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void delete(@PathVariable String identifier) {
+        gradosService.delete(identifier);
+    }
+   
     @GetMapping("/{identifier}")
     public ResponseEntity<GradosDto> get(@PathVariable String identifier) {
         return gradosService.get(identifier)
@@ -48,11 +56,5 @@ public class GradosController {
             @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) Instant fechaHasta
     ) {
         return gradosService.getSearch(page, size, descripcion, estado, nivelIdentifier, fechaDesde, fechaHasta);
-    }
-
-    @DeleteMapping("/{identifier}")
-    @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void delete(@PathVariable String identifier) {
-        gradosService.delete(identifier);
     }
 }

@@ -14,6 +14,10 @@ import java.util.Optional;
 public interface BancosRepository extends JpaRepository<TBancosEntity, Long> {
 
     Optional<TBancosEntity> findByIdentifier(String identifier);
+    
+    // --- MÉTODOS AÑADIDOS PARA VALIDACIÓN DE UNICIDAD ---
+    Optional<TBancosEntity> findByCodigo(String codigo);
+    Optional<TBancosEntity> findByDescripcion(String descripcion);
 
     @Query("SELECT r FROM TBancosEntity r " +
             "WHERE (:descripcion IS NULL OR r.descripcion LIKE %:descripcion% OR r.codigo LIKE %:descripcion%) " +

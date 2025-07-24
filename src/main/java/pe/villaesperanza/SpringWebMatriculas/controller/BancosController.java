@@ -6,6 +6,8 @@ import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import jakarta.validation.Valid;
 import pe.villaesperanza.SpringWebMatriculas.dto.BancosDto;
 import pe.villaesperanza.SpringWebMatriculas.dto.reference.EstadoReference;
 import pe.villaesperanza.SpringWebMatriculas.service.BancosService;
@@ -20,13 +22,13 @@ public class BancosController {
     private final BancosService bancosService;
 
     @PostMapping
-    public BancosDto add(@RequestBody BancosDto bancosDto) {
+    public BancosDto add(@Valid @RequestBody BancosDto bancosDto) {
         return bancosService.add(bancosDto);
     }
 
     @PatchMapping("/{identifier}")
     public BancosDto update(@PathVariable(value = "identifier") String identifier,
-                             @RequestBody BancosDto bancosDto) {
+                             @Valid @RequestBody BancosDto bancosDto) {
         return bancosService.update(identifier, bancosDto);
     }
 
@@ -40,7 +42,7 @@ public class BancosController {
     public Page<BancosDto> search(
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size,
-            @RequestParam(required = false) String descripcion, // Solo un parámetro de búsqueda
+            @RequestParam(required = false) String descripcion,
             @RequestParam(required = false) EstadoReference estado,
             @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) Instant fechaDesde,
             @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) Instant fechaHasta
