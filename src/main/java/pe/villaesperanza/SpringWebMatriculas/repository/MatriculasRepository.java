@@ -10,6 +10,7 @@ import org.springframework.stereotype.Repository;
 import pe.villaesperanza.SpringWebMatriculas.dto.report.AlumnoPorGradoDto;
 import pe.villaesperanza.SpringWebMatriculas.entity.TMatriculasEntity;
 
+import java.time.Instant;
 //import java.time.Instant;
 import java.util.List;
 import java.util.Optional;
@@ -29,7 +30,7 @@ public interface MatriculasRepository extends JpaRepository<TMatriculasEntity, L
             "ORDER BY r.fechaCreacion DESC")
     Page<TMatriculasEntity> searchMatriculas(String codigo, String procedencia, Integer estado, Integer situacion, Instant fechaDesde, Instant fechaHasta, Pageable pageable);*/
 
-    // --- CONSULTA DE BÚSQUEDA CORREGIDA Y COMPLETADA ---
+    // --- CONSULTA DE BÚSQUEDA COMPLETADA ---
     @Query("SELECT r FROM TMatriculasEntity r " +
            "WHERE (:descripcion IS NULL OR r.codigo LIKE %:descripcion% " +
            "OR r.estudiantesEntity.dni LIKE %:descripcion% " +
@@ -40,13 +41,17 @@ public interface MatriculasRepository extends JpaRepository<TMatriculasEntity, L
            "AND (:anioId IS NULL OR r.aniosAcademicosEntity.identifier = :anioId) " +
            "AND (:nivelId IS NULL OR r.nivelesEntity.identifier = :nivelId) " +
            "AND (:gradoId IS NULL OR r.gradosEntity.identifier = :gradoId) " +
-           "ORDER BY r.fechaCreacion DESC")
+           "AND (CAST(:fechaDesde AS TIMESTAMP) IS NULL OR r.fechaMatricula >= :fechaDesde) " +
+           "AND (CAST(:fechaHasta AS TIMESTAMP) IS NULL OR r.fechaMatricula <= :fechaHasta) " +
+           "ORDER BY r.id DESC")
     Page<TMatriculasEntity> searchMatriculas(
             @Param("descripcion") String descripcion,
             @Param("estado") Integer estado,
             @Param("anioId") String anioId,
             @Param("nivelId") String nivelId,
             @Param("gradoId") String gradoId,
+            @Param("fechaDesde") Instant fechaDesde,
+            @Param("fechaHasta") Instant fechaHasta,
             Pageable pageable);
 
     @Query("SELECT new pe.villaesperanza.SpringWebMatriculas.dto.report.AlumnoPorGradoDto(" +
@@ -59,6 +64,11 @@ public interface MatriculasRepository extends JpaRepository<TMatriculasEntity, L
             "AND (:grado IS NULL OR r.gradosEntity.identifier = :grado)")
     List<AlumnoPorGradoDto> alumnoPorGrado(Integer anio, String nivel, String grado);
 
-    // Busca todas las matrículas de un año académico específico y las ordena por el código de forma descendente
-    List<TMatriculasEntity> findByAniosAcademicosEntity_AnioOrderByCodigoDesc(Integer anio);
+    // --- MÉTODO DE VALIDACIÓN MODIFICADO ---
+    boolean existsByEstudiantesEntity_IdentifierAndAniosAcademicosEntity_IdentifierAndEstadoNotAndIdentifierNot(
+        String estudianteId, String anioAcademicoId, Integer estado, String matriculaIdentifier
+    );
+    
+    // --- MÉTODO PARA CORRELATIVO CORREGIDO (ORDENADO POR ID) ---
+    Optional<TMatriculasEntity> findTopByAniosAcademicosEntity_AnioOrderByIdDesc(Integer anio); // <-- CAMBIO CLAVE
 }

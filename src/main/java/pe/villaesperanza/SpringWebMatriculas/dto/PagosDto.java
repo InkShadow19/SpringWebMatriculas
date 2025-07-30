@@ -23,5 +23,9 @@ public class PagosDto implements Serializable {
     private String usuario;
     private String banco;
 
+    // --- CAMPOS AÑADIDOS PARA LA VISTA DE LISTA ---
+    private String nombreEstudiante;
+    private String nombreUsuario;
+
     private List<PagoDetallesDto> detalles = new ArrayList<>();
 }

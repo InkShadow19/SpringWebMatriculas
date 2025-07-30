@@ -1,8 +1,11 @@
 package pe.villaesperanza.SpringWebMatriculas.controller;
 
 import lombok.RequiredArgsConstructor;
+
+import java.time.Instant;
+
 import org.springframework.data.domain.Page;
-//import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -60,9 +63,11 @@ public class MatriculasController {
             @RequestParam(required = false) EstadoMatriculaReference estado,
             @RequestParam(required = false) String anioId,
             @RequestParam(required = false) String nivelId,
-            @RequestParam(required = false) String gradoId
+            @RequestParam(required = false) String gradoId,
+            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) Instant fechaDesde,
+            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) Instant fechaHasta
     ) {
-        return matriculasService.getSearch(page, size, descripcion, estado, anioId, nivelId, gradoId);
+        return matriculasService.getSearch(page, size, descripcion, estado, anioId, nivelId, gradoId, fechaDesde, fechaHasta);
     }
 
     // --- NUEVO ENDPOINT PARA 'ANULAR' ---
@@ -70,6 +75,13 @@ public class MatriculasController {
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void anular(@PathVariable(value = "identifier") String identifier) {
         matriculasService.anular(identifier);
+    }
+
+    // --- NUEVO ENDPOINT PARA 'COMPLETAR' MATRÍCULA ---
+    @PatchMapping("/{identifier}/completar")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void completar(@PathVariable(value = "identifier") String identifier) {
+        matriculasService.completar(identifier);
     }
 
     @DeleteMapping("/{identifier}")

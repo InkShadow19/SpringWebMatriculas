@@ -38,16 +38,19 @@ public class TPagosEntity {
     private Double montoTotalPagado;
 
     @Column(name = "fecha_pago", nullable = false)
+    //private Instant fechaPago = Instant.now();
     private Instant fechaPago;
 
     @Column(name = "estado")
     private Integer estado = 10;
 
     @Column(name = "fecha_creacion", nullable = false)
-    private Instant fechaCreacion = Instant.now();
+    //private Instant fechaCreacion = Instant.now();
+    private Instant fechaCreacion;
 
     @Column(name = "fecha_actualizacion", nullable = false)
-    private Instant fechaActualizacion = Instant.now();
+    //private Instant fechaActualizacion = Instant.now();
+    private Instant fechaActualizacion;
 
     @ManyToOne
     @JoinColumn(name = "id_usuarios")
@@ -68,7 +71,7 @@ public class TPagosEntity {
         this.canalPago = pagosDto.getCanalPago().getValue();
         this.numeroTicket = pagosDto.getNumeroTicket();
         this.montoTotalPagado = pagosDto.getMontoTotalPagado();
-        if (pagosDto.getFechaPago() != null) this.fechaPago = Instant.parse(pagosDto.getFechaPago());
+        //if (pagosDto.getFechaPago() != null) this.fechaPago = Instant.parse(pagosDto.getFechaPago());
 
         if (pagosDto.getDetalles() != null)
             this.detalles.addAll(pagosDto.getDetalles().parallelStream().map(x -> new TPagoDetallesEntity(x, null, this)).toList());
@@ -81,7 +84,7 @@ public class TPagosEntity {
         this.montoTotalPagado = pagosDto.getMontoTotalPagado();
         if (pagosDto.getFechaPago() != null) this.fechaPago = Instant.parse(pagosDto.getFechaPago());
 
-        this.fechaActualizacion = Instant.now();
+        //this.fechaActualizacion = Instant.now();
     }
 
     public PagosDto toDto() {
@@ -95,6 +98,7 @@ public class TPagosEntity {
         dto.setEstado(EstadoPagoReference.fromInt(estado));
         dto.setFechaCreacion(fechaCreacion.toString());
 
+        if (fechaPago != null) dto.setFechaPago(fechaPago.toString());
         if (usuariosEntity != null) dto.setUsuario(usuariosEntity.getIdentifier());
         if (bancosEntity != null) dto.setBanco(bancosEntity.getIdentifier());
 

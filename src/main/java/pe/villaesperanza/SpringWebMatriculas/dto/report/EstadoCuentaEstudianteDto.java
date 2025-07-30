@@ -8,6 +8,7 @@ import pe.villaesperanza.SpringWebMatriculas.dto.reference.EstadoDeudaReference;
 @Setter
 public class EstadoCuentaEstudianteDto {
 
+    private String identifier;
     private String descripcion;
     private Double montoOriginal;
     private Double descuento;

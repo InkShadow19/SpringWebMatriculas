@@ -17,7 +17,8 @@ import java.util.function.Function;
 @Service
 public class JwtService {
 
-    // Clave secreta para firmar los tokens. En un proyecto real, esto debería estar en application.properties
+    // Clave secreta para firmar los tokens. En un proyecto real, esto debería estar
+    // en application.properties
     private static final String SECRET_KEY = "estaEsUnaClaveSecretaMuyLargaParaAsegurarQueFuncioneCorrectamenteYSegura";
 
     public String extractUsername(String token) {
@@ -38,7 +39,7 @@ public class JwtService {
                 .setClaims(extraClaims)
                 .setSubject(userDetails.getUsername())
                 .setIssuedAt(new Date(System.currentTimeMillis()))
-                .setExpiration(new Date(System.currentTimeMillis() + 1000 * 60 * 60 * 10)) // Token válido por 10 horas
+                .setExpiration(new Date(System.currentTimeMillis() + 1000 * 60 * 60 * 24)) // Token válido por 24 horas
                 .signWith(getSignInKey(), SignatureAlgorithm.HS256)
                 .compact();
     }

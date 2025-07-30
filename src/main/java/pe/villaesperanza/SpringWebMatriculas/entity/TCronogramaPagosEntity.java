@@ -97,8 +97,8 @@ public class TCronogramaPagosEntity {
         if (conceptosPagoEntity != null) dto.setConcepto(conceptosPagoEntity.getIdentifier());
         if (matriculasEntity != null) dto.setMatricula(matriculasEntity.getIdentifier());
 
-        if (detalles != null)
-            dto.setDetalles(detalles.stream().map(TPagoDetallesEntity::toDto).toList());
+        /*if (detalles != null)
+            dto.setDetalles(detalles.stream().map(TPagoDetallesEntity::toDto).toList());*/
 
         return dto;
     }
@@ -106,6 +106,7 @@ public class TCronogramaPagosEntity {
     public EstadoCuentaEstudianteDto estadoCuentaEstudante() {
 
         EstadoCuentaEstudianteDto dto = new EstadoCuentaEstudianteDto();
+        dto.setIdentifier(identifier);
         dto.setDescripcion(descripcion);
         dto.setMontoOriginal(montoOriginal);
         dto.setDescuento(descuento);

@@ -7,6 +7,7 @@ import pe.villaesperanza.SpringWebMatriculas.dto.report.PorMorosidadDto;
 import pe.villaesperanza.SpringWebMatriculas.entity.TCronogramaPagosEntity;
 
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface CronogramaRepository extends JpaRepository<TCronogramaPagosEntity, Long> {
@@ -24,4 +25,6 @@ public interface CronogramaRepository extends JpaRepository<TCronogramaPagosEnti
             "WHERE (:nivel IS NULL OR r.matriculasEntity.nivelesEntity.identifier = :nivel) " +
             "AND (:grado IS NULL OR r.matriculasEntity.gradosEntity.identifier = :grado)")
     List<PorMorosidadDto> porMorosidad(String nivel, String grado);
+
+    Optional<TCronogramaPagosEntity> findByIdentifier(String identifier);
 }

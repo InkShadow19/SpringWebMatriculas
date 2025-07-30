@@ -5,6 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
+import pe.villaesperanza.SpringWebMatriculas.dto.reference.EstadoDeudaReference;
 import pe.villaesperanza.SpringWebMatriculas.dto.report.AlumnoPorGradoDto;
 import pe.villaesperanza.SpringWebMatriculas.dto.report.EstadoCuentaEstudianteDto;
 import pe.villaesperanza.SpringWebMatriculas.dto.report.PagosPorPeriodosDto;
@@ -15,8 +16,11 @@ import pe.villaesperanza.SpringWebMatriculas.repository.MatriculasRepository;
 import pe.villaesperanza.SpringWebMatriculas.repository.PagosRepository;
 
 import java.time.Instant;
+import java.time.temporal.ChronoUnit;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
+
 @Slf4j
 @Service
 @RequiredArgsConstructor
@@ -25,6 +29,7 @@ public class ReportService {
     private final MatriculasRepository matriculasRepository;
     private final CronogramaRepository cronogramaRepository;
     private final PagosRepository pagosRepository;
+    private final TimeTravelService timeTravelService; // Maquina del Tiempo
 
     @Transactional(readOnly = true, propagation = Propagation.REQUIRED)
     public Optional<List<EstadoCuentaEstudianteDto>> getEstadoEstudiante(String estudiante) {
@@ -33,27 +38,52 @@ public class ReportService {
 
         if (result == null || result.isEmpty()) return Optional.empty();
 
+        // --- LÓGICA DE MORA CON SEMANA DE TOLERANCIA ---
+        Instant fechaActual = timeTravelService.getNow();
+        //Instant fechaActual = Instant.now();
+        double montoMora = 10.00;
+
         List<EstadoCuentaEstudianteDto> dtos = result.stream()
-                .map(TCronogramaPagosEntity::estadoCuentaEstudante).toList();
+                .map(deuda -> {
+                    EstadoCuentaEstudianteDto dto = deuda.estadoCuentaEstudante();
+                    
+                    if (dto.getEstadoDeuda() == EstadoDeudaReference.PENDIENTE) {
+                        Instant fechaVencimiento = Instant.parse(dto.getFechaVencimiento());
+                        
+                        // --- LÓGICA DE VENCIMIENTO CORREGIDA ---
+                        Instant inicioDiaSiguienteAlVencimiento = fechaVencimiento.plus(1, ChronoUnit.DAYS);
+
+                        if (fechaActual.isAfter(inicioDiaSiguienteAlVencimiento)) {
+                            dto.setEstadoDeuda(EstadoDeudaReference.VENCIDO);
+                            
+                            Instant fechaLimiteTolerancia = inicioDiaSiguienteAlVencimiento.plus(7, ChronoUnit.DAYS);
+                            
+                            if (fechaActual.isAfter(fechaLimiteTolerancia)) {
+                                dto.setMora(montoMora);
+                                double montoOriginalAPagar = (dto.getMontoOriginal() != null ? dto.getMontoOriginal() : 0) - (dto.getDescuento() != null ? dto.getDescuento() : 0);
+                                dto.setMontoAPagar(montoOriginalAPagar + montoMora);
+                            }
+                        }
+                        // --- FIN DE LA LÓGICA ---
+                    }
+                    return dto;
+                }).collect(Collectors.toList());
 
         return Optional.of(dtos);
     }
 
     @Transactional(readOnly = true, propagation = Propagation.REQUIRED)
     public Optional<List<AlumnoPorGradoDto>> alumnoPorGrado(Integer anio, String nivel, String grado) {
-
         List<AlumnoPorGradoDto> result = matriculasRepository.alumnoPorGrado(anio, nivel, grado);
         return Optional.of(result);
     }
 
     public Optional<List<PorMorosidadDto>> porMorosidad(String nivel, String grado) {
-
         List<PorMorosidadDto> result = cronogramaRepository.porMorosidad(nivel, grado);
         return Optional.of(result);
     }
 
     public Optional<List<PagosPorPeriodosDto>> pagosPorPeriodos(Instant fechaDesde, Instant fechaHasta) {
-
         List<PagosPorPeriodosDto> result = pagosRepository.pagosPorPeriodos(fechaDesde, fechaHasta);
         return Optional.of(result);
     }

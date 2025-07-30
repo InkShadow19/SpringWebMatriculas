@@ -3,6 +3,7 @@ package pe.villaesperanza.SpringWebMatriculas.controller;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import pe.villaesperanza.SpringWebMatriculas.dto.PagosDto;
@@ -36,17 +37,30 @@ public class PagosController {
                 .orElse(ResponseEntity.notFound().build());
     }
 
+    // --- ENDPOINT DE BÚSQUEDA ACTUALIZADO ---
     @GetMapping("/search")
     public Page<PagosDto> search(
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size,
             @RequestParam(required = false) EstadoPagoReference estado,
             @RequestParam(required = false) CanalReference canal,
-            @RequestParam(required = false) String ticket,
-            @RequestParam(required = false) Double monto,
+            @RequestParam(required = false) String descripcion, // Parámetro unificado para búsqueda
             @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) Instant fechaDesde,
             @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) Instant fechaHasta
     ) {
-        return pagosService.getSearch(page, size, estado, canal, ticket, monto, fechaDesde, fechaHasta);
+        return pagosService.getSearch(page, size, estado, canal, descripcion, fechaDesde, fechaHasta);
+    }
+
+    // --- NUEVO ENDPOINT PARA ANULAR PAGO ---
+    @PatchMapping("/{identifier}/anular")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void anular(@PathVariable(value = "identifier") String identifier) {
+        pagosService.anular(identifier);
+    }
+
+    // --- NUEVO ENDPOINT PARA CONSULTAR EL SIGUIENTE TICKET ---
+    @GetMapping("/next-caja-ticket")
+    public ResponseEntity<String> getNextCajaTicket() {
+        return ResponseEntity.ok(pagosService.getNextCajaTicket());
     }
 }

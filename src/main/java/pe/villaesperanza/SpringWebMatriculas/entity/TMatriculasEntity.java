@@ -38,16 +38,19 @@ public class TMatriculasEntity {
     private Integer situacion;
 
     @Column(name = "fecha_matricula", nullable = false)
-    private Instant fechaMatricula = Instant.now();
+    //private Instant fechaMatricula = Instant.now();
+    private Instant fechaMatricula;
 
     @Column(name = "estado")
     private Integer estado = 10;
 
     @Column(name = "fecha_creacion", nullable = false)
-    private Instant fechaCreacion = Instant.now();
+    //private Instant fechaCreacion = Instant.now();
+    private Instant fechaCreacion;
 
     @Column(name = "fecha_actualizacion", nullable = false)
-    private Instant fechaActualizacion = Instant.now();
+    //private Instant fechaActualizacion = Instant.now();
+    private Instant fechaActualizacion;
 
     @ManyToOne
     @JoinColumn(name = "id_niveles")
@@ -69,7 +72,7 @@ public class TMatriculasEntity {
     @JoinColumn(name = "id_anios_academicos")
     private TAniosAcademicosEntity aniosAcademicosEntity;
 
-    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "matriculasEntity")
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "matriculasEntity", orphanRemoval = true)
     private Set<TCronogramaPagosEntity> cronogramas = new HashSet<>();
 
     public TMatriculasEntity(MatriculasDto matriculasDto, TNivelesEntity nivelesEntity,
@@ -81,15 +84,14 @@ public class TMatriculasEntity {
         this.estudiantesEntity = estudiantesEntity;
         this.apoderadosEntity = apoderadosEntity;
         this.aniosAcademicosEntity = aniosAcademicosEntity;
-
         this.identifier = UUID.randomUUID().toString();
         this.codigo = matriculasDto.getCodigo();
         this.procedencia = matriculasDto.getProcedencia();
         this.situacion = matriculasDto.getSituacion().getValue();
-        if (matriculasDto.getFechaMatricula() != null) this.fechaMatricula = Instant.parse(matriculasDto.getFechaMatricula());
+        //if (matriculasDto.getFechaMatricula() != null) this.fechaMatricula = Instant.parse(matriculasDto.getFechaMatricula());
 
-        if (matriculasDto.getCronogramas() != null)
-            this.cronogramas.addAll(matriculasDto.getCronogramas().parallelStream().map(x -> new TCronogramaPagosEntity(x, null, this)).toList());
+        /*if (matriculasDto.getCronogramas() != null)
+            this.cronogramas.addAll(matriculasDto.getCronogramas().parallelStream().map(x -> new TCronogramaPagosEntity(x, null, this)).toList());*/
     }
 
     public void update(MatriculasDto matriculasDto) {
@@ -100,7 +102,7 @@ public class TMatriculasEntity {
         if (matriculasDto.getSituacion() != null) this.situacion = matriculasDto.getSituacion().getValue();
         if (matriculasDto.getEstado() != null) this.estado = matriculasDto.getEstado().getValue();
 
-        this.fechaActualizacion = Instant.now();
+        //this.fechaActualizacion = Instant.now();
     }
 
     public MatriculasDto toDto() {

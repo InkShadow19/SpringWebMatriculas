@@ -61,8 +61,10 @@ public class TPagoDetallesEntity {
         dto.setMontoAplicado(montoAplicado);
         dto.setEstado(EstadoReference.fromInt(estado));
         dto.setFechaCreacion(fechaCreacion.toString());
-
-        if (cronogramaPagosEntity != null) dto.setCronograma(cronogramaPagosEntity.getIdentifier());
+        if (cronogramaPagosEntity != null) {
+            dto.setCronograma(cronogramaPagosEntity.getIdentifier());
+            dto.setDescripcionCronograma(cronogramaPagosEntity.getDescripcion());
+        }
         if (pagosEntity != null) dto.setPago(pagosEntity.getIdentifier());
 
         return dto;

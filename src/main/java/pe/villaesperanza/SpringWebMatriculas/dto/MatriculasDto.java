@@ -26,5 +26,9 @@ public class MatriculasDto implements Serializable {
     private String apoderado;
     private String anioAcademico;
 
+    // --- CAMPOS AÑADIDOS PARA RECIBIR LOS DESCUENTOS ---
+    private Double descuentoMatricula;
+    private Double descuentoPension;
+
     private List<CronogramaPagosDto> cronogramas = new ArrayList<>();
 }
