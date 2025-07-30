@@ -17,6 +17,9 @@ public interface UsuariosRepository extends JpaRepository<TUsuariosEntity, Long>
     Optional<TUsuariosEntity> findByUsuario(String usuario);
     Optional<TUsuariosEntity> findByIdentifier(String identifier);
 
+    // --- MÉTODO AÑADIDO PARA LA VALIDACIÓN DE UNICIDAD DEL DNI ---
+    Optional<TUsuariosEntity> findByDni(String dni);
+
     @Query("SELECT u FROM TUsuariosEntity u " +
            "WHERE (:descripcion IS NULL " +
            "OR u.dni LIKE %:descripcion% " +

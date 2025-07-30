@@ -12,6 +12,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import pe.villaesperanza.SpringWebMatriculas.dto.UsuariosDto;
 import pe.villaesperanza.SpringWebMatriculas.dto.reference.EstadoReference;
+import pe.villaesperanza.SpringWebMatriculas.dto.reference.GeneroReference;
 
 import java.time.Instant;
 import java.util.HashSet;
@@ -48,6 +49,9 @@ public class TUsuariosEntity implements UserDetails {
     @Column(name = "fecha_nacimiento", nullable = false)
     private Instant fechaNacimiento;
 
+    @Column(name = "genero")
+    private Integer genero;
+
     @Column(name = "dni", length = 15)
     private String dni;
 
@@ -69,12 +73,13 @@ public class TUsuariosEntity implements UserDetails {
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        // Esto le dice a Spring Security cuál es el rol del usuario.
-        // Asegúrate de que 'rolesEntity' y su descripción no sean nulos.
-        if (rolesEntity != null && rolesEntity.getDescripcion() != null) {
+        // MODIFICADO: Ahora solo concede la autoridad si el rol existe,
+        // tiene descripción y su estado es ACTIVO (valor 10).
+        if (rolesEntity != null && rolesEntity.getDescripcion() != null && rolesEntity.getEstado() == 10) {
             return List.of(new SimpleGrantedAuthority(rolesEntity.getDescripcion()));
         }
-        return List.of(); // Devuelve una lista vacía si no hay rol
+        // Si el rol está inactivo o no existe, no se otorgan permisos.
+        return List.of();
     }
 
     @Override
@@ -134,10 +139,14 @@ public class TUsuariosEntity implements UserDetails {
         dto.setApellidos(apellidos);
         dto.setFechaNacimiento(fechaNacimiento.toString());
         dto.setDni(dni);
+        if (this.genero != null) {
+            dto.setGenero(GeneroReference.fromInt(this.genero));
+        }
         dto.setEstado(EstadoReference.fromInt(estado));
         dto.setFechaCreacion(fechaCreacion.toString());
 
-        if (rolesEntity != null) dto.setRol(rolesEntity.getIdentifier());
+        if (rolesEntity != null)
+            dto.setRol(rolesEntity.getIdentifier());
 
         if (pagos != null)
             dto.setPagos(pagos.stream().map(TPagosEntity::toDto).toList());

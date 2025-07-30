@@ -30,8 +30,24 @@ public class UsuariosService {
     private final PasswordEncoder passwordEncoder;
     private final EmailService emailService;
 
+    // --- NUEVO MÉTODO PARA VALIDACIÓN DE UNICIDAD ---
+    private void validarUnicidadUsuario(String username, String dni, String identifier) {
+        Optional<TUsuariosEntity> porUsuario = usuariosRepository.findByUsuario(username);
+        if (porUsuario.isPresent() && !porUsuario.get().getIdentifier().equals(identifier)) {
+            throw new AppException("El nombre de usuario '" + username + "' ya está en uso.");
+        }
+
+        Optional<TUsuariosEntity> porDni = usuariosRepository.findByDni(dni);
+        if (porDni.isPresent() && !porDni.get().getIdentifier().equals(identifier)) {
+            throw new AppException("El DNI '" + dni + "' ya se encuentra registrado.");
+        }
+    }
+
     @Transactional(propagation = Propagation.REQUIRED, rollbackFor = { Exception.class, IOException.class })
     public UsuariosDto registrarUsuario(UsuariosDto usuariosDto) {
+        // Validación de unicidad para nuevos usuarios
+        validarUnicidadUsuario(usuariosDto.getUsuario(), usuariosDto.getDni(), null);
+
         TRolesEntity rol = rolesRepository.findByIdentifier(usuariosDto.getRol())
                 .orElseThrow(() -> new AppException("El rol especificado no existe"));
 
@@ -41,11 +57,12 @@ public class UsuariosService {
         nuevoUsuario.setNombres(usuariosDto.getNombres());
         nuevoUsuario.setApellidos(usuariosDto.getApellidos());
         nuevoUsuario.setDni(usuariosDto.getDni());
+        if (usuariosDto.getGenero() != null) {
+            nuevoUsuario.setGenero(usuariosDto.getGenero().getValue());
+        }
         nuevoUsuario.setFechaNacimiento(Instant.parse(usuariosDto.getFechaNacimiento() + "T00:00:00Z"));
         nuevoUsuario.setRolesEntity(rol);
         
-        // ¡PUNTO CLAVE! Hashear la contraseña antes de guardarla.
-        // Se asume que la contraseña viene en el DTO al registrar.
         if (usuariosDto.getContrasena() == null || usuariosDto.getContrasena().isEmpty()) {
             throw new AppException("La contraseña es obligatoria para registrar un nuevo usuario.");
         }
@@ -72,13 +89,19 @@ public class UsuariosService {
 
     @Transactional(propagation = Propagation.REQUIRED, rollbackFor = { Exception.class, IOException.class })
     public UsuariosDto update(String identifier, UsuariosDto usuariosDto) {
+
+        validarUnicidadUsuario(usuariosDto.getUsuario(), usuariosDto.getDni(), identifier);
+        
         TUsuariosEntity entity = usuariosRepository.findByIdentifier(identifier)
                 .orElseThrow(() -> new AppException("El identifier de este usuario no existe"));
 
-        // Actualizar campos (la contraseña NO se actualiza aquí por seguridad)
         entity.setNombres(usuariosDto.getNombres());
         entity.setApellidos(usuariosDto.getApellidos());
         entity.setDni(usuariosDto.getDni());
+        entity.setUsuario(usuariosDto.getUsuario()); 
+        if (usuariosDto.getGenero() != null) {
+            entity.setGenero(usuariosDto.getGenero().getValue());
+        }
         
         if (usuariosDto.getFechaNacimiento() != null) {
             String fecha = usuariosDto.getFechaNacimiento();
@@ -93,7 +116,6 @@ public class UsuariosService {
             entity.setEstado(usuariosDto.getEstado().getValue());
         }
 
-        // Actualizar rol si se proporciona uno nuevo
         if (usuariosDto.getRol() != null && !usuariosDto.getRol().equals(entity.getRolesEntity().getIdentifier())) {
             TRolesEntity nuevoRol = rolesRepository.findByIdentifier(usuariosDto.getRol())
                     .orElseThrow(() -> new AppException("El nuevo rol especificado no existe"));
