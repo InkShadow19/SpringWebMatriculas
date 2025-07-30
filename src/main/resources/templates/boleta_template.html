@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8" />
+    <title>Boleta de Pago</title>
+    <style>
+        body {
+            font-family: 'Helvetica Neue', 'Helvetica', Helvetica, Arial, sans-serif;
+            color: #555;
+            margin: 0;
+            padding: 0;
+        }
+
+        .invoice-box {
+            max-width: 800px;
+            margin: auto;
+            padding: 30px;
+            border: 1px solid #eee;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.15);
+            font-size: 16px;
+            line-height: 24px;
+        }
+
+        .invoice-box table {
+            width: 100%;
+            line-height: inherit;
+            text-align: left;
+            border-collapse: collapse;
+        }
+
+        .invoice-box table td {
+            padding: 5px;
+            vertical-align: top;
+        }
+
+        .invoice-box table tr td:nth-child(2) {
+            text-align: right;
+        }
+
+        .invoice-box .top table tr {
+            border-bottom: 1px solid #eee;
+        }
+
+        .invoice-box .top .title {
+            font-size: 45px;
+            line-height: 45px;
+            color: #333;
+        }
+
+        .invoice-box .information table td {
+            padding-bottom: 20px;
+        }
+
+        .invoice-box .heading td {
+            background: #eee;
+            border-bottom: 1px solid #ddd;
+            font-weight: bold;
+        }
+
+        .invoice-box .item td {
+            border-bottom: 1px solid #eee;
+        }
+
+        .invoice-box .item.last td {
+            border-bottom: none;
+        }
+
+        .invoice-box .total td:nth-child(2) {
+            border-top: 2px solid #eee;
+            font-weight: bold;
+        }
+
+        .text-right {
+            text-align: right;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="invoice-box">
+        <table>
+            <tr class="top">
+                <td colspan="2">
+                    <table>
+                        <tr>
+                            <td class="title">
+                                <img src="URL_DEL_LOGO_AQUI" style="width: 100%; max-width: 200px" alt="Logo Colegio" />
+                            </td>
+                            <td>
+                                <b>Recibo Nº: <span th:text="${pago.numeroTicket}">V-0001</span></b><br />
+                                Fecha de Pago: <span th:text="${#temporals.format(T(java.time.Instant).parse(pago.fechaPago), 'dd/MM/yyyy h:mm a', new java.util.Locale('es', 'PE'))}">26/07/2025</span><br />
+                                RUC: 20123456789
+                            </td>
+                        </tr>
+                    </table>
+                </td>
+            </tr>
+
+            <tr class="information">
+                <td colspan="2">
+                    <table>
+                        <tr>
+                            <td>
+                                Colegio Villa Esperanza<br />
+                                Av. Principal 123<br />
+                                Villa María del Triunfo, Lima
+                            </td>
+                            <td>
+                                <b>Estudiante:</b><br />
+                                <span th:text="${pago.nombreEstudiante}">Sebastián Vásquez Silva</span><br />
+                                <b>Registrado por:</b><br />
+                                <span th:text="${pago.nombreUsuario}">Percy Rafael Fuertes Anaya</span>
+                            </td>
+                        </tr>
+                    </table>
+                </td>
+            </tr>
+
+            <tr class="heading">
+                <td>Concepto Pagado</td>
+                <td class="text-right">Monto Aplicado</td>
+            </tr>
+            <tr class="item" th:each="detalle : ${pago.detalles}">
+                <td th:text="${detalle.descripcionCronograma}">Matrícula 2025</td>
+                <td class="text-right" th:text="${#numbers.formatCurrency(detalle.montoAplicado)}">S/ 280.00</td>
+            </tr>
+            <tr class="item last" th:remove="all">
+                <td>Pensión Marzo</td>
+                <td class="text-right">S/ 300.00</td>
+            </tr>
+
+            <tr class="total">
+                <td></td>
+                <td class="text-right">
+                    <b>Total Pagado: <span th:text="${#numbers.formatCurrency(pago.montoTotalPagado)}">S/
+                            580.00</span></b>
+                </td>
+            </tr>
+        </table>
+    </div>
+</body>
+
+</html>

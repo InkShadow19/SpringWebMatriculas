@@ -3,13 +3,16 @@ package pe.villaesperanza.SpringWebMatriculas.controller;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import pe.villaesperanza.SpringWebMatriculas.dto.PagosDto;
 import pe.villaesperanza.SpringWebMatriculas.dto.reference.CanalReference;
 import pe.villaesperanza.SpringWebMatriculas.dto.reference.EstadoPagoReference;
 import pe.villaesperanza.SpringWebMatriculas.service.PagosService;
+import pe.villaesperanza.SpringWebMatriculas.service.PdfGenerationService;
 
 import java.time.Instant;
 
@@ -19,6 +22,8 @@ import java.time.Instant;
 public class PagosController {
 
     private final PagosService pagosService;
+    private final PdfGenerationService pdfGenerationService; // <-- INYECTA EL NUEVO SERVICIO
+
 
     @PostMapping
     public PagosDto add(@RequestBody PagosDto pagosDto) {
@@ -62,5 +67,22 @@ public class PagosController {
     @GetMapping("/next-caja-ticket")
     public ResponseEntity<String> getNextCajaTicket() {
         return ResponseEntity.ok(pagosService.getNextCajaTicket());
+    }
+
+    // --- NUEVO ENDPOINT PARA DESCARGAR LA BOLETA EN PDF ---
+    @GetMapping("/{identifier}/imprimir")
+    public ResponseEntity<byte[]> downloadBoleta(@PathVariable String identifier) {
+        // 1. Llamamos a nuestro servicio para generar el PDF en memoria
+        byte[] pdfBytes = pdfGenerationService.generateBoletaPdf(identifier);
+
+        // 2. Preparamos las cabeceras de la respuesta para el navegador
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_PDF);
+        // El nombre del archivo que se descargará (ej. Boleta-V-0001.pdf)
+        headers.setContentDispositionFormData("attachment", "Boleta-" + identifier + ".pdf");
+        headers.setContentLength(pdfBytes.length);
+
+        // 3. Devolvemos el archivo PDF al frontend
+        return ResponseEntity.ok().headers(headers).body(pdfBytes);
     }
 }
