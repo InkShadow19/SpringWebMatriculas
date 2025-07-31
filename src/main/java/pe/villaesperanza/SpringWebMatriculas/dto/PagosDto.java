@@ -26,6 +26,14 @@ public class PagosDto implements Serializable {
     // --- CAMPOS AÑADIDOS PARA LA VISTA DE LISTA ---
     private String nombreEstudiante;
     private String nombreUsuario;
+    private String nombreBanco; // Para el nombre completo del banco
+    private String montoTotalEnPalabras; // Para el texto del monto
+
+    // --- NUEVO CAMPO PARA LA FECHA FORMATEADA ---
+    private String fechaPagoFormateada; 
+
+    // --- NUEVO CAMPO PARA LA SUMA DE MORAS ---
+    private Double totalMora;
 
     private List<PagoDetallesDto> detalles = new ArrayList<>();
 }

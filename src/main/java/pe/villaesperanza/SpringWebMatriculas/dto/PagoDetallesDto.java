@@ -17,4 +17,9 @@ public class PagoDetallesDto implements Serializable {
     private String cronograma; // Identifier
     private String pago; // Identifier
     private String descripcionCronograma;
+
+    // --- CAMPOS AÑADIDOS PARA LA BOLETA ---
+    private Double montoOriginal;
+    private Double descuento;
+    private Double mora;
 }

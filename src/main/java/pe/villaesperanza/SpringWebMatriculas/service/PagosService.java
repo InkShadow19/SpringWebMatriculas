@@ -138,10 +138,8 @@ public class PagosService {
     @Transactional(readOnly = true, propagation = Propagation.REQUIRED)
     public Optional<PagosDto> get(String identifier) {
 
-        TPagosEntity result = pagosRepository.findByIdentifier(identifier)
-                .orElseThrow(() -> new AppException("El identifier de este pago no existe"));
-
-        return Optional.ofNullable(result.toDto());
+        return pagosRepository.findByIdentifier(identifier) // 1. Busca la entidad
+                .map(this::enriquecerPagoDto);              // 2. La enriquece (esto ya convierte a DTO adentro)
     }
 
     @Transactional(readOnly = true, propagation = Propagation.REQUIRED)
@@ -171,6 +169,10 @@ public class PagosService {
                     entity.getUsuariosEntity().getNombres() + " " + entity.getUsuariosEntity().getApellidos());
         } else {
             dto.setNombreUsuario("N/A");
+        }
+
+        if (entity.getBancosEntity() != null) {
+            dto.setNombreBanco(entity.getBancosEntity().getDescripcion());
         }
 
         // 2. Añadir nombre completo del estudiante

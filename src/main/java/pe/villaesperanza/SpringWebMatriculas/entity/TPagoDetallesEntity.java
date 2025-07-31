@@ -56,15 +56,21 @@ public class TPagoDetallesEntity {
     public PagoDetallesDto toDto() {
 
         PagoDetallesDto dto = new PagoDetallesDto();
-
+        
         dto.setIdentifier(identifier);
         dto.setMontoAplicado(montoAplicado);
         dto.setEstado(EstadoReference.fromInt(estado));
         dto.setFechaCreacion(fechaCreacion.toString());
+
         if (cronogramaPagosEntity != null) {
             dto.setCronograma(cronogramaPagosEntity.getIdentifier());
+            // --- LÍNEAS AÑADIDAS ---
             dto.setDescripcionCronograma(cronogramaPagosEntity.getDescripcion());
+            dto.setMontoOriginal(cronogramaPagosEntity.getMontoOriginal());
+            dto.setDescuento(cronogramaPagosEntity.getDescuento());
+            dto.setMora(cronogramaPagosEntity.getMora());
         }
+        
         if (pagosEntity != null) dto.setPago(pagosEntity.getIdentifier());
 
         return dto;

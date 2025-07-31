@@ -5,8 +5,16 @@ import org.springframework.stereotype.Service;
 import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.Context;
 import org.xhtmlrenderer.pdf.ITextRenderer;
+
+import pe.villaesperanza.SpringWebMatriculas.dto.PagoDetallesDto;
 import pe.villaesperanza.SpringWebMatriculas.dto.PagosDto;
+import pe.villaesperanza.SpringWebMatriculas.util.NumberToWordsConverter;
+
 import java.io.ByteArrayOutputStream;
+import java.time.Instant;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
+import java.util.Locale;
 
 @Service
 @RequiredArgsConstructor
@@ -14,23 +22,38 @@ public class PdfGenerationService {
 
     private final TemplateEngine templateEngine; // Inyectamos el motor de plantillas de Thymeleaf
     private final PagosService pagosService;     // Inyectamos el servicio de Pagos para obtener los datos
+    private final NumberToWordsConverter numberToWordsConverter; // Inyectar la nueva herramienta
 
     public byte[] generateBoletaPdf(String pagoIdentifier) {
-        // 1. Obtener los datos completos del pago
         PagosDto pago = pagosService.get(pagoIdentifier)
                 .orElseThrow(() -> new RuntimeException("Pago no encontrado"));
 
-        // 2. Crear el contexto de Thymeleaf
-        // Esto es como un "mapa" que le dice a Thymeleaf qué variables usar en el HTML.
+        // --- LÓGICA PARA CALCULAR LA SUMA DE MORAS ---
+        double moraTotal = pago.getDetalles().stream()
+                             .filter(detalle -> detalle.getMora() != null && detalle.getMora() > 0)
+                             .mapToDouble(PagoDetallesDto::getMora)
+                             .sum();
+        pago.setTotalMora(moraTotal);
+
+        // --- LÓGICA DE FORMATO DE FECHA EN EL BACKEND ---
+        // 1. Convertimos el String de la fecha a un objeto Instant
+        Instant fechaPagoInstant = Instant.parse(pago.getFechaPago());
+
+        // 2. Definimos el formato y la zona horaria deseada.
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy h:mm a")
+                .withLocale(Locale.of("es", "PE"))
+                .withZone(ZoneId.of("America/Lima"));
+        
+        // 3. Formateamos el objeto Instant y lo guardamos en el campo del DTO.
+        pago.setFechaPagoFormateada(formatter.format(fechaPagoInstant));
+        
+        pago.setMontoTotalEnPalabras(numberToWordsConverter.convertToWords(pago.getMontoTotalPagado()));
+
         Context context = new Context();
         context.setVariable("pago", pago);
-
-        // 3. Procesar la plantilla HTML con los datos
-        // Thymeleaf tomará "boleta_template.html", leerá las variables th:*
-        // y las reemplazará con los datos del objeto "pago".
+        
         String htmlContent = templateEngine.process("boleta_template.html", context);
 
-        // 4. Usar Flying Saucer para convertir el HTML procesado a PDF
         try (ByteArrayOutputStream outputStream = new ByteArrayOutputStream()) {
             ITextRenderer renderer = new ITextRenderer();
             renderer.setDocumentFromString(htmlContent);
@@ -38,7 +61,6 @@ public class PdfGenerationService {
             renderer.createPDF(outputStream);
             return outputStream.toByteArray();
         } catch (Exception e) {
-            // Manejo de errores en caso de que la conversión falle
             e.printStackTrace();
             throw new RuntimeException("Error al generar el PDF", e);
         }
