@@ -6,57 +6,85 @@
     <title>Comprobante de Pago</title>
     <style>
         body {
-            font-family: 'Helvetica', sans-serif;
-            color: #333;
-            font-size: 12px;
+            font-family: Verdana, Geneva, sans-serif;
+            color: #151515;
+            font-size: 15px;
+            line-height: 1.4;
         }
 
         .invoice-box {
             max-width: 800px;
             margin: auto;
             padding: 20px;
-            border: 1px solid #eee;
+            border: 1px solid #3f3f3f;
             box-shadow: 0 0 10px rgba(0, 0, 0, 0.15);
         }
 
         table {
             width: 100%;
-            line-height: inherit;
             text-align: left;
             border-collapse: collapse;
         }
 
         .invoice-box table td {
             padding: 5px;
+        }
+
+        /* --- ESTILOS DEL ENCABEZADO REESTRUCTURADOS --- */
+        .header-table {
+            margin-bottom: 10px;
+        }
+
+        .header-left-column {
+            width: 50%;
             vertical-align: top;
         }
 
-        .header-table td {
-            padding-bottom: 20px;
-        }
-
-        .header-table .company-details {
-            text-align: left;
-        }
-
-        .header-table .invoice-details {
+        .header-right-column {
+            width: 50%;
+            vertical-align: top;
             text-align: right;
         }
 
-        .invoice-details b {
-            display: block;
-            margin-bottom: 5px;
-            font-size: 14px;
-            color: #000;
+        .logo-info-table td {
+            vertical-align: middle;
+            /* Alinea logo y texto en la tabla anidada */
+            padding: 0;
+            /* Resetea padding para la tabla interna */
         }
 
-        .client-details-table {
-            margin-bottom: 20px;
+        .logo-cell {
+            width: 60px;
+        }
+
+        .company-cell {
+            padding-left: 10px;
+        }
+
+        .header-invoice-details {
+            text-align: right;
+        }
+
+        .header-invoice-details b {
+            font-size: 14px;
+        }
+
+        .header-invoice-details p {
+            margin: 0;
+        }
+
+        /* --- ESTILOS PARA LA INFO DEL CLIENTE --- */
+        .client-info {
+            margin-bottom: 30px;
+        }
+
+        .client-info p {
+            margin: 2px 0;
         }
 
         .details-table .heading td {
-            background: #f2f2f2;
-            border-bottom: 1px solid #ddd;
+            background: #f3c414;
+            color: #000000;
             font-weight: bold;
             padding: 8px 5px;
         }
@@ -66,25 +94,27 @@
             padding: 8px 5px;
         }
 
-        .summary-table {
-            margin-top: 20px;
-            width: 40%;
-            margin-left: 60%;
-        }
-
-        .summary-table td {
-            text-align: right;
-            padding: 5px;
-        }
-
-        .summary-table .total {
-            font-size: 14px;
-            font-weight: bold;
-            border-top: 2px solid #eee;
+        .details-table .item:nth-child(even) td {
+            background: #dad8d8;
         }
 
         .text-right {
             text-align: right;
+        }
+
+        .summary-table {
+            margin-top: 20px;
+            width: 35%;
+            margin-left: 65%;
+        }
+
+        .summary-table td {
+            text-align: right;
+            padding: 4px 5px;
+        }
+
+        .summary-table .total td {
+            font-weight: bold;
         }
 
         .footer {
@@ -99,38 +129,39 @@
     <div class="invoice-box">
         <table class="header-table">
             <tr>
-                <td class="company-details">
-                    <b>Colegio Villa Esperanza</b><br />
-                    Av. Principal 123<br />
-                    Villa María del Triunfo, Lima
+                <td class="header-left-column">
+                    <table class="logo-info-table">
+                        <tr>
+                            <td class="logo-cell">
+                                <img th:src="${logoUrl}" style="width: 50px;" alt="Logo" />
+                            </td>
+                            <td class="company-cell">
+                                <b>Colegio Villa Esperanza</b><br />
+                                Av. 27 de Diciembre 1358<br />
+                                Villa María del Triunfo, Lima
+                            </td>
+                        </tr>
+                    </table>
                 </td>
-                <td class="invoice-details">
-                    <b>BOLETA DE VENTA ELECTRÓNICA</b>
-                    <p style="font-size: 14px; margin: 0;">R.U.C. 20123456789</p>
-                    <p style="font-size: 18px; font-weight: bold; margin: 0; color: red;"
-                        th:text="${pago.numeroTicket}">C-0001</p>
+                <td class="header-right-column">
+                    <div class="header-invoice-details">
+                        <b>BOLETA DE VENTA ELECTRÓNICA</b>
+                        <p>R.U.C. 20600239873</p>
+                        <p style="font-size: 16px; font-weight: bold; color: #08371b;" th:text="${pago.numeroTicket}">
+                            C-0000003</p>
+                    </div>
                 </td>
             </tr>
         </table>
 
-        <table class="client-details-table">
-            <tr>
-                <td><b>Cliente:</b> <span th:text="${pago.nombreEstudiante}">Nombre del Estudiante</span></td>
-            </tr>
-            <tr>
-                <td><b>Fecha de Emisión:</b>
-                    <span th:text="${pago.fechaPagoFormateada}">Fecha</span>
-                </td>
-            </tr>
-            <tr>
-                <td th:if="${pago.banco != null}"><b>Canal:</b> <span th:text="${pago.canalPago}">BANCO</span> - <span
-                        th:text="${pago.nombreBanco}">Nombre del Banco</span></td>
-                <td th:if="${pago.banco == null}"><b>Canal:</b> <span th:text="${pago.canalPago}">CAJA</span></td>
-            </tr>
-            <tr>
-                <td><b>Registrado por:</b> <span th:text="${pago.nombreUsuario}">Nombre de Usuario</span></td>
-            </tr>
-        </table>
+        <div class="client-info">
+            <p><b>Estudiante:</b> <span th:text="${pago.nombreEstudiante}">Nombre del Estudiante</span></p>
+            <p><b>Fecha de Emisión:</b> <span th:text="${pago.fechaPagoFormateada}">Fecha</span></p>
+            <p th:if="${pago.banco != null}"><b>Canal:</b> <span th:text="${pago.canalPago}">BANCO</span> - <span
+                    th:text="${pago.nombreBanco}">Nombre del Banco</span></p>
+            <p th:if="${pago.banco == null}"><b>Canal:</b> <span th:text="${pago.canalPago}">CAJA</span></p>
+            <p><b>Registrado por:</b> <span th:text="${pago.nombreUsuario}">Nombre de Usuario</span></p>
+        </div>
 
         <table class="details-table">
             <thead>
@@ -145,10 +176,14 @@
             <tbody>
                 <tr class="item" th:each="detalle : ${pago.detalles}">
                     <td th:text="${detalle.descripcionCronograma}">Pensión Marzo</td>
-                    <td class="text-right" th:text="${#numbers.formatCurrency(detalle.montoOriginal)}">S/ 300.00</td>
-                    <td class="text-right" th:text="${#numbers.formatCurrency(detalle.descuento)}">S/ 0.00</td>
-                    <td class="text-right" th:if="${pago.totalMora > 0}" th:text="${#numbers.formatCurrency(detalle.mora)}">S/ 10.00</td>
-                    <td class="text-right" th:text="${#numbers.formatCurrency(detalle.montoAplicado)}">S/ 310.00</td>
+                    <td class="text-right" th:text="'S/ ' + ${#numbers.formatDecimal(detalle.montoOriginal, 1, 2)}">S/
+                        300.00</td>
+                    <td class="text-right" th:text="'S/ ' + ${#numbers.formatDecimal(detalle.descuento, 1, 2)}">S/ 0.00
+                    </td>
+                    <td class="text-right" th:if="${pago.totalMora > 0}"
+                        th:text="'S/ ' + ${#numbers.formatDecimal(detalle.mora, 1, 2)}">S/ 10.00</td>
+                    <td class="text-right" th:text="'S/ ' + ${#numbers.formatDecimal(detalle.montoAplicado, 1, 2)}">S/
+                        310.00</td>
                 </tr>
             </tbody>
         </table>
@@ -164,7 +199,7 @@
             </tr>
             <tr class="total">
                 <td>IMPORTE TOTAL:</td>
-                <td th:text="${#numbers.formatCurrency(pago.montoTotalPagado)}">S/ 580.00</td>
+                <td th:text="'S/ ' + ${#numbers.formatDecimal(pago.montoTotalPagado, 1, 2)}">S/ 580.00</td>
             </tr>
         </table>
 

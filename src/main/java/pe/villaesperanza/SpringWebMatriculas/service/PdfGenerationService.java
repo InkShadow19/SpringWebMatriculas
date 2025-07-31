@@ -11,6 +11,7 @@ import pe.villaesperanza.SpringWebMatriculas.dto.PagosDto;
 import pe.villaesperanza.SpringWebMatriculas.util.NumberToWordsConverter;
 
 import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.time.Instant;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
@@ -49,8 +50,16 @@ public class PdfGenerationService {
         
         pago.setMontoTotalEnPalabras(numberToWordsConverter.convertToWords(pago.getMontoTotalPagado()));
 
+        // --- INICIO DE LA SOLUCIÓN ---
+        // 1. Obtenemos la ruta absoluta de la imagen.
+        File logoFile = new File("src/main/resources/static/images/logo.png");
+        String logoPath = logoFile.toURI().toString();
+
+        // 2. Pasamos la ruta al contexto de Thymeleaf.
         Context context = new Context();
         context.setVariable("pago", pago);
+        context.setVariable("logoUrl", logoPath); // <-- AÑADIMOS LA RUTA AL CONTEXTO
+        // --- FIN DE LA SOLUCIÓN ---
         
         String htmlContent = templateEngine.process("boleta_template.html", context);
 
