@@ -7,6 +7,7 @@ import java.util.Map;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.DisabledException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -35,6 +36,13 @@ public class AuthenticationController {
     @PostMapping("/login")
     public ResponseEntity<?> authenticateUser(@RequestBody LoginRequest loginRequest) {
         try {
+            TUsuariosEntity user = usuariosRepository.findByUsuario(loginRequest.getUsuario())
+                .orElseThrow(() -> new AppException("Usuario o contraseña incorrectos."));
+
+            if (!user.getUsername().equals(loginRequest.getUsuario())) {
+                throw new AppException("Usuario o contraseña incorrectos.");
+            }
+
             authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(
                     loginRequest.getUsuario(),
@@ -42,17 +50,19 @@ public class AuthenticationController {
                 )
             );
 
-            TUsuariosEntity user = usuariosRepository.findByUsuario(loginRequest.getUsuario()).orElseThrow();
             String token = jwtService.generateToken(user);
 
-            // Devolver la respuesta con el token y los datos del usuario
             return ResponseEntity.ok(LoginResponse.builder()
                 .token(token)
                 .username(user.getUsername())
                 .role(user.getRolesEntity().getDescripcion())
                 .build());
 
+        } catch (DisabledException e) {
+            // Captura específicamente el error de cuenta deshabilitada
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Su usuario se encuentra inactivo o ha sido dado de baja.");
         } catch (Exception e) {
+            // Captura todos los demás errores (contraseña incorrecta, etc.)
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Usuario o contraseña incorrectos.");
         }
     }
