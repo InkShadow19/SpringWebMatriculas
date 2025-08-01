@@ -60,7 +60,7 @@ public class TPagosEntity {
     @JoinColumn(name = "id_bancos")
     private TBancosEntity bancosEntity;
 
-    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "pagosEntity")
+    @OneToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE}, fetch = FetchType.LAZY, mappedBy = "pagosEntity")
     private Set<TPagoDetallesEntity> detalles = new HashSet<>();
 
     public TPagosEntity(PagosDto pagosDto, TUsuariosEntity usuariosEntity, TBancosEntity bancosEntity) {

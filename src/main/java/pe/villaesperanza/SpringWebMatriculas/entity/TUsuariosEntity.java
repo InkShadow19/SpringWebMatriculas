@@ -68,7 +68,7 @@ public class TUsuariosEntity implements UserDetails {
     @JoinColumn(name = "id_roles")
     private TRolesEntity rolesEntity;
 
-    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "usuariosEntity")
+    @OneToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE}, fetch = FetchType.LAZY, mappedBy = "usuariosEntity")
     private Set<TPagosEntity> pagos = new HashSet<>();
 
     @Override

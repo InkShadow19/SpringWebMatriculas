@@ -52,6 +52,16 @@ public class EstudiantesController {
         return estudiantesService.getSearch(page, size, descripcion, genero, estadoA, fechaDesde, fechaHasta);
     }
 
+    // --- NUEVO ENDPOINT PARA BÚSQUEDA DE ESTUDIANTES ACTIVOS ---
+    @GetMapping("/search/activos")
+    public Page<EstudiantesDto> searchActivos(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size,
+            @RequestParam(required = false) String descripcion
+    ) {
+        return estudiantesService.getSearchActivos(page, size, descripcion);
+    }
+
     @DeleteMapping("/{identifier}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void delete(@PathVariable(value = "identifier") String identifier) {

@@ -52,6 +52,16 @@ public class ApoderadosController {
         return apoderadosService.getSearch(page, size, descripcion, genero, estado, fechaDesde, fechaHasta);
     }
 
+    // --- NUEVO ENDPOINT PARA BÚSQUEDA DE APODERADOS ACTIVOS ---
+    @GetMapping("/search/activos")
+    public Page<ApoderadosDto> searchActivos(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size,
+            @RequestParam(required = false) String descripcion
+    ) {
+        return apoderadosService.getSearchActivos(page, size, descripcion);
+    }
+
     @DeleteMapping("/{identifier}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void delete(@PathVariable(value = "identifier") String identifier) {

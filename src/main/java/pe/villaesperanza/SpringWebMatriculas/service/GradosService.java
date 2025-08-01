@@ -66,7 +66,7 @@ public class GradosService {
 
         // VALIDACIÓN: No eliminar si tiene matrículas asociadas.
         if (!entity.getMatriculas().isEmpty()) {
-            throw new AppException("No se puede eliminar el grado porque tiene matrículas asociadas. Por favor, inactivelo en su lugar.");
+            throw new AppException("No se puede eliminar el grado porque tiene matrículas asociadas.");
         }
         
         gradosRepository.delete(entity);

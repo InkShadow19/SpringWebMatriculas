@@ -5,6 +5,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import pe.villaesperanza.SpringWebMatriculas.dto.MatriculasDto;
+import pe.villaesperanza.SpringWebMatriculas.dto.reference.EstadoAcademicoReference;
 import pe.villaesperanza.SpringWebMatriculas.dto.reference.EstadoMatriculaReference;
 import pe.villaesperanza.SpringWebMatriculas.dto.reference.SituacionReference;
 
@@ -121,7 +122,10 @@ public class TMatriculasEntity {
         if (gradosEntity != null) dto.setGrado(gradosEntity.getIdentifier());
         if (estudiantesEntity != null) dto.setEstudiante(estudiantesEntity.getIdentifier());
         if (apoderadosEntity != null) dto.setApoderado(apoderadosEntity.getIdentifier());
-        if (aniosAcademicosEntity != null) dto.setAnioAcademico(aniosAcademicosEntity.getIdentifier());
+        if (aniosAcademicosEntity != null) {
+            dto.setAnioAcademico(aniosAcademicosEntity.getIdentifier());
+            dto.setEstadoAnioAcademico(EstadoAcademicoReference.fromInt(aniosAcademicosEntity.getEstadoAcademico()));
+        }
 
         if (cronogramas != null)
             dto.setCronogramas(cronogramas.stream().map(TCronogramaPagosEntity::toDto).toList());

@@ -64,7 +64,7 @@ public class TEstudiantesEntity {
     @Column(name = "fecha_actualizacion", nullable = false)
     private Instant fechaActualizacion = Instant.now();
 
-    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "estudiantesEntity")
+    @OneToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE}, fetch = FetchType.LAZY, mappedBy = "estudiantesEntity")
     private Set<TMatriculasEntity> matriculas = new HashSet<>();
 
     public TEstudiantesEntity(EstudiantesDto estudiantesDto) {

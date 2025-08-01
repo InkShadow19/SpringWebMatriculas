@@ -45,7 +45,7 @@ public class TConceptosPagoEntity {
     @Column(name = "fecha_actualizacion", nullable = false)
     private Instant fechaActualizacion = Instant.now();
 
-    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "conceptosPagoEntity")
+    @OneToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE}, fetch = FetchType.LAZY, mappedBy = "conceptosPagoEntity")
     private Set<TCronogramaPagosEntity> cronogramas = new HashSet<>();
 
     public TConceptosPagoEntity(ConceptosPagoDto conceptosPagoDto) {

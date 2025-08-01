@@ -11,7 +11,9 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import pe.villaesperanza.SpringWebMatriculas.dto.PagosDto;
 import pe.villaesperanza.SpringWebMatriculas.dto.reference.CanalReference;
+import pe.villaesperanza.SpringWebMatriculas.dto.reference.EstadoAcademicoReference;
 import pe.villaesperanza.SpringWebMatriculas.dto.reference.EstadoDeudaReference;
+import pe.villaesperanza.SpringWebMatriculas.dto.reference.EstadoMatriculaReference;
 import pe.villaesperanza.SpringWebMatriculas.dto.reference.EstadoPagoReference;
 import pe.villaesperanza.SpringWebMatriculas.entity.*;
 import pe.villaesperanza.SpringWebMatriculas.repository.BancosRepository;
@@ -102,7 +104,7 @@ public class PagosService {
                 // Si se está pagando después del día de vencimiento...
                 if (ahora.isAfter(inicioDiaSiguienteAlVencimiento)) {
                     Instant fechaLimiteTolerancia = inicioDiaSiguienteAlVencimiento.plus(7, ChronoUnit.DAYS);
-                    
+
                     // ...y además ha pasado la semana de tolerancia, se guarda la mora.
                     if (ahora.isAfter(fechaLimiteTolerancia)) {
                         deuda.setMora(10.00);
@@ -139,7 +141,7 @@ public class PagosService {
     public Optional<PagosDto> get(String identifier) {
 
         return pagosRepository.findByIdentifier(identifier) // 1. Busca la entidad
-                .map(this::enriquecerPagoDto);              // 2. La enriquece (esto ya convierte a DTO adentro)
+                .map(this::enriquecerPagoDto); // 2. La enriquece (esto ya convierte a DTO adentro)
     }
 
     @Transactional(readOnly = true, propagation = Propagation.REQUIRED)
@@ -175,15 +177,26 @@ public class PagosService {
             dto.setNombreBanco(entity.getBancosEntity().getDescripcion());
         }
 
-        // 2. Añadir nombre completo del estudiante
+        // 2. Añadir nombre completo del estudiante y el estado de la matrícula
         if (entity.getDetalles() != null && !entity.getDetalles().isEmpty()) {
             entity.getDetalles().stream().findFirst().ifPresent(detalle -> {
-                TEstudiantesEntity estudiante = detalle.getCronogramaPagosEntity().getMatriculasEntity()
-                        .getEstudiantesEntity();
-                if (estudiante != null) {
-                    // CORRECCIÓN: Se añaden ambos apellidos
-                    dto.setNombreEstudiante(estudiante.getNombre() + " " + estudiante.getApellidoPaterno() + " "
-                            + estudiante.getApellidoMaterno());
+                TMatriculasEntity matricula = detalle.getCronogramaPagosEntity().getMatriculasEntity();
+                if (matricula != null) {
+                    TEstudiantesEntity estudiante = matricula.getEstudiantesEntity();
+                    if (estudiante != null) {
+                        dto.setNombreEstudiante(estudiante.getNombre() + " " + estudiante.getApellidoPaterno() + " "
+                                + estudiante.getApellidoMaterno());
+                    }
+
+                    // --- LÓGICA AÑADIDA ---
+                    // Se obtiene el estado de la matrícula y se añade al DTO.
+                    dto.setEstadoMatricula(EstadoMatriculaReference.fromInt(matricula.getEstado()));
+
+                    // --- LÓGICA AÑADIDA ---
+                    TAniosAcademicosEntity anio = matricula.getAniosAcademicosEntity();
+                    if (anio != null) {
+                        dto.setEstadoAnioAcademico(EstadoAcademicoReference.fromInt(anio.getEstadoAcademico()));
+                    }
                 }
             });
         }
@@ -199,6 +212,20 @@ public class PagosService {
     public void anular(String identifier) {
         TPagosEntity pago = pagosRepository.findByIdentifier(identifier)
                 .orElseThrow(() -> new AppException("El pago que intenta anular no existe."));
+
+        // --- VALIDACIÓN AÑADIDA ---
+        // 1. Verificamos si el pago tiene detalles y obtenemos el primero.
+        if (!pago.getDetalles().isEmpty()) {
+            TPagoDetallesEntity primerDetalle = pago.getDetalles().iterator().next();
+            TMatriculasEntity matriculaAsociada = primerDetalle.getCronogramaPagosEntity().getMatriculasEntity();
+
+            // 2. Comprobamos si el estado de la matrícula es COMPLETADA.
+            if (matriculaAsociada.getEstado() == EstadoMatriculaReference.COMPLETADA.getValue()) {
+                // 3. Si es así, lanzamos una excepción y detenemos el proceso.
+                throw new AppException("No se puede anular un pago de una matrícula que ya ha sido completada.");
+            }
+        }
+        // --- FIN DE LA VALIDACIÓN ---
 
         Instant ahora = timeTravelService.getNow();
 

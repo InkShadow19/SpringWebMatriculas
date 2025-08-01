@@ -3,6 +3,8 @@ package pe.villaesperanza.SpringWebMatriculas.dto;
 import lombok.Getter;
 import lombok.Setter;
 import pe.villaesperanza.SpringWebMatriculas.dto.reference.CanalReference;
+import pe.villaesperanza.SpringWebMatriculas.dto.reference.EstadoAcademicoReference;
+import pe.villaesperanza.SpringWebMatriculas.dto.reference.EstadoMatriculaReference;
 import pe.villaesperanza.SpringWebMatriculas.dto.reference.EstadoPagoReference;
 
 import java.io.Serializable;
@@ -34,6 +36,12 @@ public class PagosDto implements Serializable {
 
     // --- NUEVO CAMPO PARA LA SUMA DE MORAS ---
     private Double totalMora;
+
+    // --- CAMPO AÑADIDO PARA LA VALIDACIÓN ---
+    private EstadoMatriculaReference estadoMatricula;
+
+    // --- CAMPO AÑADIDO PARA LA VALIDACIÓN ---
+    private EstadoAcademicoReference estadoAnioAcademico;
 
     private List<PagoDetallesDto> detalles = new ArrayList<>();
 }

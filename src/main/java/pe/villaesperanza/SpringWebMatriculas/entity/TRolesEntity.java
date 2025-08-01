@@ -39,7 +39,7 @@ public class TRolesEntity {
     @Column(name = "fecha_actualizacion", nullable = false)
     private Instant fechaActualizacion = Instant.now();
 
-    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "rolesEntity")
+    @OneToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE}, fetch = FetchType.LAZY, mappedBy = "rolesEntity")
     private Set<TUsuariosEntity> usuarios = new HashSet<>();
 
     public TRolesEntity(RolesDto roles) {

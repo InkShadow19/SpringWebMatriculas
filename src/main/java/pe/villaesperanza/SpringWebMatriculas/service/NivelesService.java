@@ -58,7 +58,7 @@ public class NivelesService {
 
         // VALIDACIÓN: No eliminar si tiene grados asociados.
         if (!entity.getGrados().isEmpty()) {
-            throw new AppException("No se puede eliminar el nivel porque tiene grados asociados. Por favor, inactivelo en su lugar.");
+            throw new AppException("No se puede eliminar el nivel porque tiene grados asociados.");
         }
 
         nivelesRepository.delete(entity);

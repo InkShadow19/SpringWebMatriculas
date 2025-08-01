@@ -2,6 +2,7 @@ package pe.villaesperanza.SpringWebMatriculas.dto;
 
 import lombok.Getter;
 import lombok.Setter;
+import pe.villaesperanza.SpringWebMatriculas.dto.reference.EstadoAcademicoReference;
 import pe.villaesperanza.SpringWebMatriculas.dto.reference.EstadoMatriculaReference;
 import pe.villaesperanza.SpringWebMatriculas.dto.reference.SituacionReference;
 
@@ -29,6 +30,9 @@ public class MatriculasDto implements Serializable {
     // --- CAMPOS AÑADIDOS PARA RECIBIR LOS DESCUENTOS ---
     private Double descuentoMatricula;
     private Double descuentoPension;
+
+    // --- CAMPO AÑADIDO PARA LA VALIDACIÓN ---
+    private EstadoAcademicoReference estadoAnioAcademico;
 
     private List<CronogramaPagosDto> cronogramas = new ArrayList<>();
 }

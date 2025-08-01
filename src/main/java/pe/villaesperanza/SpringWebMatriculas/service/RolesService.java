@@ -68,7 +68,7 @@ public class RolesService {
 
         // VALIDACIÓN: No eliminar si tiene usuarios asociados.
         if (!entity.getUsuarios().isEmpty()) {
-            throw new AppException("No se puede eliminar el rol porque tiene usuarios asociados. Por favor, inactivelo.");
+            throw new AppException("No se puede eliminar el rol porque tiene usuarios asociados.");
         }
 
         rolesRepository.delete(entity);

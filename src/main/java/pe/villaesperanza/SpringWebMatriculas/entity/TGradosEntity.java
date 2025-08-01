@@ -43,7 +43,7 @@ public class TGradosEntity {
     @JoinColumn(name = "id_niveles")
     private TNivelesEntity nivelesEntity;
 
-    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "gradosEntity")
+    @OneToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE}, fetch = FetchType.LAZY, mappedBy = "gradosEntity")
     private Set<TMatriculasEntity> matriculas = new HashSet<>();
 
     public TGradosEntity(GradosDto gradosDto, TNivelesEntity nivelesEntity) {

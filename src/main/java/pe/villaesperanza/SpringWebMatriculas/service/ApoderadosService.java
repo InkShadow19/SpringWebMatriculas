@@ -76,10 +76,29 @@ public class ApoderadosService {
         return pageList.map(TApoderadosEntity::toDto);
     }
 
+    // --- NUEVO MÉTODO PARA BUSCAR SOLO APODERADOS ACTIVOS ---
+    @Transactional(readOnly = true, propagation = Propagation.REQUIRED)
+    public Page<ApoderadosDto> getSearchActivos(int page, int size, String descripcion) {
+        Pageable pageable = PageRequest.of(page, size);
+        Integer estadoActivo = EstadoReference.ACTIVO.getValue();
+        
+        Page<TApoderadosEntity> pageList = apoderadosRepository.searchApoderados(
+            descripcion, null, estadoActivo, null, null, pageable);
+            
+        return pageList.map(TApoderadosEntity::toDto);
+    }
+
     @Transactional(propagation = Propagation.REQUIRED, rollbackFor = { Exception.class, IOException.class })
     public void delete(String identifier) {
         TApoderadosEntity entity = apoderadosRepository.findByIdentifier(identifier)
-                .orElseThrow(() -> new AppException("El identifier de este apoderado no existe para eliminar"));
+                .orElseThrow(() -> new AppException("El apoderado a eliminar no existe."));
+
+        // --- VALIDACIÓN AÑADIDA ---
+        // Se comprueba si la lista de matrículas asociadas no está vacía.
+        if (!entity.getMatriculas().isEmpty()) {
+            throw new AppException("No se puede eliminar un apoderado con matrículas asociadas.");
+        }
+
         apoderadosRepository.delete(entity);
     }
 }

@@ -62,8 +62,8 @@ public class TCronogramaPagosEntity {
     @ManyToOne
     @JoinColumn(name = "id_matriculas")
     private TMatriculasEntity matriculasEntity;
-
-    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "cronogramaPagosEntity")
+    
+    @OneToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE}, fetch = FetchType.LAZY, mappedBy = "cronogramaPagosEntity")
     private Set<TPagoDetallesEntity> detalles = new HashSet<>();
 
     public TCronogramaPagosEntity(CronogramaPagosDto cronogramaPagosDto, TConceptosPagoEntity conceptosPagoEntity, TMatriculasEntity matriculasEntity) {

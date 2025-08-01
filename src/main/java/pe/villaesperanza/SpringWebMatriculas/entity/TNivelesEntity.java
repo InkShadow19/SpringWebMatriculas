@@ -39,10 +39,10 @@ public class TNivelesEntity {
     @Column(name = "fecha_actualizacion", nullable = false)
     private Instant fechaActualizacion = Instant.now();
 
-    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "nivelesEntity")
+    @OneToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE}, fetch = FetchType.LAZY, mappedBy = "nivelesEntity")
     private Set<TGradosEntity> grados = new HashSet<>();
 
-    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "nivelesEntity")
+    @OneToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE}, fetch = FetchType.LAZY, mappedBy = "nivelesEntity")
     private Set<TMatriculasEntity> matriculas = new HashSet<>();
 
     public TNivelesEntity(NivelesDto nivelesDto) {

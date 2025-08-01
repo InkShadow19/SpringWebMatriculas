@@ -39,7 +39,7 @@ public class TAniosAcademicosEntity {
     @Column(name = "fecha_actualizacion", nullable = false)
     private Instant fechaActualizacion = Instant.now();
 
-    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "aniosAcademicosEntity")
+    @OneToMany(cascade = { CascadeType.PERSIST, CascadeType.MERGE }, fetch = FetchType.LAZY, mappedBy = "aniosAcademicosEntity")
     private Set<TMatriculasEntity> matriculas = new HashSet<>();
 
     public TAniosAcademicosEntity(AniosAcademicosDto aniosAcademicosDto) {
@@ -54,7 +54,7 @@ public class TAniosAcademicosEntity {
     }
 
     public void update(AniosAcademicosDto aniosAcademicosDto) {
-        
+
         if (aniosAcademicosDto.getAnio() != null) {
             this.anio = aniosAcademicosDto.getAnio();
         }

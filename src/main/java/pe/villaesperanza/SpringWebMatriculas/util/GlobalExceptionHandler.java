@@ -3,6 +3,7 @@ package pe.villaesperanza.SpringWebMatriculas.util;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -27,6 +28,15 @@ public class GlobalExceptionHandler {
         Map<String, String> error = new HashMap<>();
         error.put("error", ex.getMessage());
         return new ResponseEntity<>(error, HttpStatus.CONFLICT); // 409 Conflict es bueno para unicidad
+    }
+
+    // --- MÉTODO AÑADIDO PARA MANEJAR ERRORES DE INTEGRIDAD ---
+    @ExceptionHandler(DataIntegrityViolationException.class)
+    public ResponseEntity<Map<String, String>> handleDataIntegrityViolationException(DataIntegrityViolationException ex) {
+        Map<String, String> error = new HashMap<>();
+        // Este es el mensaje amigable que se mostrará al usuario.
+        error.put("error", "No se puede eliminar este registro porque está siendo utilizado por otros módulos.");
+        return new ResponseEntity<>(error, HttpStatus.CONFLICT); // 409 Conflict
     }
     
 }

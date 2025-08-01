@@ -86,7 +86,7 @@ public class AniosAcademicosService {
 
         // VALIDACIÓN: No eliminar si tiene matrículas asociadas.
         if (!entity.getMatriculas().isEmpty()) {
-            throw new AppException("No se puede eliminar un año académico con matrículas asociadas. Cámbielo a estado 'CERRADO'.");
+            throw new AppException("No se puede eliminar un año académico con matrículas asociadas.");
         }
 
         aniosAcademicosRepository.delete(entity);

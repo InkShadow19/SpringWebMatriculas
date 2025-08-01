@@ -42,7 +42,7 @@ public class TBancosEntity {
     @Column(name = "fecha_actualizacion", nullable = false)
     private Instant fechaActualizacion = Instant.now();
 
-    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "bancosEntity")
+    @OneToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE}, fetch = FetchType.LAZY, mappedBy = "bancosEntity")
     private Set<TPagosEntity> pagos = new HashSet<>();
 
     public TBancosEntity(BancosDto bancosDto) {

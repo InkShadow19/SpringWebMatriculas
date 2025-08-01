@@ -81,10 +81,30 @@ public class EstudiantesService {
         return pageList.map(TEstudiantesEntity::toDto);
     }
 
+    // --- NUEVO MÉTODO PARA BUSCAR SOLO ESTUDIANTES ACTIVOS ---
+    @Transactional(readOnly = true, propagation = Propagation.REQUIRED)
+    public Page<EstudiantesDto> getSearchActivos(int page, int size, String descripcion) {
+        Pageable pageable = PageRequest.of(page, size);
+        // Forzamos la búsqueda para que solo incluya el estado ACTIVO
+        Integer estadoActivo = EstadoAcademicoReference.ACTIVO.getValue();
+        
+        Page<TEstudiantesEntity> pageList = estudiantesRepository.searchEstudiantes(
+            descripcion, null, estadoActivo, null, null, pageable);
+            
+        return pageList.map(TEstudiantesEntity::toDto);
+    }
+
     @Transactional(propagation = Propagation.REQUIRED, rollbackFor = {Exception.class, IOException.class})
     public void delete(String identifier) {
         TEstudiantesEntity entity = estudiantesRepository.findByIdentifier(identifier)
                 .orElseThrow(() -> new AppException("El identifier de este estudiante no existe para eliminar"));
+
+        // --- VALIDACIÓN AÑADIDA ---
+        // Se comprueba si la lista de matrículas asociadas no está vacía.
+        if (!entity.getMatriculas().isEmpty()) {
+            throw new AppException("No se puede eliminar un alumno con matrículas asociadas.");
+        }
+
         estudiantesRepository.delete(entity);
     }
 }
