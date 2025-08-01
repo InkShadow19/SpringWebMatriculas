@@ -44,7 +44,7 @@ public class ApoderadosDto implements Serializable {
     @NotBlank(message = "El parentesco no puede estar vacío.")
     private String parentesco;
 
-    @Pattern(regexp = "^$|\\d{9}", message = "El teléfono debe tener 9 dígitos o estar vacío.")
+    @Pattern(regexp = "^$|^9\\d{8}$", message = "El teléfono debe tener 9 dígitos y comenzar con 9.")
     private String telefono;
 
     @NotBlank(message = "El email no puede estar vacío.")

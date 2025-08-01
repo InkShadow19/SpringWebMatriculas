@@ -43,7 +43,7 @@ public class EstudiantesDto implements Serializable {
 
     private String direccion;
 
-    @Pattern(regexp = "^$|\\d{9}", message = "El teléfono debe tener 9 dígitos numéricos o estar vacío.")
+    @Pattern(regexp = "^$|^9\\d{8}$", message = "El teléfono debe tener 9 dígitos y comenzar con 9.")
     private String telefono;
 
     @NotBlank(message = "El email no puede estar vacío.")
