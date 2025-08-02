@@ -8,8 +8,8 @@ import org.springframework.transaction.annotation.Transactional;
 import pe.villaesperanza.SpringWebMatriculas.dto.reference.EstadoDeudaReference;
 import pe.villaesperanza.SpringWebMatriculas.dto.report.AlumnoPorGradoDto;
 import pe.villaesperanza.SpringWebMatriculas.dto.report.EstadoCuentaEstudianteDto;
+import pe.villaesperanza.SpringWebMatriculas.dto.report.MorosidadAgrupadaDto;
 import pe.villaesperanza.SpringWebMatriculas.dto.report.PagosPorPeriodosDto;
-import pe.villaesperanza.SpringWebMatriculas.dto.report.PorMorosidadDto;
 import pe.villaesperanza.SpringWebMatriculas.entity.TCronogramaPagosEntity;
 import pe.villaesperanza.SpringWebMatriculas.repository.CronogramaRepository;
 import pe.villaesperanza.SpringWebMatriculas.repository.MatriculasRepository;
@@ -32,9 +32,9 @@ public class ReportService {
     private final TimeTravelService timeTravelService; // Maquina del Tiempo
 
     @Transactional(readOnly = true, propagation = Propagation.REQUIRED)
-    public Optional<List<EstadoCuentaEstudianteDto>> getEstadoEstudiante(String estudiante) {
+    public Optional<List<EstadoCuentaEstudianteDto>> getEstadoEstudiante(String estudiante, Integer anio) {
 
-        List<TCronogramaPagosEntity> result = cronogramaRepository.estadoCuenta(estudiante);
+        List<TCronogramaPagosEntity> result = cronogramaRepository.estadoCuenta(estudiante, anio);
 
         if (result == null || result.isEmpty()) return Optional.empty();
 
@@ -46,11 +46,11 @@ public class ReportService {
         List<EstadoCuentaEstudianteDto> dtos = result.stream()
                 .map(deuda -> {
                     EstadoCuentaEstudianteDto dto = deuda.estadoCuentaEstudante();
-                    
+                    double montoOriginalAPagar = (dto.getMontoOriginal() != null ? dto.getMontoOriginal() : 0) - (dto.getDescuento() != null ? dto.getDescuento() : 0);
+
+                    // CASO 1: La deuda está PENDIENTE
                     if (dto.getEstadoDeuda() == EstadoDeudaReference.PENDIENTE) {
                         Instant fechaVencimiento = Instant.parse(dto.getFechaVencimiento());
-                        
-                        // --- LÓGICA DE VENCIMIENTO CORREGIDA ---
                         Instant inicioDiaSiguienteAlVencimiento = fechaVencimiento.plus(1, ChronoUnit.DAYS);
 
                         if (fechaActual.isAfter(inicioDiaSiguienteAlVencimiento)) {
@@ -60,12 +60,17 @@ public class ReportService {
                             
                             if (fechaActual.isAfter(fechaLimiteTolerancia)) {
                                 dto.setMora(montoMora);
-                                double montoOriginalAPagar = (dto.getMontoOriginal() != null ? dto.getMontoOriginal() : 0) - (dto.getDescuento() != null ? dto.getDescuento() : 0);
                                 dto.setMontoAPagar(montoOriginalAPagar + montoMora);
                             }
                         }
-                        // --- FIN DE LA LÓGICA ---
                     }
+                    // --- LÓGICA AÑADIDA ---
+                    // CASO 2: La deuda ya está PAGADA y tiene una mora registrada
+                    else if (dto.getEstadoDeuda() == EstadoDeudaReference.PAGADO && dto.getMora() != null && dto.getMora() > 0) {
+                        // Recalculamos el monto total pagado para asegurar que la vista sea correcta
+                        dto.setMontoAPagar(montoOriginalAPagar + dto.getMora());
+                    }
+                    
                     return dto;
                 }).collect(Collectors.toList());
 
@@ -78,8 +83,12 @@ public class ReportService {
         return Optional.of(result);
     }
 
-    public Optional<List<PorMorosidadDto>> porMorosidad(String nivel, String grado) {
-        List<PorMorosidadDto> result = cronogramaRepository.porMorosidad(nivel, grado);
+    // --- MÉTODO ACTUALIZADO CON AÑO ---
+    public Optional<List<MorosidadAgrupadaDto>> porMorosidad(Integer anio, String nivel, String grado) {
+        Instant ahora = timeTravelService.getNow();
+        Instant fechaLimite = ahora.minus(7, ChronoUnit.DAYS);
+        
+        List<MorosidadAgrupadaDto> result = cronogramaRepository.porMorosidadAgrupada(fechaLimite, anio, nivel, grado);
         return Optional.of(result);
     }
 

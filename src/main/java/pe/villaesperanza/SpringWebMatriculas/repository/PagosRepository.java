@@ -18,16 +18,6 @@ public interface PagosRepository extends JpaRepository<TPagosEntity, Long> {
 
     Optional<TPagosEntity> findByIdentifier(String identifier);
 
-    /*@Query("SELECT r FROM TPagosEntity r " +
-            "WHERE (:estado is NULL OR r.estado = :estado) " +
-            "AND (:canalPago is NULL OR r.canalPago = :canalPago) " +
-            "AND (:ticket IS NULL OR r.numeroTicket LIKE %:ticket%) " +
-            "AND (:montoTotalPagado IS NULL OR r.montoTotalPagado = :montoTotalPagado) " +
-            "AND (CAST(:fechaDesde AS TIMESTAMP) IS NULL OR r.fechaPago >= :fechaDesde) " +
-            "AND (CAST(:fechaHasta AS TIMESTAMP) IS NULL OR r.fechaPago <= :fechaHasta) " +
-            "ORDER BY r.fechaCreacion DESC")
-    Page<TPagosEntity> searchPagos(Integer estado, Integer canalPago, String ticket, Double montoTotalPagado, Instant fechaDesde, Instant fechaHasta, Pageable pageable);*/
-
     // --- CONSULTA DE BÚSQUEDA MEJORADA ---
     @Query("SELECT DISTINCT p FROM TPagosEntity p " +
            "LEFT JOIN p.detalles pd " +
@@ -36,6 +26,7 @@ public interface PagosRepository extends JpaRepository<TPagosEntity, Long> {
            "LEFT JOIN m.estudiantesEntity e " +
            "WHERE (:estado IS NULL OR p.estado = :estado) " +
            "AND (:canalPago IS NULL OR p.canalPago = :canalPago) " +
+           "AND (:anioId IS NULL OR m.aniosAcademicosEntity.identifier = :anioId) " +
            "AND (CAST(:fechaDesde AS TIMESTAMP) IS NULL OR p.fechaPago >= :fechaDesde) " +
            "AND (CAST(:fechaHasta AS TIMESTAMP) IS NULL OR p.fechaPago <= :fechaHasta) " +
            "AND (:descripcion IS NULL " +
@@ -45,21 +36,26 @@ public interface PagosRepository extends JpaRepository<TPagosEntity, Long> {
            "OR e.apellidoMaterno LIKE %:descripcion% " +
            "OR e.dni LIKE %:descripcion%) " +
            "ORDER BY p.id DESC")
-    Page<TPagosEntity> searchPagos(
-            @Param("estado") Integer estado,
-            @Param("canalPago") Integer canalPago,
-            @Param("descripcion") String descripcion,
-            @Param("fechaDesde") Instant fechaDesde,
-            @Param("fechaHasta") Instant fechaHasta,
-            Pageable pageable);
+    Page<TPagosEntity> searchPagos(@Param("estado") Integer estado, @Param("canalPago") Integer canalPago, @Param("anioId") String anioId, @Param("descripcion") String descripcion, @Param("fechaDesde") Instant fechaDesde, @Param("fechaHasta") Instant fechaHasta, Pageable pageable);
 
+    // --- CONSULTA DEL REPORTE MEJORADA ---
     @Query("SELECT new pe.villaesperanza.SpringWebMatriculas.dto.report.PagosPorPeriodosDto(" +
-            "r.numeroTicket, r.fechaPago, r.montoTotalPagado, r.canalPago, " +
-            "r.bancosEntity.descripcion, " +
-            "CONCAT(r.usuariosEntity.nombres, ' ', r.usuariosEntity.apellidos)) " +
-            "FROM TPagosEntity r " +
-            "WHERE (CAST(:fechaDesde AS TIMESTAMP) IS NULL OR r.fechaPago >= :fechaDesde) " +
-            "AND (CAST(:fechaHasta AS TIMESTAMP) IS NULL OR r.fechaPago <= :fechaHasta)")
+            "p.numeroTicket, p.fechaPago, " +
+            "CONCAT(e.nombre, ' ', e.apellidoPaterno, ' ', e.apellidoMaterno), " +
+            "p.montoTotalPagado, " +
+            "CASE WHEN p.canalPago = 20 THEN 'Caja' ELSE CONCAT('Banco - ', b.descripcion) END, " +
+            "CONCAT(u.nombres, ' ', u.apellidos)) " +
+            "FROM TPagosEntity p " +
+            "JOIN p.usuariosEntity u " +
+            "LEFT JOIN p.bancosEntity b " +
+            "LEFT JOIN p.detalles pd " +
+            "LEFT JOIN pd.cronogramaPagosEntity c " +
+            "LEFT JOIN c.matriculasEntity m " +
+            "LEFT JOIN m.estudiantesEntity e " +
+            "WHERE p.estado = 10 " +
+            "AND (CAST(:fechaDesde AS TIMESTAMP) IS NULL OR p.fechaPago >= :fechaDesde) " +
+            "AND (CAST(:fechaHasta AS TIMESTAMP) IS NULL OR p.fechaPago <= :fechaHasta) " +
+            "GROUP BY p.id, e.id, u.id, b.id")
     List<PagosPorPeriodosDto> pagosPorPeriodos(@Param("fechaDesde") Instant fechaDesde, @Param("fechaHasta") Instant fechaHasta);
 
     // --- MÉTODO PARA CORRELATIVO CORREGIDO (ORDENADO POR ID) ---

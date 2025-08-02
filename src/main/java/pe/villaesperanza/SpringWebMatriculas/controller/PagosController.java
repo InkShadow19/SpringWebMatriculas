@@ -49,11 +49,12 @@ public class PagosController {
             @RequestParam(defaultValue = "10") int size,
             @RequestParam(required = false) EstadoPagoReference estado,
             @RequestParam(required = false) CanalReference canal,
+            @RequestParam(required = false) String anioId,
             @RequestParam(required = false) String descripcion, // Parámetro unificado para búsqueda
             @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) Instant fechaDesde,
             @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) Instant fechaHasta
     ) {
-        return pagosService.getSearch(page, size, estado, canal, descripcion, fechaDesde, fechaHasta);
+        return pagosService.getSearch(page, size, estado, canal, anioId, descripcion, fechaDesde, fechaHasta);
     }
 
     // --- NUEVO ENDPOINT PARA ANULAR PAGO ---

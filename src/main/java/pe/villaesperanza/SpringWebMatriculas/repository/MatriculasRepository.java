@@ -54,12 +54,16 @@ public interface MatriculasRepository extends JpaRepository<TMatriculasEntity, L
             @Param("fechaHasta") Instant fechaHasta,
             Pageable pageable);
 
+    // --- CONSULTA DEL REPORTE ACTUALIZADA ---
     @Query("SELECT new pe.villaesperanza.SpringWebMatriculas.dto.report.AlumnoPorGradoDto(" +
             "r.estudiantesEntity.dni, " +
             "CONCAT(r.estudiantesEntity.nombre, ' ', r.estudiantesEntity.apellidoPaterno, ' ', r.estudiantesEntity.apellidoMaterno), " +
             "CONCAT(r.apoderadosEntity.nombre, ' ', r.apoderadosEntity.apellidoPaterno, ' ', r.apoderadosEntity.apellidoMaterno), " +
             "r.apoderadosEntity.telefono, r.fechaMatricula, r.situacion) " +
-            "FROM TMatriculasEntity r WHERE r.aniosAcademicosEntity.anio = :anio " +
+            "FROM TMatriculasEntity r " +
+            "WHERE r.aniosAcademicosEntity.anio = :anio " +
+            // Ahora busca estados 10 (VIGENTE) O 30 (COMPLETADA)
+            "AND r.estado IN (10, 30) " + 
             "AND (:nivel IS NULL OR r.nivelesEntity.identifier = :nivel) " +
             "AND (:grado IS NULL OR r.gradosEntity.identifier = :grado)")
     List<AlumnoPorGradoDto> alumnoPorGrado(Integer anio, String nivel, String grado);

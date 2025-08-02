@@ -62,8 +62,7 @@ public class MatriculasService {
 
         List<CronogramaPagosDto> cronogramasActualizados = dto.getCronogramas().stream()
                 .map(cuota -> {
-                    double montoOriginalAPagar = (cuota.getMontoOriginal() != null ? cuota.getMontoOriginal() : 0)
-                            - (cuota.getDescuento() != null ? cuota.getDescuento() : 0);
+                    double montoOriginalAPagar = (cuota.getMontoOriginal() != null ? cuota.getMontoOriginal() : 0) - (cuota.getDescuento() != null ? cuota.getDescuento() : 0);
 
                     // CASO 1: La deuda está PENDIENTE (verificamos si está vencida)
                     if (cuota.getEstadoDeuda() == EstadoDeudaReference.PENDIENTE) {
@@ -88,8 +87,7 @@ public class MatriculasService {
                         }
                     }
                     // CASO 2: La deuda ya está PAGADA y tiene una mora registrada
-                    else if (cuota.getEstadoDeuda() == EstadoDeudaReference.PAGADO && cuota.getMora() != null
-                            && cuota.getMora() > 0) {
+                    else if (cuota.getEstadoDeuda() == EstadoDeudaReference.PAGADO && cuota.getMora() != null && cuota.getMora() > 0) {
                         // Recalculamos el monto total pagado para asegurar que la vista sea correcta
                         cuota.setMontoAPagar(montoOriginalAPagar + cuota.getMora());
                     }

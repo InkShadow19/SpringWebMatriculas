@@ -181,7 +181,7 @@
                     <td class="text-right" th:text="'S/ ' + ${#numbers.formatDecimal(detalle.descuento, 1, 2)}">S/ 0.00
                     </td>
                     <td class="text-right" th:if="${pago.totalMora > 0}"
-                        th:text="'S/ ' + ${#numbers.formatDecimal(detalle.mora, 1, 2)}">S/ 10.00</td>
+                        th:text="'S/ ' + ${#numbers.formatDecimal(detalle.mora ?: 0, 1, 2)}">S/ 0.00</td>
                     <td class="text-right" th:text="'S/ ' + ${#numbers.formatDecimal(detalle.montoAplicado, 1, 2)}">S/
                         310.00</td>
                 </tr>

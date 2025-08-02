@@ -145,13 +145,14 @@ public class PagosService {
     }
 
     @Transactional(readOnly = true, propagation = Propagation.REQUIRED)
-    public Page<PagosDto> getSearch(int page, int size, EstadoPagoReference estado, CanalReference canalPago,
+    public Page<PagosDto> getSearch(int page, int size, EstadoPagoReference estado, CanalReference canalPago, String anioId,
             String descripcion, Instant fechaDesde, Instant fechaHasta) {
 
         Pageable pageable = PageRequest.of(page, size);
         Page<TPagosEntity> pageList = pagosRepository.searchPagos(
                 estado == null ? null : estado.getValue(),
                 canalPago == null ? null : canalPago.getValue(),
+                anioId,
                 descripcion,
                 fechaDesde,
                 fechaHasta,
