@@ -7,7 +7,12 @@ import java.util.Map;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
+
+import org.springframework.security.core.Authentication;
+//import org.springframework.security.core.context.SecurityContextHolder;
+import pe.villaesperanza.SpringWebMatriculas.dto.UserProfileDto;
 import pe.villaesperanza.SpringWebMatriculas.dto.UsuariosDto;
 import pe.villaesperanza.SpringWebMatriculas.dto.reference.EstadoReference;
 import pe.villaesperanza.SpringWebMatriculas.service.UsuariosService;
@@ -69,5 +74,18 @@ public class UsuariosController {
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void delete(@PathVariable(value = "identifier") String identifier) {
         usuariosService.delete(identifier);
+    }
+
+    // --- NUEVO ENDPOINT PARA "MI PERFIL" ---
+    @GetMapping("/me")
+    public ResponseEntity<UserProfileDto> getMyProfile() {
+        // Obtenemos el nombre de usuario del contexto de seguridad
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String currentUsername = authentication.getName();
+        
+        // Llamamos al nuevo método del servicio para obtener el perfil
+        UserProfileDto userProfile = usuariosService.getProfile(currentUsername);
+        
+        return ResponseEntity.ok(userProfile);
     }
 }

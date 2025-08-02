@@ -8,8 +8,11 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
+
+import pe.villaesperanza.SpringWebMatriculas.dto.UserProfileDto;
 import pe.villaesperanza.SpringWebMatriculas.dto.UsuariosDto;
 import pe.villaesperanza.SpringWebMatriculas.dto.reference.EstadoReference;
+import pe.villaesperanza.SpringWebMatriculas.dto.reference.GeneroReference;
 import pe.villaesperanza.SpringWebMatriculas.entity.TRolesEntity;
 import pe.villaesperanza.SpringWebMatriculas.entity.TUsuariosEntity;
 import pe.villaesperanza.SpringWebMatriculas.repository.RolesRepository;
@@ -152,4 +155,26 @@ public class UsuariosService {
         // Si el usuario sí existe, envía la notificación como antes.
         emailService.sendPasswordResetNotification(user.getUsername());
     }
+
+    // --- NUEVO MÉTODO PARA OBTENER EL PERFIL DEL USUARIO ---
+    @Transactional(readOnly = true)
+    public UserProfileDto getProfile(String username) {
+        TUsuariosEntity usuario = usuariosRepository.findByUsuario(username)
+                .orElseThrow(() -> new AppException("El usuario no fue encontrado."));
+
+        // Se construye el DTO del perfil utilizando el patrón Builder
+        return UserProfileDto.builder()
+                .identifier(usuario.getIdentifier())
+                .usuario(usuario.getUsername())
+                .nombres(usuario.getNombres())
+                .apellidos(usuario.getApellidos())
+                .fechaNacimiento(usuario.getFechaNacimiento().toString())
+                .genero(usuario.getGenero() != null ? GeneroReference.fromInt(usuario.getGenero()) : null)
+                .dni(usuario.getDni())
+                .estado(EstadoReference.fromInt(usuario.getEstado()))
+                .rol(usuario.getRolesEntity().getDescripcion())
+                .totalPagosRegistrados(usuario.getPagos().size()) // Se calcula el total de pagos
+                .build();
+    }
+
 }
