@@ -101,106 +101,111 @@ public class MatriculasService {
 
     @Transactional(propagation = Propagation.REQUIRED, rollbackFor = { Exception.class, IOException.class })
     public MatriculasDto add(MatriculasDto matriculasDto) {
-        validarMatriculaUnica(matriculasDto.getEstudiante(), matriculasDto.getAnioAcademico(), null);
+        // Obtenemos la fecha "actual" de nuestro reloj especial para saber el mes.
+        Instant ahora = timeTravelService.getNow();
+        Month mesDeInscripcion = LocalDate.ofInstant(ahora, ZoneOffset.UTC).getMonth();
 
-        TAniosAcademicosEntity anioAcademico = aniosAcademicosRepository
+        // Obtenemos el año académico seleccionado en el formulario (ej. 2023 ACTIVO).
+        TAniosAcademicosEntity anioSeleccionadoEnFormulario = aniosAcademicosRepository
                 .findByIdentifier(matriculasDto.getAnioAcademico())
                 .orElseThrow(() -> new AppException("El año académico especificado no existe."));
-        TEstudiantesEntity estudiante = estudiantesRepository.findByIdentifier(matriculasDto.getEstudiante())
-                .orElseThrow(() -> new AppException("El estudiante especificado no existe."));
-        TApoderadosEntity apoderado = apoderadosRepository.findByIdentifier(matriculasDto.getApoderado())
-                .orElseThrow(() -> new AppException("El apoderado especificado no existe."));
-        TNivelesEntity nivel = nivelesRepository.findByIdentifier(matriculasDto.getNivel())
-                .orElseThrow(() -> new AppException("El nivel especificado no existe."));
-        TGradosEntity grado = gradosRepository.findByIdentifier(matriculasDto.getGrado())
-                .orElseThrow(() -> new AppException("El grado especificado no existe."));
 
-        Integer anioActual = anioAcademico.getAnio();
+        // Por defecto, el año efectivo de la matrícula es el seleccionado en el formulario.
+        TAniosAcademicosEntity anioAcademicoEfectivo = anioSeleccionadoEnFormulario;
+        Integer anioParaCalculos = anioAcademicoEfectivo.getAnio();
 
-        // --- LÓGICA DE CORRELATIVO CORREGIDA ---
-        // 1. Usamos el nuevo método que ordena por ID para encontrar la última matrícula.
-        Optional<TMatriculasEntity> ultimaMatricula = matriculasRepository.findTopByAniosAcademicosEntity_AnioOrderByIdDesc(anioActual);
+        // --- LÓGICA DE EXCEPCIÓN PARA DICIEMBRE ---
+        // Si la matrícula se hace en Diciembre...
+        if (mesDeInscripcion == Month.DECEMBER) {
+            Integer anioSiguiente = anioSeleccionadoEnFormulario.getAnio() + 1;
+            // ...buscamos el registro del AÑO SIGUIENTE en la base de datos.
+            anioAcademicoEfectivo = aniosAcademicosRepository.findByAnio(anioSiguiente)
+                    .orElseThrow(() -> new AppException("El año académico " + anioSiguiente + " no ha sido creado. Por favor, créelo antes de registrar matrículas de Diciembre."));
+            anioParaCalculos = anioSiguiente;
+        }
 
+        // --- VALIDACIÓN DE UNICIDAD (ahora usa el año académico EFECTIVO) ---
+        validarMatriculaUnica(matriculasDto.getEstudiante(), anioAcademicoEfectivo.getIdentifier(), null);
+
+        // --- BÚSQUEDA DE OTRAS ENTIDADES (sin cambios) ---
+        TEstudiantesEntity estudiante = estudiantesRepository.findByIdentifier(matriculasDto.getEstudiante()).orElseThrow(() -> new AppException("El estudiante especificado no existe."));
+        TApoderadosEntity apoderado = apoderadosRepository.findByIdentifier(matriculasDto.getApoderado()).orElseThrow(() -> new AppException("El apoderado especificado no existe."));
+        TNivelesEntity nivel = nivelesRepository.findByIdentifier(matriculasDto.getNivel()).orElseThrow(() -> new AppException("El nivel especificado no existe."));
+        TGradosEntity grado = gradosRepository.findByIdentifier(matriculasDto.getGrado()).orElseThrow(() -> new AppException("El grado especificado no existe."));
+
+        // --- LÓGICA DE CORRELATIVO (ahora usa el año para cálculos) ---
+        Optional<TMatriculasEntity> ultimaMatricula = matriculasRepository.findTopByAniosAcademicosEntity_AnioOrderByIdDesc(anioParaCalculos);
         int correlativo = 1;
         if (ultimaMatricula.isPresent()) {
             String ultimoCodigo = ultimaMatricula.get().getCodigo();
             int ultimoCorrelativo = Integer.parseInt(ultimoCodigo.substring(7));
             correlativo = ultimoCorrelativo + 1;
         }
-
-        String nuevoCodigo = "M-" + anioActual + "-" + String.format("%03d", correlativo);
+        String nuevoCodigo = "M-" + anioParaCalculos + "-" + String.format("%03d", correlativo);
         matriculasDto.setCodigo(nuevoCodigo);
 
-        TMatriculasEntity entity = new TMatriculasEntity(matriculasDto, nivel, grado, estudiante, apoderado,
-                anioAcademico);
-
-        // --- LÍNEA AÑADIDA ---
-        // Se establece la fecha de matrícula usando nuestro reloj especial
-        Instant ahora = timeTravelService.getNow();
+        // --- CREACIÓN DE LA ENTIDAD (ahora usa el año académico EFECTIVO) ---
+        TMatriculasEntity entity = new TMatriculasEntity(matriculasDto, nivel, grado, estudiante, apoderado, anioAcademicoEfectivo);
+        
         entity.setFechaMatricula(ahora);
         entity.setFechaCreacion(ahora);
         entity.setFechaActualizacion(ahora);
-
-        generarCronograma(entity, anioActual, matriculasDto);
+        
+        generarCronograma(entity, anioAcademicoEfectivo.getAnio(), matriculasDto);
         TMatriculasEntity result = matriculasRepository.save(entity);
         return result.toDto();
     }
 
-    // --- MÉTODO ADAPTADO CON LÓGICA DE MATRÍCULA TARDÍA ---
-    private void generarCronograma(TMatriculasEntity matricula, Integer anio, MatriculasDto matriculasDto) {
+    // --- MÉTODO ADAPTADO CON LÓGICA DE EXCEPCIÓN PARA DICIEMBRE ---
+    private void generarCronograma(TMatriculasEntity matricula, Integer anioDelCronograma, MatriculasDto matriculasDto) {
         TConceptosPagoEntity conceptoMatricula = conceptosPagoRepository.findByCodigo("MATR")
                 .orElseThrow(() -> new AppException("No se encontró el concepto de pago 'MATR'"));
         TConceptosPagoEntity conceptoPension = conceptosPagoRepository.findByCodigo("PENS")
                 .orElseThrow(() -> new AppException("No se encontró el concepto de pago 'PENS'"));
 
-        // --- INICIO DE LA LÓGICA DE FECHA DE VENCIMIENTO DINÁMICA ---
-        //Month mesDeInscripcion = LocalDate.now(ZoneOffset.UTC).getMonth();
+        // Obtenemos la fecha "actual" de nuestro reloj especial para la lógica de meses.
+        Instant ahora = timeTravelService.getNow();
+        LocalDate fechaActualSimulada = LocalDate.ofInstant(ahora, ZoneOffset.UTC);
+        Month mesDeInscripcion = fechaActualSimulada.getMonth();
 
-        // 1. Obtenemos la fecha "actual" de nuestro servicio de tiempo simulado.
-        Instant ahoraSimulado = timeTravelService.getNow();
-        LocalDate fechaSimulada = LocalDate.ofInstant(ahoraSimulado, ZoneOffset.UTC);
-        Month mesDeInscripcion = fechaSimulada.getMonth();
-
+        // --- LÓGICA DE VENCIMIENTO DE MATRÍCULA CORREGIDA ---
         LocalDate fechaVencimientoMatricula;
-
-        // Si la matrícula se crea después de Febrero...
-        if (mesDeInscripcion.getValue() > 2) {
-            // ...la fecha de vencimiento será el último día del mes de inscripción.
-            //LocalDate hoy = LocalDate.now(ZoneOffset.UTC);
-            //fechaVencimientoMatricula = hoy.withDayOfMonth(hoy.lengthOfMonth());
-            fechaVencimientoMatricula = fechaSimulada.withDayOfMonth(fechaSimulada.lengthOfMonth());
-        } else {
-            // Si no, se mantiene la fecha de vencimiento estándar (28 de Febrero).
-            fechaVencimientoMatricula = LocalDate.of(anio, Month.FEBRUARY, 28);
+        // Si la inscripción es en Diciembre, el vencimiento es en Febrero del próximo año.
+        if (mesDeInscripcion == Month.DECEMBER) {
+            fechaVencimientoMatricula = LocalDate.of(anioDelCronograma, Month.FEBRUARY, 28);
+        } 
+        // Si es entre Marzo y Noviembre, vence a fin del mes de inscripción.
+        else if (mesDeInscripcion.getValue() > 2) {
+            fechaVencimientoMatricula = fechaActualSimulada.withDayOfMonth(fechaActualSimulada.lengthOfMonth());
+        } 
+        // Si es en Enero o Febrero, el vencimiento es el estándar.
+        else {
+            fechaVencimientoMatricula = LocalDate.of(anioDelCronograma, Month.FEBRUARY, 28);
         }
-        // --- FIN DE LA LÓGICA ---
         
-        // --- Lógica para la Matrícula (ahora usa la fecha dinámica) ---
+        // --- El resto del método ahora confía en 'anioDelCronograma' ---
         double descuentoMatriculaValor = Optional.ofNullable(matriculasDto.getDescuentoMatricula()).orElse(0.0);
         double montoFinalMatricula = conceptoMatricula.getMontoSugerido() - descuentoMatriculaValor;
-
         TCronogramaPagosEntity deudaMatricula = new TCronogramaPagosEntity();
         deudaMatricula.setIdentifier(UUID.randomUUID().toString());
-        deudaMatricula.setDescripcion("Matrícula " + anio);
+        deudaMatricula.setDescripcion("Matrícula " + anioDelCronograma);
         deudaMatricula.setMontoOriginal(conceptoMatricula.getMontoSugerido());
         deudaMatricula.setDescuento(descuentoMatriculaValor);
         deudaMatricula.setMontoAPagar(montoFinalMatricula);
-        deudaMatricula.setFechaVencimiento(fechaVencimientoMatricula.atStartOfDay().toInstant(ZoneOffset.UTC)); // <-- USA LA FECHA DINÁMICA
-        deudaMatricula.setEstadoDeuda(10); // PENDIENTE
+        deudaMatricula.setFechaVencimiento(fechaVencimientoMatricula.atStartOfDay().toInstant(ZoneOffset.UTC));
+        deudaMatricula.setEstadoDeuda(10);
         deudaMatricula.setConceptosPagoEntity(conceptoMatricula);
         deudaMatricula.setMatriculasEntity(matricula);
         matricula.getCronogramas().add(deudaMatricula);
 
-        // --- Lógica para las Pensiones (sin cambios) ---
         double descuentoPensionValor = Optional.ofNullable(matriculasDto.getDescuentoPension()).orElse(0.0);
         double montoFinalPension = conceptoPension.getMontoSugerido() - descuentoPensionValor;
-        
         String[] meses = { "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre" };
+        
         for (int i = 0; i < 10; i++) {
             int mesNumero = i + 3;
-            if (mesNumero >= mesDeInscripcion.getValue()) {
-                LocalDate fechaVencimiento = LocalDate.of(anio, mesNumero, 1).withDayOfMonth(LocalDate.of(anio, mesNumero, 1).lengthOfMonth());
-
+            if (mesDeInscripcion == Month.DECEMBER || mesNumero >= mesDeInscripcion.getValue()) {
+                LocalDate fechaVencimiento = LocalDate.of(anioDelCronograma, mesNumero, 1).withDayOfMonth(LocalDate.of(anioDelCronograma, mesNumero, 1).lengthOfMonth());
                 TCronogramaPagosEntity pension = new TCronogramaPagosEntity();
                 pension.setIdentifier(UUID.randomUUID().toString());
                 pension.setDescripcion("Pensión " + meses[i]);
@@ -208,7 +213,7 @@ public class MatriculasService {
                 pension.setDescuento(descuentoPensionValor);
                 pension.setMontoAPagar(montoFinalPension);
                 pension.setFechaVencimiento(fechaVencimiento.atStartOfDay().toInstant(ZoneOffset.UTC));
-                pension.setEstadoDeuda(10); // PENDIENTE
+                pension.setEstadoDeuda(10);
                 pension.setConceptosPagoEntity(conceptoPension);
                 pension.setMatriculasEntity(matricula);
                 matricula.getCronogramas().add(pension);
