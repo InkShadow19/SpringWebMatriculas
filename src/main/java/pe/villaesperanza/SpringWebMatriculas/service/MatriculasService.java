@@ -310,13 +310,28 @@ public class MatriculasService {
         TMatriculasEntity entity = matriculasRepository.findByIdentifier(identifier)
                 .orElseThrow(() -> new AppException("La matrícula a anular no existe."));
 
+        // Validación existente: No anular si ya tiene pagos.
         boolean tienePagos = entity.getCronogramas().stream()
                 .anyMatch(c -> c.getEstadoDeuda() == EstadoDeudaReference.PAGADO.getValue());
 
         if (tienePagos) {
             throw new AppException("No se puede anular una matrícula que ya tiene pagos registrados.");
         }
+        
+        // No anular si tiene deudas pendientes que ya están vencidas.
+        Instant ahora = timeTravelService.getNow(); // Usamos nuestro reloj especial
+        boolean tieneDeudasVencidas = entity.getCronogramas().stream()
+                .anyMatch(c -> 
+                    c.getEstadoDeuda() == EstadoDeudaReference.PENDIENTE.getValue() && 
+                    c.getFechaVencimiento().isBefore(ahora)
+                );
+        
+        if (tieneDeudasVencidas) {
+            throw new AppException("No se puede anular. La matrícula tiene deudas vencidas que deben ser canceladas.");
+        }
+        // --- FIN DE LA VALIDACIÓN ---
 
+        // Si pasa ambas validaciones, se procede a anular.
         entity.setEstado(EstadoMatriculaReference.ANULADA.getValue());
 
         for (TCronogramaPagosEntity cronograma : entity.getCronogramas()) {

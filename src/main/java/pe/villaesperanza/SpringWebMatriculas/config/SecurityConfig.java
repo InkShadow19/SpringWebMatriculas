@@ -48,6 +48,7 @@ public class SecurityConfig {
 
                 // REGLA 2: Permisos completos para los módulos operativos que ambos roles gestionan.
                 .requestMatchers(
+                    "/dashboard/**",
                     "/estudiantes/**", 
                     "/apoderados/**", 
                     "/matriculas/**", 
