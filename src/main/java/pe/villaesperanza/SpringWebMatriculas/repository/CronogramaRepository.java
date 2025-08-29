@@ -20,7 +20,9 @@ public interface CronogramaRepository extends JpaRepository<TCronogramaPagosEnti
            "WHERE m.estudiantesEntity.identifier = :estudiante " +
            "AND m.aniosAcademicosEntity.anio = :anio " +
            "AND m.estado IN (10, 30) " +
-           "ORDER BY r.fechaVencimiento ASC")
+           "ORDER BY " +
+           "CASE WHEN r.descripcion LIKE 'Matrícula%' THEN 0 ELSE 1 END, " +
+           "r.fechaVencimiento ASC")
     List<TCronogramaPagosEntity> estadoCuenta(@Param("estudiante") String estudiante, @Param("anio") Integer anio);
 
     @Query("SELECT new pe.villaesperanza.SpringWebMatriculas.dto.report.MorosidadAgrupadaDto(" +
@@ -45,6 +47,13 @@ public interface CronogramaRepository extends JpaRepository<TCronogramaPagosEnti
            "WHERE c.estadoDeuda = 10 " +
            "AND c.matriculasEntity.aniosAcademicosEntity.identifier = :anioId")
     List<TCronogramaPagosEntity> findAllPendientesByAnio(@Param("anioId") String anioId);
+
+    @Query("SELECT DISTINCT m.aniosAcademicosEntity.anio " +
+           "FROM TCronogramaPagosEntity c JOIN c.matriculasEntity m " +
+           "WHERE c.matriculasEntity.estudiantesEntity.identifier = :estudianteIdentifier " +
+           "AND c.estadoDeuda = 10 " +
+           "ORDER BY m.aniosAcademicosEntity.anio DESC")
+    List<Integer> findAniosConDeudasPendientes(@Param("estudianteIdentifier") String estudianteIdentifier);
     
     // --- MÉTODOS PARA DASHBOARD ---
 

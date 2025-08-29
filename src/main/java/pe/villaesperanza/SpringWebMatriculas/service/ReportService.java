@@ -14,6 +14,7 @@ import pe.villaesperanza.SpringWebMatriculas.entity.TCronogramaPagosEntity;
 import pe.villaesperanza.SpringWebMatriculas.repository.CronogramaRepository;
 import pe.villaesperanza.SpringWebMatriculas.repository.MatriculasRepository;
 import pe.villaesperanza.SpringWebMatriculas.repository.PagosRepository;
+import pe.villaesperanza.SpringWebMatriculas.util.AppException;
 
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
@@ -36,45 +37,51 @@ public class ReportService {
 
         List<TCronogramaPagosEntity> result = cronogramaRepository.estadoCuenta(estudiante, anio);
 
-        if (result == null || result.isEmpty()) return Optional.empty();
+        // --- LÓGICA MODIFICADA ---
+        if (result != null && !result.isEmpty()) {
+            // Si se encontraron deudas para el año solicitado, se procesan y devuelven como antes.
+            Instant fechaActual = timeTravelService.getNow();
+            double montoMora = 10.00;
 
-        // --- LÓGICA DE MORA CON SEMANA DE TOLERANCIA ---
-        Instant fechaActual = timeTravelService.getNow();
-        //Instant fechaActual = Instant.now();
-        double montoMora = 10.00;
+            List<EstadoCuentaEstudianteDto> dtos = result.stream()
+                    .map(deuda -> {
+                        EstadoCuentaEstudianteDto dto = deuda.estadoCuentaEstudante();
+                        double montoOriginalAPagar = (dto.getMontoOriginal() != null ? dto.getMontoOriginal() : 0) - (dto.getDescuento() != null ? dto.getDescuento() : 0);
 
-        List<EstadoCuentaEstudianteDto> dtos = result.stream()
-                .map(deuda -> {
-                    EstadoCuentaEstudianteDto dto = deuda.estadoCuentaEstudante();
-                    double montoOriginalAPagar = (dto.getMontoOriginal() != null ? dto.getMontoOriginal() : 0) - (dto.getDescuento() != null ? dto.getDescuento() : 0);
+                        if (dto.getEstadoDeuda() == EstadoDeudaReference.PENDIENTE) {
+                            Instant fechaVencimiento = Instant.parse(dto.getFechaVencimiento());
+                            Instant inicioDiaSiguienteAlVencimiento = fechaVencimiento.plus(1, ChronoUnit.DAYS);
 
-                    // CASO 1: La deuda está PENDIENTE
-                    if (dto.getEstadoDeuda() == EstadoDeudaReference.PENDIENTE) {
-                        Instant fechaVencimiento = Instant.parse(dto.getFechaVencimiento());
-                        Instant inicioDiaSiguienteAlVencimiento = fechaVencimiento.plus(1, ChronoUnit.DAYS);
-
-                        if (fechaActual.isAfter(inicioDiaSiguienteAlVencimiento)) {
-                            dto.setEstadoDeuda(EstadoDeudaReference.VENCIDO);
-                            
-                            Instant fechaLimiteTolerancia = inicioDiaSiguienteAlVencimiento.plus(7, ChronoUnit.DAYS);
-                            
-                            if (fechaActual.isAfter(fechaLimiteTolerancia)) {
-                                dto.setMora(montoMora);
-                                dto.setMontoAPagar(montoOriginalAPagar + montoMora);
+                            if (fechaActual.isAfter(inicioDiaSiguienteAlVencimiento)) {
+                                dto.setEstadoDeuda(EstadoDeudaReference.VENCIDO);
+                                Instant fechaLimiteTolerancia = inicioDiaSiguienteAlVencimiento.plus(7, ChronoUnit.DAYS);
+                                if (fechaActual.isAfter(fechaLimiteTolerancia)) {
+                                    dto.setMora(montoMora);
+                                    dto.setMontoAPagar(montoOriginalAPagar + montoMora);
+                                }
                             }
+                        } else if (dto.getEstadoDeuda() == EstadoDeudaReference.PAGADO && dto.getMora() != null && dto.getMora() > 0) {
+                            dto.setMontoAPagar(montoOriginalAPagar + dto.getMora());
                         }
-                    }
-                    // --- LÓGICA AÑADIDA ---
-                    // CASO 2: La deuda ya está PAGADA y tiene una mora registrada
-                    else if (dto.getEstadoDeuda() == EstadoDeudaReference.PAGADO && dto.getMora() != null && dto.getMora() > 0) {
-                        // Recalculamos el monto total pagado para asegurar que la vista sea correcta
-                        dto.setMontoAPagar(montoOriginalAPagar + dto.getMora());
-                    }
-                    
-                    return dto;
-                }).collect(Collectors.toList());
+                        
+                        return dto;
+                    }).collect(Collectors.toList());
 
-        return Optional.of(dtos);
+            return Optional.of(dtos);
+
+        } else {
+            // Si no se encontraron deudas, se realiza la verificación en otros años.
+            List<Integer> aniosConDeuda = cronogramaRepository.findAniosConDeudasPendientes(estudiante);
+            
+            if (!aniosConDeuda.isEmpty()) {
+                // Si hay deudas, se formatea el mensaje y se lanza una excepción que el frontend capturará.
+                String aniosStr = aniosConDeuda.stream().map(String::valueOf).collect(Collectors.joining(", "));
+                throw new AppException("El estudiante tiene deudas pendientes del año/s: " + aniosStr + ". Por favor, active el año correspondiente para poder registrar el pago.");
+            }
+        }
+
+        // Si no se encontraron deudas en el año activo NI en otros años, se retorna un opcional vacío.
+        return Optional.empty();
     }
 
     @Transactional(readOnly = true, propagation = Propagation.REQUIRED)
