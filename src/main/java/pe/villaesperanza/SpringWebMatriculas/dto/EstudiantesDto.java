@@ -47,7 +47,7 @@ public class EstudiantesDto implements Serializable {
     private String telefono;
 
     @NotBlank(message = "El email no puede estar vacío.")
-    @Email(message = "El formato del correo electrónico no es válido.")
+    @Pattern(regexp = "^[a-zA-Z0-9._%+-ñÑáéíóúÁÉÍÓÚ]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,6}$", message = "El formato del correo electrónico no es válido.")
     private String email;
 
     @NotNull(message = "El estado académico no puede ser nulo.")
